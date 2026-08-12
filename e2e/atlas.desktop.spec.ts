@@ -1,0 +1,28 @@
+import { expect, test } from '@playwright/test'
+
+test('expert flow preserves filters and comparison across locale switch', async ({ page }) => {
+  await page.goto('/tr')
+  await page.getByRole('link', { name: 'Ne aradığımı biliyorum' }).click()
+  await page.getByLabel('INF', { exact: true }).click()
+  await expect(page).toHaveURL(/category=INF/)
+  await expect(page.getByText('8 sonuç')).toBeVisible()
+  await page.getByRole('checkbox', { name: 'Karşılaştır TensorRT-LLM' }).click()
+  await page.getByRole('checkbox', { name: 'Karşılaştır llama.cpp' }).click()
+  await page.getByRole('link', { name: /Karşılaştır 2/ }).click()
+  await expect(page).toHaveURL(/compare=.*tensorrt-llm.*llama-cpp/)
+  await page.getByRole('link', { name: 'Switch to English' }).click()
+  await expect(page).toHaveURL(/\/en\/compare\?compare=/)
+  await expect(page.getByRole('heading', { name: 'Compare solutions' })).toBeVisible()
+  await expect(page.getByText('TensorRT-LLM')).toBeVisible()
+  await expect(page.getByText('llama.cpp')).toBeVisible()
+
+  await page.goto('/en/guide')
+  await page.getByRole('button', { name: 'Apple Silicon' }).click()
+  await page.getByRole('button', { name: 'Local development' }).click()
+  await page.getByRole('button', { name: 'Desktop GUI' }).click()
+  await page.getByRole('button', { name: 'Single user / device' }).click()
+  await page.getByRole('button', { name: 'No platform preference' }).click()
+  await expect(page.getByText('JUSTIFIED SHORTLIST', { exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'MLX-LM' })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Compare shortlist/ }).first()).toBeVisible()
+})

@@ -1,0 +1,10 @@
+.superpowers/
+docs/superpowers/
+llm-atlas-design-directions.*
+node_modules/
+dist/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
