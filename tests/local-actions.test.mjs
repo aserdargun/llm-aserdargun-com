@@ -88,6 +88,11 @@ test('Codex environment delegates Setup, Run, Validate, and Stop to repository c
   assert.equal(packageJson.scripts.validate, 'npm run stop:local && npm run check && npm run test:e2e && git diff --check')
 })
 
+test('production CSP permits Vite-inlined font assets', () => {
+  const swaConfig = JSON.parse(readFileSync(path.join(root, 'public/staticwebapp.config.json'), 'utf8'))
+  assert.match(swaConfig.globalHeaders['Content-Security-Policy'], /font-src 'self' data:/)
+})
+
 test('Stop terminates a listener owned by this checkout', async (t) => {
   const port = await reservePort()
   const child = await startListener(root, port)
