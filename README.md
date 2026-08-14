@@ -37,6 +37,7 @@ Node.js 22 ve npm gereklidir.
 
 ```bash
 npm ci
+npx playwright install chromium
 npm run dev
 ```
 
@@ -56,7 +57,7 @@ Depo iki iş akışı içerir:
 - `CI`: veri doğrulama, birim/bileşen testleri, lint, TypeScript, üretim derlemesi ve Playwright E2E.
 - `Azure Static Web Apps`: `main` dalındaki doğrulanmış uygulamayı Azure’a dağıtır.
 
-Dağıtım iş akışı için GitHub Actions deposuna `AZURE_STATIC_WEB_APPS_API_TOKEN` adlı secret eklenmelidir. SPA yönlendirmesi ve güvenlik başlıkları `public/staticwebapp.config.json` içinde tanımlıdır.
+Dağıtım iş akışı için GitHub Actions deposuna `AZURE_STATIC_WEB_APPS_API_TOKEN_SWA_LLM_ASERDARGUN_COM` adlı secret eklenmelidir. SPA yönlendirmesi ve güvenlik başlıkları `public/staticwebapp.config.json` içinde tanımlıdır.
 
 ## English
 
