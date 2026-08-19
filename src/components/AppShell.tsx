@@ -14,6 +14,7 @@ export function AppShell() {
   if (routeLocale !== 'tr' && routeLocale !== 'en') return <Navigate to="/tr" replace />
   const links = [
     ['', navigation.atlas],
+    ['/learn', navigation.learn],
     ['/explore', navigation.explore],
     ['/compare', navigation.compare],
     ['/guide', navigation.guide],

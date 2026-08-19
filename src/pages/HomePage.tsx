@@ -19,6 +19,7 @@ export function HomePage() {
           <h1>{pick(locale, 'Doğru modeli, doğru katmanda çalıştırın.', 'Run the right model on the right layer.')}</h1>
           <p>{pick(locale, 'LLM çalıştırma ve sunma ekosistemini katmanlarına ayıran, kaynaklara dayalı bir alan rehberi.', 'A source-backed field guide that separates the LLM runtime and serving ecosystem into its architectural layers.')}</p>
           <div className="hero-actions"><Link className="button primary" to={`/${locale}/guide`}>{pick(locale, 'Yeni başlıyorum', 'I’m getting started')}<ArrowRight size={18} /></Link><Link className="button secondary" to={`/${locale}/explore`}>{pick(locale, 'Ne aradığımı biliyorum', 'I know what I’m looking for')}<ArrowRight size={18} /></Link></div>
+          <Link className="text-link hero-learn" to={`/${locale}/learn`}>{pick(locale, 'Önce temel bilgileri öğren', 'Learn the basics first')}<ArrowRight size={16} /></Link>
         </div>
         <div className="layer-diagram" aria-hidden="true"><div><Cpu /></div><div><Server /></div><div><Braces /></div><div><Database /></div><div><Network /></div><div><Route /></div><div><Smartphone /></div></div>
       </div>

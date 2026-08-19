@@ -35,12 +35,15 @@ describe('atlas routes', () => {
     renderAt('/en/solutions/vllm')
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('vLLM')
     expect(screen.getByText('What it does')).toBeInTheDocument()
+    expect(screen.getByText('WHERE IN THE STACK')).toBeInTheDocument()
+    expect(screen.getByText('The CPU and GPU types this tool can run the model on.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /vLLM Documentation/ })).toHaveAttribute('target', '_blank')
   })
 
   it('explains methodology without a universal ranking', () => {
     renderAt('/en/methodology')
     expect(screen.getByText('TTFT')).toBeInTheDocument()
+    expect(screen.getByText('How long until you hear the first word.')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Why there is no universal speed ranking/ })).toBeInTheDocument()
   })
 
@@ -48,5 +51,14 @@ describe('atlas routes', () => {
     renderAt('/en/guide')
     expect(screen.getByText('Question 1 of 5')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Apple Silicon' })).toBeInTheDocument()
+  })
+
+  it('explains the seven layers with analogies on the learn page', () => {
+    renderAt('/en/learn')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Understand the LLM world')
+    expect(screen.getByText('Seven layers, seven different jobs')).toBeInTheDocument()
+    expect(screen.getByText('Mini glossary')).toBeInTheDocument()
+    expect(screen.getByText('TTFT')).toBeInTheDocument()
+    expect(screen.getByText('KV Cache')).toBeInTheDocument()
   })
 })
