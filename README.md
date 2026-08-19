@@ -30,6 +30,7 @@ Toplam 31 kayıt 12 Ağustos 2026 tarihinde resmi dokümantasyon veya resmi proj
 - Beş soruluk, gerekçeli kısa liste üreten seçim rehberi.
 - Her çözüm için rol, ideal kullanım, uyumluluk, yaşam döngüsü ve resmi kaynak profili.
 - Masaüstü tablo ve mobil kart/çekmece deneyimi.
+- **Öğrenme katmanı**: 30 kavram (3 seviye derinlik + görsel), 92 flashcard (SM-2 spaced repetition), 90 quiz ve 6 mini-ders; tüm ilerleme cihazda saklanır, hesap gerekmez.
 
 ### Yerel geliştirme
 
@@ -67,17 +68,28 @@ It explains why tools such as TensorRT-LLM, vLLM, SGLang, Ollama, and LM Studio 
 
 The initial dataset contains 31 records verified against official documentation or official repositories on August 12, 2026. See the in-app Methodology page for the evidence, freshness, lifecycle, and performance policies.
 
+### Features
+
+- Bilingual Turkish and English UI; filters and compare state are preserved across locale switches.
+- URL-shareable search, filters, and up to four-solution comparison.
+- Cross-layer warning when architectural roles are mixed.
+- Five-question selection guide that returns a justified short list.
+- Per-solution profile: role, ideal use, compatibility, lifecycle, official sources.
+- Desktop table and mobile card/drawer experience.
+- **Learning layer**: 30 concepts (3 readability levels + visual), 92 flashcards (SM-2 spaced repetition), 90 quiz questions and 6 mini-lessons. All progress is stored on-device, no account required.
+
 ### Stack
 
 React 19, TypeScript, Vite, React Router, Zod, Vitest, Testing Library, and Playwright. The site is a static client application with no runtime secrets or backend dependency.
 
 ### Repository map
 
-- `src/data/`: validated category and solution records.
-- `src/features/`: pure filter, comparison, freshness, and guide logic.
-- `src/pages/`: localized application routes.
+- `src/data/`: validated category, solution, concept, flashcard, quiz, and lesson records.
+- `src/features/`: pure filter, comparison, freshness, guide, and learning logic.
+- `src/pages/`: localized application routes (atlas + learn hub + concepts/flashcards/quiz/lessons).
 - `e2e/`: desktop and mobile critical-path tests.
 - `docs/design/`: approved Layered Atlas visual references.
+- `docs/learning-transformation-plan.md`: plan and verification log for the learning layer.
 - `docs/fidelity-ledger.md`: reference-to-render QA record.
 
 ## License

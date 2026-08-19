@@ -53,8 +53,8 @@ describe('atlas routes', () => {
     expect(screen.getByRole('button', { name: 'Apple Silicon' })).toBeInTheDocument()
   })
 
-  it('explains the seven layers with analogies on the learn page', () => {
-    renderAt('/en/learn')
+  it('explains the seven layers with analogies on the learn intro page', () => {
+    renderAt('/en/learn/intro')
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Understand the LLM world')
     expect(screen.getByText('Seven layers, seven different jobs')).toBeInTheDocument()
     expect(screen.getByText('Mini glossary')).toBeInTheDocument()

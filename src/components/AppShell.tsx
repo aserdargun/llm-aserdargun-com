@@ -17,6 +17,7 @@ export function AppShell() {
     ['/learn', navigation.learn],
     ['/explore', navigation.explore],
     ['/compare', navigation.compare],
+    ['/learn', navigation.learn],
     ['/guide', navigation.guide],
     ['/methodology', navigation.methodology],
   ] as const
