@@ -7,6 +7,17 @@
     <meta name="description" content="A source-backed atlas of LLM runtime and serving solutions." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>LLM Runtime &amp; Serving Atlas</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('atlas-theme')
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          document.documentElement.dataset.theme = t
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

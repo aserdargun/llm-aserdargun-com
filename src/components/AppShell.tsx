@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Navigate, Outlet, useParams } from 'react-router-dom'
 import { navigation, pick, useLocale } from '@/i18n/copy'
 import { LocaleSwitch } from './LocaleSwitch'
+import { ThemeToggle } from './ThemeToggle'
 
 export function AppShell() {
   const { locale: routeLocale } = useParams()
@@ -32,6 +33,7 @@ export function AppShell() {
           </nav>
           <div className="header-actions">
             <LocaleSwitch />
+            <ThemeToggle />
             <button className="menu-button" type="button" aria-label={pick(locale, 'Menüyü aç veya kapat', 'Toggle menu')} aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X /> : <Menu />}</button>
           </div>
         </div>
