@@ -18,3 +18,28 @@ test('mobile explore exposes filters without horizontal page overflow', async ({
   }))
   expect(overflow, JSON.stringify(overflow, null, 2)).toMatchObject({ pageWidth: overflow.viewportWidth, offenders: [] })
 })
+
+test('mobile theme switch stays inside the header and changes the palette', async ({ page }) => {
+  await page.goto('/tr')
+  const header = page.getByRole('banner')
+  const themeSwitch = page.getByRole('switch', { name: /temaya geç/ })
+  await expect(themeSwitch).toBeVisible()
+
+  const headerBox = await header.boundingBox()
+  const switchBox = await themeSwitch.boundingBox()
+  expect(headerBox).not.toBeNull()
+  expect(switchBox).not.toBeNull()
+  expect(switchBox!.width).toBeGreaterThanOrEqual(50)
+  expect(switchBox!.height).toBeGreaterThanOrEqual(28)
+  expect(switchBox!.x).toBeGreaterThanOrEqual(headerBox!.x)
+  expect(switchBox!.x + switchBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width)
+
+  const initialTheme = await page.locator('html').getAttribute('data-theme')
+  await themeSwitch.click()
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', initialTheme ?? '')
+
+  await page.getByRole('button', { name: 'Menüyü aç veya kapat' }).click()
+  const navBox = await page.getByRole('navigation', { name: 'Ana navigasyon' }).boundingBox()
+  expect(navBox).not.toBeNull()
+  expect(navBox!.width).toBeGreaterThanOrEqual(headerBox!.width - 1)
+})

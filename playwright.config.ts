@@ -10,6 +10,8 @@ import { extract } from 'tar-fs'
 
 const chromiumBin = join(import.meta.dirname, 'node_modules/@sparticuz/chromium/bin')
 const useServerlessChromium = process.platform === 'linux' && process.arch === 'x64'
+const localPort = process.env.CODEX_LOCAL_PORT ?? '4173'
+const localUrl = `http://127.0.0.1:${localPort}`
 async function ensureArchive(source: string, output: string, marker: string) {
   if (existsSync(marker)) return
   mkdirSync(output, { recursive: true })
@@ -41,7 +43,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: localUrl,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     ...(serverlessLaunchOptions ? { launchOptions: serverlessLaunchOptions } : {}),
@@ -51,8 +53,8 @@ export default defineConfig({
     { name: 'mobile-chromium', testMatch: '**/*.mobile.spec.ts', use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
   ],
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1 --port 4173 --strictPort',
-    url: 'http://127.0.0.1:4173/tr',
+    command: `npm run dev -- --host 127.0.0.1 --port ${localPort} --strictPort`,
+    url: `${localUrl}/tr`,
     reuseExistingServer: !process.env.CI,
   },
 })

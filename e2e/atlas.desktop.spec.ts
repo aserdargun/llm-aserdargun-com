@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('expert flow preserves filters and comparison across locale switch', async ({ page }) => {
   await page.goto('/tr')
-  await page.getByRole('link', { name: 'Ne aradığımı biliyorum' }).click()
+  await page.getByRole('link', { name: 'Keşfet', exact: true }).click()
   await page.getByLabel('INF', { exact: true }).click()
   await expect(page).toHaveURL(/category=INF/)
   await expect(page.getByText('8 sonuç')).toBeVisible()

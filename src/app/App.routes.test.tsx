@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
@@ -10,9 +10,25 @@ describe('atlas routes', () => {
   it('renders the complete English home entry', () => {
     renderAt('/en')
     expect(document.documentElement).toHaveAttribute('lang', 'en')
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Run the right model')
-    expect(screen.getByRole('link', { name: 'I’m getting started' })).toHaveAttribute('href', '/en/guide')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Not one market')
+    expect(screen.getByRole('link', { name: 'Open the selection guide' })).toHaveAttribute('href', '/en/guide')
+    expect(within(screen.getByRole('navigation')).getAllByRole('link', { name: 'Learn' })).toHaveLength(1)
     expect(screen.getAllByText(/INF/).length).toBeGreaterThan(0)
+  })
+
+  it('expands an architectural layer and links to its filtered explorer', async () => {
+    const user = userEvent.setup()
+    renderAt('/tr')
+
+    const servingLayer = screen.getByRole('button', { name: /SRV · Model Sunucuları ve Servis Çerçeveleri/ })
+    expect(servingLayer).toHaveAttribute('aria-expanded', 'false')
+
+    await user.click(servingLayer)
+
+    expect(servingLayer).toHaveAttribute('aria-expanded', 'true')
+    const details = screen.getByRole('region', { name: 'Model Sunucuları ve Servis Çerçeveleri' })
+    expect(within(details).getByText(/İstek zamanlama, batching, streaming/)).toBeInTheDocument()
+    expect(within(details).getByRole('link', { name: 'Bu katmanı keşfet' })).toHaveAttribute('href', '/tr/explore?category=SRV')
   })
 
   it('filters the explorer from URL state and adds a comparison', async () => {
