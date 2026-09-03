@@ -1,5 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#111a2d"/>
-  <path d="M16 15h8v27h16v7H16V15Zm31 0h7L39 49h-7l15-34Z" fill="#fff"/>
-  <path d="M47 15h7L39 49h-7l15-34Z" fill="#1763ed"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="llm">
+  <rect width="320" height="320" rx="64" fill="#121310"/>
+  <circle cx="160" cy="142" r="108" fill="#c8ff36"/>
+  <g transform="translate(60 42)">
+    <g stroke="#0c0d0a" stroke-width="14" stroke-linecap="round">
+      <line x1="20" y1="40" x2="170" y2="40" />
+      <line x1="20" y1="80" x2="170" y2="80" />
+      <line x1="20" y1="120" x2="140" y2="120" />
+      <line x1="20" y1="160" x2="90" y2="160" />
+    </g>
+    <circle cx="178" cy="120" r="9" fill="#0c0d0a" /></g>
+  <text x="160" y="296" text-anchor="middle" fill="#c8ff36"
+    font-family="Inter, Helvetica, Arial, sans-serif" font-size="40" font-weight="800"
+    letter-spacing="-2">LLM</text>
 </svg>
