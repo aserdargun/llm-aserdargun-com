@@ -4,6 +4,7 @@ import { NavLink, Navigate, Outlet, useParams } from 'react-router-dom'
 import { navigation, pick, useLocale } from '@/i18n/copy'
 import { LocaleSwitch } from './LocaleSwitch'
 import { ThemeToggle } from './ThemeToggle'
+import { ATLAS_DATASET_REVIEWED_AT } from '@/data/atlas-meta'
 
 export function AppShell() {
   const { locale: routeLocale } = useParams()
@@ -11,6 +12,18 @@ export function AppShell() {
   const [open, setOpen] = useState(false)
   useEffect(() => {
     document.documentElement.lang = locale
+    document.title = pick(locale, 'LLM Atlas — Çalışma Zamanı ve Sunum Rehberi', 'LLM Atlas — Runtime & Serving Field Guide')
+    let description = document.querySelector<HTMLMetaElement>('meta[name="description"]')
+    if (!description) {
+      description = document.createElement('meta')
+      description.name = 'description'
+      document.head.append(description)
+    }
+    description.content = pick(
+      locale,
+      '31 LLM çalışma zamanı ve sunum çözümünü resmî kaynaklarla yedi mimari katmanda karşılaştırın.',
+      'Compare 31 LLM runtime and serving solutions across seven architectural layers using official sources.',
+    )
   }, [locale])
   if (routeLocale !== 'tr' && routeLocale !== 'en') return <Navigate to="/tr" replace />
   const links = [
@@ -39,7 +52,7 @@ export function AppShell() {
       </header>
       <main id="main-content"><Outlet /></main>
       <footer className="site-footer">
-        <div className="shell footer-inner"><div><strong>LLM / ATLAS</strong><p>{pick(locale, 'LLM Runtime & Serving alan rehberi.', 'A field guide to LLM Runtime & Serving.')}</p></div><div className="footer-meta"><span>31 {pick(locale, 'çözüm', 'solutions')}</span><span>7 {pick(locale, 'katman', 'layers')}</span><span>{pick(locale, 'Doğrulandı', 'Verified')}: 2026-08-12</span></div></div>
+        <div className="shell footer-inner"><div><strong>LLM / ATLAS</strong><p>{pick(locale, 'LLM çalışma zamanı ve sunum alan rehberi.', 'A field guide to LLM runtime and serving.')}</p></div><div className="footer-meta"><span>31 {pick(locale, 'çözüm', 'solutions')}</span><span>7 {pick(locale, 'katman', 'layers')}</span><span>{pick(locale, 'Veri denetimi', 'Dataset reviewed')}: {ATLAS_DATASET_REVIEWED_AT}</span></div></div>
       </footer>
     </div>
   )

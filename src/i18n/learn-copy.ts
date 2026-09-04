@@ -4,7 +4,7 @@ export const learnNav = {
   hub: t('Öğren', 'Learn'),
   concepts: t('Kavramlar', 'Concepts'),
   flashcards: t('Kartlar', 'Flashcards'),
-  quiz: t('Quiz', 'Quiz'),
+  quiz: t('Test', 'Quiz'),
   lessons: t('Dersler', 'Lessons'),
 }
 
@@ -16,7 +16,7 @@ export const learnHome = {
   ),
   ctaConcepts: t('Kavramlara başla', 'Start with concepts'),
   ctaCards: t('Bugünkü tekrar', 'Today’s review'),
-  ctaQuiz: t('Hızlı quiz', 'Quick quiz'),
+  ctaQuiz: t('Hızlı test', 'Quick quiz'),
   ctaLessons: t('Mini-ders', 'Mini-lesson'),
   stats: {
     streak: t('Günlük seri', 'Day streak'),
@@ -28,7 +28,7 @@ export const learnHome = {
   },
   empty: {
     title: t('Henüz bir ilerleme yok', 'No progress yet'),
-    body: t('İlk kavramı okuyarak veya ilk karta gözden geçirerek başla. Tüm ilerlemen cihazında saklanır, hesap gerekmez.', 'Start by reading your first concept or reviewing your first card. Everything stays on your device, no account required.'),
+    body: t('İlk kavramı okuyarak veya ilk kartı gözden geçirerek başla. Tüm ilerlemen cihazında saklanır; hesap gerekmez.', 'Start by reading your first concept or reviewing your first card. Everything stays on your device; no account is required.'),
   },
 }
 
@@ -60,7 +60,7 @@ export const learnCommon = {
   noLessons: t('Henüz mini-ders eklenmedi.', 'No mini-lessons yet.'),
   noConcepts: t('Henüz kavram eklenmedi.', 'No concepts yet.'),
   results: t('Sonuçlar', 'Results'),
-  of: t('/ şu kadar', 'of'),
+  of: t('/', 'of'),
 }
 
 export const learnCards = {
@@ -76,7 +76,7 @@ export const learnCards = {
 }
 
 export const learnQuiz = {
-  title: t('Quiz', 'Quiz'),
+  title: t('Test', 'Quiz'),
   intro: t(
     'Bilgini sınayan kısa sorular. Hata yaptığında açıklama gösterilir; her etiket ayrı takip edilir.',
     'Short questions to check your understanding. Mistakes come with an explanation; every tag is tracked separately.',
@@ -91,11 +91,11 @@ export const learnQuiz = {
 export const learnLessons = {
   title: t('Mini-dersler', 'Mini-lessons'),
   intro: t(
-    '5-8 adımlı, görsel ve uygulamalı kısa dersler. Her ders bağımsız yapılabilir; gereken araçlar adımlarda listelenir.',
-    'Short, visual, hands-on lessons in 5–8 steps. Each lesson stands alone; tools required are listed inside.',
+    '5–8 adımlı, görsel ve uygulamalı kısa dersler. Her ders bağımsız tamamlanabilir; gereken araçlar adımlarda listelenir.',
+    'Short, visual, hands-on lessons with 5–8 steps. Each lesson stands alone; required tools are listed inside.',
   ),
   step: t('Adım', 'Step'),
-  of: t('/ şu kadar', 'of'),
+  of: t('/', 'of'),
 }
 
 export const learnConcepts = {

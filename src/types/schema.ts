@@ -33,7 +33,7 @@ export const solutionSchema = z.object({
   apiProtocols: z.array(z.string().min(1)).min(1),
   deploymentScopes: z.array(z.string().min(1)).min(1),
   license: z.string().min(1),
-  projectStatus: z.enum(['active', 'mature', 'preview', 'maintenance']),
+  projectStatus: z.enum(['active', 'mature', 'preview', 'maintenance', 'archived']),
   alternatives: z.array(z.string()),
   sources: z.array(z.object({
     title: z.string().min(1),

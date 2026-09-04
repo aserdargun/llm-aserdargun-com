@@ -93,7 +93,7 @@ export function FlashcardsPage() {
         tabIndex={0}
         onClick={() => setFlipped((v) => !v)}
         onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') setFlipped((v) => !v) }}
-        aria-label={flipped ? learnCommon.showAnswer[locale] : pick(locale, 'Cevap', 'Answer')}
+        aria-label={flipped ? pick(locale, 'Cevap gösteriliyor; soruya dön', 'Answer shown; return to question') : learnCommon.showAnswer[locale]}
       >
         <div className="flashcard__inner">
           <div className="flashcard__face flashcard__face--front">

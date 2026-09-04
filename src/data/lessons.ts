@@ -43,11 +43,11 @@ export const lessons: Lesson[] = [
         },
         body: {
           tr: '`ollama pull` komutu, modeli ~/.ollama/models altına indirir. 3B civarı küçük bir model (örn. llama3.2:3b) ile başlamak hızlıdır; 8B de M2+ cihazlarda rahat çalışır.',
-          en: '`ollama pull` downloads the model under ~/.ollama/models. Starting with a small ~3B model (e.g. llama3.2:3b) is fast; 8B also runs well on M2+ devices.',
+          en: '`ollama pull` downloads the model under ~/.ollama/models. Start with a small model such as llama3.2:3b, then measure memory use and generation speed on your own device before scaling up.',
         },
         codeBlock: {
           lang: 'bash',
-          code: '#!/bin/bash\n# ~2 GB model indir ve doğrula\nollama pull llama3.2:3b\nollama list',
+          code: '#!/bin/bash\n# Modeli indir ve yerel kaydı doğrula\nollama pull llama3.2:3b\nollama list',
         },
       },
       {
@@ -148,8 +148,8 @@ export const lessons: Lesson[] = [
           en: 'Install vLLM',
         },
         body: {
-          tr: 'pip ile vLLM\'i kur. Yeni sürümlerde torch ayrı bir adım gerektirebilir; vLLM 0.6+ ile birlikte OpenAI uyumlu sunum varsayılandır. Bu adımda continuous batching ve PagedAttention motorun içine hazır gelir.',
-          en: 'Install vLLM via pip. Newer releases may need a separate torch step; vLLM 0.6+ ships OpenAI-compatible serving by default. Continuous batching and PagedAttention come built in.',
+          tr: 'vLLM\'i desteklenen Python, PyTorch ve hızlandırıcı kombinasyonuyla kur. Paket ve donanım matrisi sürümle değişebildiği için komutu çalıştırmadan önce güncel kurulum sayfasını kontrol et. Sunucu continuous batching ve sayfalı KV önbelleği gibi üretim odaklı mekanizmaları yönetir.',
+          en: 'Install vLLM with a supported Python, PyTorch, and accelerator combination. Package and hardware matrices change by release, so check the current installation page before running the command. The server manages production-oriented mechanisms such as continuous batching and paged KV cache.',
         },
         codeBlock: {
           lang: 'bash',
@@ -284,8 +284,8 @@ export const lessons: Lesson[] = [
           en: 'Build INT4 with AutoAWQ',
         },
         body: {
-          tr: 'AutoAWQ, kalibrasyon verisi üzerinde ağırlıkları INT4\'e sıkıştırır. Çıktı, vLLM veya TGI tarafından doğrudan yüklenebilir. Bu yöntem özellikle NVIDIA GPU sunumunda latency ve bellek tasarrufu sağlar.',
-          en: 'AutoAWQ compresses weights to INT4 using calibration data. The output is loaded directly by vLLM or TGI. This method is especially good for latency and memory savings on NVIDIA GPU serving.',
+          tr: 'AutoAWQ, kalibrasyon verisi üzerinde ağırlıkları INT4\'e sıkıştırır. Çıktı, uyumlu vLLM veya SGLang sürümleri tarafından yüklenebilir. Gecikme ve bellek kazancı model, donanım ve sunum ayarlarında ölçülmelidir.',
+          en: 'AutoAWQ compresses weights to INT4 using calibration data. Compatible vLLM or SGLang releases can load the output. Latency and memory gains should be measured for the model, hardware, and serving configuration.',
         },
         codeBlock: {
           lang: 'bash',
@@ -298,8 +298,8 @@ export const lessons: Lesson[] = [
           en: 'Quality control: perplexity',
         },
         body: {
-          tr: 'Perplexity (PPL) düşük = model dili daha iyi "tahmin ediyor" demektir. Wikitext gibi standart bir veri kümesinde FP16 ve nicellenmiş modelin PPL\'sini karşılaştırın; küçük artışlar (örn. <%3) çoğu kullanım için kabul edilebilirdir.',
-          en: 'Lower perplexity (PPL) means the model predicts language better. Compare FP16 vs quantized PPL on a standard dataset like Wikitext; small increases (e.g. <3%) are acceptable for most use cases.',
+          tr: 'Daha düşük perplexity (PPL), modelin değerlendirme metnini daha olası gördüğünü gösterir. FP16 ile nicemlenmiş modeli aynı veri kümesinde karşılaştırın; kabul eşiğini asıl kullanım görevlerindeki kalite ölçümleriyle birlikte belirleyin.',
+          en: 'Lower perplexity means the model assigns more probability to the evaluation text. Compare FP16 and quantized variants on the same dataset, then set the acceptance threshold alongside quality metrics from the real task.',
         },
         codeBlock: {
           lang: 'bash',
@@ -312,8 +312,8 @@ export const lessons: Lesson[] = [
           en: 'Compare size and speed',
         },
         body: {
-          tr: 'Disk üzerindeki boyut ve tokens/s hızı, nicellemenin gerçek kazancını gösterir. INT4 tipik olarak belleği %75 azaltır, tokens/s\'yi 1.5-3x artırır; kalite ise iyi kalibrasyonla ihmal edilebilir düzeyde düşer.',
-          en: 'On-disk size and tokens/s reveal the real win from quantization. INT4 typically cuts memory by 75% and raises tokens/s by 1.5-3x; with good calibration the quality drop is negligible.',
+          tr: 'Disk boyutu, tepe bellek kullanımı, token/s ve görev kalitesi birlikte ölçüldüğünde nicemlemenin gerçek kazancı görülür. INT4 ham ağırlık belleğini azaltır; hız ve kalite etkisi model, yöntem ve çekirdeğe göre değişir.',
+          en: 'Quantization’s real impact appears only when on-disk size, peak memory, tokens per second, and task quality are measured together. INT4 reduces raw weight memory; speed and quality effects vary by model, method, and kernel.',
         },
       },
     ],
@@ -344,8 +344,8 @@ export const lessons: Lesson[] = [
           en: 'Chunk your documents',
         },
         body: {
-          tr: 'Ham belgeler doğrudan LLM\'e verilemez; küçük, örtüşen parçalara (chunk) bölünür. 500-1000 token boyutu ve %10-20 örtüşme iyi bir başlangıçtır. Aşırı küçük parça anlamı, aşırı büyük parça retrieval kalitesini düşürür.',
-          en: 'Raw documents cannot be fed straight to an LLM; split them into small, overlapping chunks. 500-1000 tokens with 10-20% overlap is a solid starting point. Chunks too small lose meaning; too big hurt retrieval quality.',
+          tr: 'Belgeler retrieval için anlamlı parçalara ayrılır. Parça boyutu ve örtüşme; belge yapısı, embedding modeli, sorgular ve bağlam bütçesine göre seçilir. Aşırı küçük parçalar anlamı bölebilir, aşırı büyük parçalar ilgisiz bağlam taşıyabilir.',
+          en: 'Split documents into meaningful retrieval units. Choose chunk size and overlap for the document structure, embedding model, queries, and context budget. Chunks that are too small can break meaning; chunks that are too large can carry irrelevant context.',
         },
         codeBlock: {
           lang: 'python',
@@ -464,8 +464,8 @@ export const lessons: Lesson[] = [
           en: 'Check WebGPU browser support',
         },
         body: {
-          tr: 'WebGPU, modern Chrome/Edge\'in varsayılan desteğidir; Firefox ve Safari hâlâ geliştirme aşamasında. navigator.gpu mevcutsa GPU\'ya erişim açıktır; bu olmadan model sadece CPU\'da yavaş çalışır.',
-          en: 'WebGPU is enabled by default in modern Chrome/Edge; Firefox and Safari are still maturing. If navigator.gpu is present, the GPU is reachable; without it, the model falls back to slow CPU inference.',
+          tr: 'WebGPU desteği tarayıcı, işletim sistemi, güvenli bağlam ve donanım sürücüsüne göre değişir. `navigator.gpu` ilk yetenek sinyalidir; ardından `requestAdapter()` sonucunu ve gereken sınırları kontrol et. WebGPU yoksa geri dönüş davranışı kullandığın kütüphaneye bağlıdır.',
+          en: 'WebGPU support varies by browser, operating system, secure context, and hardware driver. `navigator.gpu` is the first capability signal; then check `requestAdapter()` and required limits. Without WebGPU, fallback behavior depends on the library you use.',
         },
         codeBlock: {
           lang: 'ts',
@@ -549,8 +549,8 @@ export const lessons: Lesson[] = [
           en: 'Meet the three ecosystems',
         },
         body: {
-          tr: 'Apple Silicon (M1/M2/M3/M4) unified memory kullanır; CPU ve GPU aynı RAM havuzunu paylaşır, bu da büyük modelleri tek bir çipte çalıştırabilir. NVIDIA (CUDA) sunucu sınıfıdır; dünyanın en geniş LLM yazılım ekosistemi buradadır. NPU ise düşük güçlü, inference odaklı yardımcı işlemcidir; telefonlarda ve yeni nesil Intel/AMD CPU\'larda bulunur.',
-          en: 'Apple Silicon (M1/M2/M3/M4) uses unified memory; CPU and GPU share the same RAM pool, letting large models run on a single chip. NVIDIA (CUDA) is server-class with the broadest LLM software ecosystem. NPU is a low-power, inference-focused accelerator found on phones and on newer Intel/AMD CPUs.',
+          tr: 'Apple Silicon birleşik belleği CPU ve GPU arasında paylaşır. NVIDIA GPU\'lar CUDA tabanlı geniş bir çıkarım ekosistemi ve istemci ile veri merkezi sınıfı seçenekler sunar. NPU\'lar ise desteklenen operatör ve model yollarında düşük güçte çıkarıma odaklanır. Gerçek kapasite çip, bellek, yazılım sürümü ve model biçimine bağlıdır.',
+          en: 'Apple Silicon shares unified memory between CPU and GPU. NVIDIA GPUs offer a broad CUDA inference ecosystem across client and data-center parts. NPUs focus on low-power inference for supported operator and model paths. Actual capacity depends on the chip, memory, software release, and model format.',
         },
       },
       {
@@ -559,8 +559,8 @@ export const lessons: Lesson[] = [
           en: 'Performance per watt',
         },
         body: {
-          tr: 'Apple Silicon, watt başına performansta öne çıkar; 70B+ modelleri sessizce sohbet hızında çalıştırabilir. NVIDIA H100/B200 ham throughput\'ta kazanır, ama veri merkezi gücü ve soğutma gerektirir. NPU, miliwatt seviyesinde çalışır; sadece 1-3B nicellenmiş modeller için uygundur.',
-          en: 'Apple Silicon leads on performance per watt and can quietly run 70B+ models at chat speed. NVIDIA H100/B200 wins on raw throughput but needs data-center power and cooling. NPUs run at the milliwatt level; they only fit 1-3B quantized models.',
+          tr: 'Watt başına performans tek bir sıralama değildir. Modelin sığıp sığmaması, bellek bant genişliği, batch, bağlam ve çalışma zamanı sonucu değiştirir. Apple Silicon yerel ve sessiz geliştirmede, NVIDIA GPU\'lar desteklenen yüksek eşzamanlı işlerde, NPU\'lar ise uygun düşük güç yollarında avantaj sağlayabilir; hepsi aynı model ve görevle ölçülmelidir.',
+          en: 'Performance per watt is not one universal ranking. Model fit, memory bandwidth, batch, context, and runtime all change the result. Apple Silicon can suit quiet local development, NVIDIA GPUs can suit supported high-concurrency workloads, and NPUs can suit compatible low-power paths; compare them with the same model and task.',
         },
       },
       {
@@ -569,8 +569,8 @@ export const lessons: Lesson[] = [
           en: 'Software ecosystem',
         },
         body: {
-          tr: 'NVIDIA tarafında vLLM, SGLang, TensorRT-LLM, TGI, ExLlamaV2/V3; Apple tarafında mlx-lm, llama.cpp Metal backend; NPU tarafında OpenVINO GenAI, ONNX Runtime GenAI, Core ML. Yeni bir motor denemeden önce donanımınızın destek listesini kontrol edin.',
-          en: 'On NVIDIA: vLLM, SGLang, TensorRT-LLM, TGI, ExLlamaV2/V3. On Apple: mlx-lm, llama.cpp Metal backend. On NPU: OpenVINO GenAI, ONNX Runtime GenAI, Core ML. Before trying a new engine, check the support list for your hardware.',
+          tr: 'NVIDIA tarafında vLLM, SGLang, TensorRT-LLM ve ExLlamaV3; Apple tarafında MLX-LM ile llama.cpp Metal arka ucu; NPU tarafında OpenVINO GenAI ve ONNX Runtime GenAI öne çıkar. Yeni bir motor denemeden önce model, sürüm ve donanım destek matrisini birlikte kontrol edin.',
+          en: 'Prominent paths include vLLM, SGLang, TensorRT-LLM, and ExLlamaV3 on NVIDIA; MLX-LM and llama.cpp\'s Metal backend on Apple; and OpenVINO GenAI or ONNX Runtime GenAI for selected NPU paths. Check the combined model, release, and hardware support matrix before adopting an engine.',
         },
         codeBlock: {
           lang: 'bash',
@@ -583,8 +583,8 @@ export const lessons: Lesson[] = [
           en: 'Cost',
         },
         body: {
-          tr: 'Bir kere alınan Mac, geliştirici için en düşük toplam sahip olma maliyetini (TCO) sunar. NVIDIA H100 kiralama veya satın alma yüz binlerce dolar seviyesindedir; bulut API ise token başına ücretlendirilir. NPU genelde çipin içinde gelir, ayrı maliyet yoktur.',
-          en: 'A one-time Mac purchase offers the lowest total cost of ownership (TCO) for a developer. NVIDIA H100 rental or purchase is in the hundreds of thousands of dollars; cloud APIs charge per token. NPU is usually built into the chip with no extra cost.',
+          tr: 'Toplam sahip olma maliyetine donanım, enerji, bakım, ekip zamanı, kullanım oranı ve bulut fiyatı birlikte girer. Zaten sahip olunan istemci donanımı geliştirmede ekonomik olabilir; yüksek kullanımda ayrılmış hızlandırıcı, dalgalı kullanımda kiralama veya API daha uygun olabilir. Fiyatlar ve kapasite varsayımları karar anında yeniden hesaplanmalıdır.',
+          en: 'Total cost of ownership combines hardware, energy, maintenance, staff time, utilization, and cloud pricing. Existing client hardware may be economical for development; dedicated accelerators can fit high utilization, while rental or APIs can fit bursty demand. Recalculate prices and capacity assumptions at decision time.',
         },
       },
       {
@@ -593,8 +593,8 @@ export const lessons: Lesson[] = [
           en: 'When to pick which',
         },
         body: {
-          tr: 'Bireysel geliştirme ve küçük iş yükleri için Apple Silicon yeterlidir. Yüksek eşzamanlı üretim ve büyük modeller için NVIDIA. Mobil/edge veya ultra düşük güç senaryoları için NPU. Hibrit senaryolarda (ör. geliştirme Mac, üretim NVIDIA) OpenAI uyumlu API standardı geçişi kolaylaştırır.',
-          en: 'For individual development and small workloads, Apple Silicon is enough. For high-concurrency production and large models, NVIDIA. For mobile/edge or ultra-low-power, NPU. In hybrid setups (e.g. dev on Mac, prod on NVIDIA), the OpenAI-compatible API standard makes the switch easy.',
+          tr: 'Seçimi modelin bellek gereksinimi, hedef gecikme ve eşzamanlılık, güç bütçesi, veri yerleşimi ve desteklenen araç zinciriyle yap. Apple Silicon, NVIDIA GPU veya NPU bu koşullara göre aday olabilir. Hibrit akışlarda OpenAI uyumlu bir API temel çağrıları ortaklaştırabilir; gelişmiş özelliklerin uyumluluğu yine test edilmelidir.',
+          en: 'Choose from model memory, latency and concurrency targets, power budget, data location, and the supported toolchain. Apple Silicon, NVIDIA GPUs, or NPUs may fit different points. In hybrid flows, an OpenAI-compatible API can unify basic calls, while advanced-feature compatibility still needs testing.',
         },
       },
       {
@@ -603,8 +603,8 @@ export const lessons: Lesson[] = [
           en: 'Hybrid scenarios',
         },
         body: {
-          tr: 'Pratik bir akış: geliştirme sırasında mlx-lm veya llama.cpp (Mac) ile hızlı iterasyon; üretimde vLLM veya SGLang (NVIDIA) ile yüksek verim; mobil istemcide WebLLM veya ExecuTorch (NPU). Aynı GGUF/SafeTensors formatı ile birden fazla motor arasında geçiş yapılabilir.',
-          en: 'A practical flow: iterate fast on a Mac with mlx-lm or llama.cpp during development; in production, serve at high throughput with vLLM or SGLang on NVIDIA; on mobile clients, run WebLLM or ExecuTorch on NPU. The same GGUF/SafeTensors format lets you hop between engines.',
+          tr: 'Örnek bir hibrit akışta Mac üzerinde MLX-LM veya llama.cpp ile geliştirme, sunucuda vLLM ya da SGLang ile sunum, istemcide WebLLM veya ExecuTorch ile cihaz üzeri çıkarım denenebilir. Motorlar aynı model biçimini ve nicemleme şemasını desteklemeyebilir; dönüşüm, tokenizer ve çıktı tutarlılığı ayrı ayrı doğrulanmalıdır.',
+          en: 'One hybrid flow might develop with MLX-LM or llama.cpp on a Mac, serve with vLLM or SGLang on a server, and test on-device inference with WebLLM or ExecuTorch. Engines may not share the same model format or quantization scheme, so conversion, tokenizer behavior, and output consistency must be verified separately.',
         },
       },
     ],

@@ -6,21 +6,21 @@
 
 LLM Runtime & Serving Atlas, yerel çalıştırıcılardan üretim sunucularına, dağıtık çıkarım platformlarından ağ geçitlerine kadar LLM çalıştırma ve sunma ekosistemini yedi mimari katmanda sınıflandıran, kaynaklara dayalı bir alan rehberidir.
 
-Atlas, TensorRT-LLM, vLLM, SGLang, Ollama ve LM Studio gibi farklı sorumluluklara sahip araçları tek bir “hız sıralaması” içinde göstermenin neden yanıltıcı olduğunu açıklar. Bunun yerine çözümün mimari rolünü, donanım ve dağıtım uyumunu, proje durumunu ve resmi kaynaklarını birlikte görünür kılar.
+Atlas, TensorRT-LLM, vLLM, SGLang, Ollama ve LM Studio gibi farklı sorumluluklara sahip araçları tek bir “hız sıralaması” içinde göstermenin neden yanıltıcı olduğunu açıklar. Bunun yerine çözümün mimari rolünü, donanım ve dağıtım uyumunu, proje durumunu ve resmî kaynaklarını birlikte görünür kılar.
 
 ### Kapsam
 
 | Kod | Mimari katman | Çözüm sayısı |
 | --- | --- | ---: |
 | INF | Çıkarım Motorları ve Çalışma Zamanları | 8 |
-| SRV | Model Sunucuları ve Servis Çerçeveleri | 6 |
+| SRV | Model Sunucuları ve Servis Çerçeveleri | 7 |
 | RUN | Yerel Model Çalıştırıcıları ve Yöneticileri | 3 |
 | APP | Masaüstü Yerel LLM Çalışma Alanları | 5 |
 | DST | Dağıtık Çıkarım Platformları | 4 |
 | GTW | LLM Ağ Geçitleri ve Yönlendiriciler | 2 |
-| EDG | Uç ve Cihaz Üzeri Çalışma Zamanları | 3 |
+| EDG | Uç ve Cihaz Üzeri Çalışma Zamanları | 2 |
 
-Toplam 31 kayıt 12 Ağustos 2026 tarihinde resmi dokümantasyon veya resmi proje depoları üzerinden doğrulandı. Yaşam döngüsü ve performans iddiaları için izlenen yaklaşım uygulamanın Metodoloji sayfasında açıklanır.
+Toplam 31 kaydın resmî kaynak uçları 4 Eylül 2026 tarihinde yeniden denetlendi. Hızlı değişen yaşam döngüsü ve uyumluluk kayıtları güncellendi; her profil kendi son doğrulama tarihini taşır. İzlenen yaklaşım uygulamanın Metodoloji sayfasında açıklanır.
 
 ### Özellikler
 
@@ -28,9 +28,9 @@ Toplam 31 kayıt 12 Ağustos 2026 tarihinde resmi dokümantasyon veya resmi proj
 - URL ile paylaşılabilen arama, filtre ve en fazla dört çözümü karşılaştırma akışı.
 - Farklı mimari katmanlar birlikte seçildiğinde bağlamsal uyarı.
 - Beş soruluk, gerekçeli kısa liste üreten seçim rehberi.
-- Her çözüm için rol, ideal kullanım, uyumluluk, yaşam döngüsü ve resmi kaynak profili.
+- Her çözüm için rol, ideal kullanım, uyumluluk, yaşam döngüsü ve resmî kaynak profili.
 - Masaüstü tablo ve mobil kart/çekmece deneyimi.
-- **Öğrenme katmanı**: 30 kavram (3 seviye derinlik + görsel), 92 flashcard (SM-2 spaced repetition), 90 quiz ve 6 mini-ders; tüm ilerleme cihazda saklanır, hesap gerekmez.
+- **Öğrenme katmanı**: 30 kavram (3 seviye derinlik + görsel), 92 bilgi kartı (SM-2 aralıklı tekrar), 90 test sorusu ve 6 mini ders; tüm ilerleme cihazda saklanır, hesap gerekmez.
 
 ### Yerel geliştirme
 
@@ -66,7 +66,7 @@ LLM Runtime & Serving Atlas is a source-backed field guide that maps the LLM run
 
 It explains why tools such as TensorRT-LLM, vLLM, SGLang, Ollama, and LM Studio should not be reduced to one universal speed ranking. The atlas instead presents architectural role, hardware and deployment compatibility, project status, and official sources together.
 
-The initial dataset contains 31 records verified against official documentation or official repositories on August 12, 2026. See the in-app Methodology page for the evidence, freshness, lifecycle, and performance policies.
+Official source endpoints for all 31 records were checked again on September 4, 2026. Fast-moving lifecycle and compatibility records were refreshed, while every profile retains its own last-verified date. See the in-app Methodology page for the evidence, freshness, lifecycle, and performance policies.
 
 ### Features
 

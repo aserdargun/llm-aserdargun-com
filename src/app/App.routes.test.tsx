@@ -10,6 +10,9 @@ describe('atlas routes', () => {
   it('renders the complete English home entry', () => {
     renderAt('/en')
     expect(document.documentElement).toHaveAttribute('lang', 'en')
+    expect(document.title).toBe('LLM Atlas — Runtime & Serving Field Guide')
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'Compare 31 LLM runtime and serving solutions across seven architectural layers using official sources.')
+    expect(screen.getByText('DATASET REVIEWED · 2026-09-04')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Not one market')
     expect(screen.getByRole('link', { name: 'Open the selection guide' })).toHaveAttribute('href', '/en/guide')
     expect(within(screen.getByRole('navigation')).getAllByRole('link', { name: 'Learn' })).toHaveLength(1)
@@ -45,6 +48,32 @@ describe('atlas routes', () => {
     renderAt('/en/compare?compare=tensorrt-llm,ollama')
     expect(screen.getByRole('alert')).toHaveTextContent('different architectural layers')
     expect(screen.getByText('Execution backend')).toBeInTheDocument()
+  })
+
+  it('describes the differences-only control as a filter', () => {
+    renderAt('/tr/compare?compare=tensorrt-llm,llama-cpp')
+    expect(screen.getByRole('checkbox', { name: 'Yalnızca farklılıkları göster' })).toBeInTheDocument()
+  })
+
+  it('localizes Turkish compatibility values and source types', () => {
+    renderAt('/tr/solutions/llama-cpp')
+    expect(screen.getByText('Yerel · Masaüstü · Uç · Sunucu')).toBeInTheDocument()
+    expect(screen.getByText(/Resmî proje deposu/)).toBeInTheDocument()
+    expect(screen.queryByText(/official-repository/)).not.toBeInTheDocument()
+  })
+
+  it('uses natural Turkish labels throughout the learning hub', () => {
+    renderAt('/tr/learn')
+    expect(screen.getByRole('heading', { name: 'Test' })).toBeInTheDocument()
+    expect(screen.getByText('Aralıklı tekrar ile her gün küçük bir set tekrar et.')).toBeInTheDocument()
+    expect(screen.getByText('Hızlı ve rastgele')).toBeInTheDocument()
+    expect(screen.getByText('5–8 adımlı, görsel mini dersler.')).toBeInTheDocument()
+  })
+
+  it('shows archived projects with a clear historical-context notice', () => {
+    renderAt('/tr/solutions/hugging-face-tgi')
+    expect(screen.getByText('Arşivlendi')).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent('salt okunur')
   })
 
   it('renders a source-backed solution profile', () => {

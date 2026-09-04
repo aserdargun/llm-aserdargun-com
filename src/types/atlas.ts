@@ -1,6 +1,6 @@
 export type Locale = 'tr' | 'en'
 export type CategoryId = 'INF' | 'SRV' | 'RUN' | 'APP' | 'DST' | 'GTW' | 'EDG'
-export type ProjectStatus = 'active' | 'mature' | 'preview' | 'maintenance'
+export type ProjectStatus = 'active' | 'mature' | 'preview' | 'maintenance' | 'archived'
 export type SourceType = 'official-docs' | 'official-repository'
 
 export interface LocalizedText { tr: string; en: string }

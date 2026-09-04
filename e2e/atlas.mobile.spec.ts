@@ -4,8 +4,10 @@ test('mobile explore exposes filters without horizontal page overflow', async ({
   await page.goto('/tr/explore')
   await expect(page.getByRole('button', { name: /Filtreler/ })).toBeVisible()
   await page.getByRole('button', { name: /Filtreler/ }).click()
-  await expect(page.getByRole('dialog', { name: 'Filtreler' })).toBeVisible()
-  await page.getByRole('dialog', { name: 'Filtreler' }).press('Escape')
+  const dialog = page.getByRole('dialog', { name: 'Filtreler' })
+  await expect(dialog).toBeVisible()
+  await expect(dialog).toBeFocused()
+  await dialog.press('Escape')
   await expect(page.getByRole('dialog', { name: 'Filtreler' })).not.toBeVisible()
   await expect(page.getByRole('button', { name: /Filtreler/ })).toBeFocused()
   const overflow = await page.evaluate(() => ({
@@ -29,8 +31,8 @@ test('mobile theme switch stays inside the header and changes the palette', asyn
   const switchBox = await themeSwitch.boundingBox()
   expect(headerBox).not.toBeNull()
   expect(switchBox).not.toBeNull()
-  expect(switchBox!.width).toBeGreaterThanOrEqual(50)
-  expect(switchBox!.height).toBeGreaterThanOrEqual(28)
+  expect(switchBox!.width).toBeGreaterThanOrEqual(44)
+  expect(switchBox!.height).toBeGreaterThanOrEqual(44)
   expect(switchBox!.x).toBeGreaterThanOrEqual(headerBox!.x)
   expect(switchBox!.x + switchBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width)
 
@@ -42,4 +44,21 @@ test('mobile theme switch stays inside the header and changes the palette', asyn
   const navBox = await page.getByRole('navigation', { name: 'Ana navigasyon' }).boundingBox()
   expect(navBox).not.toBeNull()
   expect(navBox!.width).toBeGreaterThanOrEqual(headerBox!.width - 1)
+})
+
+test('mobile header controls expose 44px touch targets', async ({ page }) => {
+  await page.goto('/tr')
+  const controls = [
+    page.getByRole('link', { name: 'LLM / ATLAS' }),
+    page.getByRole('link', { name: 'Switch to English' }),
+    page.getByRole('switch', { name: /temaya geç/ }),
+    page.getByRole('button', { name: 'Menüyü aç veya kapat' }),
+  ]
+
+  for (const control of controls) {
+    const box = await control.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box!.height).toBeGreaterThanOrEqual(44)
+    expect(box!.width).toBeGreaterThanOrEqual(44)
+  }
 })

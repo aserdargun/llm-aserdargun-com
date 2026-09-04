@@ -34,7 +34,7 @@ export const flashcards: Flashcard[] = [
     },
     back: {
       tr: 'Sondan eklemeli bir dil olduğu için aynı içerik genellikle İngilizce’den 2-3 kat daha fazla token üretir; bu da API maliyetini artırır ve context window’u hızla doldurur.',
-      en: 'Because Turkish is an agglutinative language, the same content usually produces 2-3x more tokens than English; that raises API cost and fills the context window faster.',
+      en: 'Agglutinative languages such as Turkish can use more tokens than equivalent English text with some tokenizers, increasing cost and context use. Measure with the model’s actual tokenizer.',
     },
     tags: ['tokenization', 'multilingual', 'cost'],
   },
@@ -97,8 +97,8 @@ export const flashcards: Flashcard[] = [
       en: 'What does GQA (Grouped-Query Attention) bring?',
     },
     back: {
-      tr: 'Multi-Head Attention ile Multi-Query Attention arasında bir uzlaşma sunar: K/V başlıklarını 4-8 gruba indirerek bellek tasarrufu sağlar, kaliteden ödün vermeden. Llama 2/3, Mistral ve Qwen2 bu yaklaşımı kullanır.',
-      en: 'It strikes a balance between Multi-Head Attention and Multi-Query Attention: reduces K/V heads to 4-8 groups, saving memory without sacrificing quality. Llama 2/3, Mistral and Qwen2 use this approach.',
+      tr: 'Birden çok sorgu başlığını daha az K/V grubuyla eşleyerek MHA ile MQA arasında bellek ve kalite dengesi kurar. Grup sayısı model mimarisine özgüdür; etki hedef iş yükünde ölçülmelidir.',
+      en: 'It maps multiple query heads to fewer K/V groups, trading memory and quality between MHA and MQA. Group count is model-specific, and impact should be measured on the target workload.',
     },
     tags: ['attention', 'gqa', 'optimization'],
   },
@@ -207,8 +207,8 @@ export const flashcards: Flashcard[] = [
       en: 'How does nucleus sampling (Top-p) work?',
     },
     back: {
-      tr: 'Olasılıkları büyükten küçüğe sıralar ve birikimli toplam p’ye ulaşana kadar olan tokenlardan örnekler. p=0.9 genellikle 5-15 aday bırakır; sabit Top-k’dan daha sağlıklıdır.',
-      en: 'It sorts probabilities high to low and samples from tokens until the cumulative sum reaches p. p=0.9 usually leaves 5-15 candidates; it is healthier than a fixed Top-k.',
+      tr: 'Olasılıkları büyükten küçüğe sıralar ve birikimli toplam p’ye ulaşana kadarki tokenlardan örnekler. Tutulan aday sayısı her adımın dağılımına göre değişir.',
+      en: 'It sorts probabilities high to low and samples from tokens until their cumulative probability reaches p. The number of retained candidates changes with each step’s distribution.',
     },
     tags: ['top-p', 'sampling', 'nucleus'],
   },
@@ -217,12 +217,12 @@ export const flashcards: Flashcard[] = [
     source: 'concept',
     refSlug: 'top-p',
     front: {
-      tr: 'Structured output (JSON schema) üretirken hangi sampling ayarları zorunludur?',
-      en: 'Which sampling settings are mandatory when producing structured output (JSON schema)?',
+      tr: 'Yapılandırılmış çıktı üretirken örnekleme ayarları neden tek başına yeterli değildir?',
+      en: 'Why are sampling settings insufficient on their own for structured output?',
     },
     back: {
-      tr: 'Temperature=0 ve Top-p=1. Aksi halde rastgelelik şemayı bozar; özellikle fonksiyon çağrılarında güvenilir JSON üretimi için deterministik sampling şarttır.',
-      en: 'Temperature=0 and Top-p=1. Otherwise randomness breaks the schema; deterministic sampling is essential for reliable JSON, especially in function calling.',
+      tr: 'Düşük rastgelelik tutarlılığı artırabilir ama şema uyumunu garanti etmez. Strict/grammar desteği, uygulama tarafı doğrulama ve hata yönetimi gerekir.',
+      en: 'Lower randomness can improve consistency but does not guarantee schema conformance. Use strict or grammar support together with application-side validation and error handling.',
     },
     tags: ['top-p', 'temperature', 'structured-output'],
   },
@@ -267,8 +267,8 @@ export const flashcards: Flashcard[] = [
       en: 'Why is KV cache a critical component in production inference?',
     },
     back: {
-      tr: 'Her yeni token üretiminde önceki tüm tokenların Key/Value vektörlerini yeniden hesaplamaktan kurtarır. Bu, decode hızını 5-10x artırır; olmadan etkili inference neredeyse imkansız olur.',
-      en: 'It avoids recomputing the Key/Value vectors of all previous tokens at each new generation step. This boosts decode speed 5-10x; without it, effective inference would be nearly impossible.',
+      tr: 'Her yeni token üretiminde önceki tüm tokenların Key/Value vektörlerini yeniden hesaplamayı önler. Hesaplamayı azaltırken bağlam ve eşzamanlılıkla büyüyen bir bellek maliyeti yaratır.',
+      en: 'It avoids recomputing the Key/Value vectors of all prior tokens at each generation step. This reduces computation while adding a memory cost that grows with context and concurrency.',
     },
     tags: ['kv-cache', 'optimization', 'memory'],
   },
@@ -301,8 +301,8 @@ export const flashcards: Flashcard[] = [
       en: 'Why is continuous (iteration-level) batching a revolution?',
     },
     back: {
-      tr: 'Her decoding iteration’ında biten istekleri gruptan çıkarır, yenilerini ekler. Kısa istekler uzun olanları beklemediği için verim 2-4x artar; vLLM bu yaklaşımı varsayılan yapan ilk motordur.',
-      en: 'It removes finished requests from the group at each decoding iteration and adds new ones. Short requests no longer wait for long ones, lifting throughput 2-4x; vLLM was the first engine to make this the default.',
+      tr: 'Her decode iterasyonunda biten istekleri gruptan çıkarıp yenilerini ekler. Kısa isteklerin uzun istekleri beklemesini azaltır; gerçek verim ve gecikme etkisi trafik dağılımıyla ölçülür.',
+      en: 'It removes finished requests and admits new ones at each decode iteration. This reduces the time short requests wait for long ones; actual throughput and latency impact depends on traffic distribution.',
     },
     tags: ['batching', 'vllm', 'throughput'],
   },
@@ -315,8 +315,8 @@ export const flashcards: Flashcard[] = [
       en: 'When does SGLang RadixAttention give the biggest speedup?',
     },
     back: {
-      tr: 'Farklı istekler aynı prefix’i paylaştığında (system prompt, örnekler, ortak belge). Paylaşılan kısım için ayrı ayrı prefill yapılmaz, 2-5x hız kazancı sağlanır.',
-      en: 'When different requests share the same prefix (system prompt, examples, shared document). The shared portion is not pre-filled separately, giving 2-5x speedup.',
+      tr: 'Farklı istekler aynı öneki paylaştığında (sistem istemi, örnekler veya ortak belge) paylaşılan bölümün prefill hesabı yeniden kullanılabilir. Kazanç, ortak bölümün uzunluğu ve önbellek isabet oranına bağlıdır.',
+      en: 'When requests share a prefix such as a system prompt, examples, or a common document, the shared prefill work can be reused. Gains depend on shared-prefix length and cache-hit rate.',
     },
     tags: ['batching', 'radixattention', 'sglang'],
   },
@@ -361,8 +361,8 @@ export const flashcards: Flashcard[] = [
       en: 'What does PagedAttention solve in KV cache management?',
     },
     back: {
-      tr: 'Bellek parçalanmasını ortadan kaldırır ve kullanımı neredeyse %100’e çıkarır. Geleneksel pre-allocation stratejisinin yarattığı israfı, işletim sistemlerindeki "sanal bellek + sayfa tablosu" modelini ödünç alarak çözer.',
-      en: 'It eliminates memory fragmentation and pushes utilization close to 100%. It solves the waste of traditional pre-allocation by borrowing the "virtual memory + page table" model from operating systems.',
+      tr: 'Sabit büyük ön ayırmanın yarattığı parçalanma ve israfı azaltır. İşletim sistemlerindeki "sanal bellek + sayfa tablosu" modelinden esinlenerek KV bloklarını gerektiği kadar eşler.',
+      en: 'It reduces fragmentation and waste from large fixed preallocations by mapping KV blocks as needed, borrowing the virtual-memory and page-table model from operating systems.',
     },
     tags: ['paged-attention', 'vllm', 'memory'],
   },
@@ -405,8 +405,8 @@ export const flashcards: Flashcard[] = [
       en: 'When does speculative decoding lose its speed advantage?',
     },
     back: {
-      tr: 'Kabul oranı %50’nin altına düştüğünde. Taslak modelin dağılımı hedef modele uymuyorsa, çoğu tahmin reddedilir ve forward pass israf olur. Bu yüzden taslak model ≈ %5-10 büyüklükte ve benzer dağılımda olmalı.',
-      en: 'When the acceptance rate drops below 50%. If the draft model’s distribution does not match the target, most predictions are rejected and the forward pass is wasted. That is why the draft should be about 5-10% the size with a similar distribution.',
+      tr: 'Taslak üretme ve doğrulama maliyeti, kabul edilen tokenların kazancını aştığında yavaşlatır. Kabul oranı ve ideal taslak yapı, model çifti ile iş yükünde ölçülmelidir.',
+      en: 'It can slow down when draft generation and verification cost more than the accepted tokens save. Acceptance rate and draft design should be measured for the model pair and workload.',
     },
     tags: ['speculative-decoding', 'acceptance-rate', 'tuning'],
   },
@@ -435,8 +435,8 @@ export const flashcards: Flashcard[] = [
       en: 'Why is disaggregated serving (e.g. NVIDIA Dynamo) necessary?',
     },
     back: {
-      tr: 'Çünkü aynı GPU’da aynı anda çalışan prefill ve decode birbirini yavaşlatır. Ayrı donanımlara bölünce her faz kendi profili için en uygun GPU’da çalışır; 1.5-2x toplam verim artışı sağlanır.',
-      en: 'Because prefill and decode running on the same GPU at the same time slow each other down. Splitting them lets each phase run on the GPU best suited to its profile, yielding 1.5-2x total throughput gain.',
+      tr: 'Prefill ve decode farklı hesaplama profillerine sahiptir; aynı havuzda birbirlerinin gecikmesini etkileyebilirler. Ayrı çalışan havuzları her fazı bağımsız ölçeklemeyi sağlar, ancak kazanç iş yükü ve KV aktarım maliyetiyle ölçülmelidir.',
+      en: 'Prefill and decode have different compute profiles and can interfere with each other’s latency in one pool. Separate worker pools allow independent scaling, but any gain must be measured against workload and KV-transfer cost.',
     },
     tags: ['prefill-decode', 'disaggregated', 'scaling'],
   },
@@ -451,8 +451,8 @@ export const flashcards: Flashcard[] = [
       en: 'What does INT4 quantization gain and lose compared to FP16?',
     },
     back: {
-      tr: 'Belleği %75 azaltır (4 bit / 16 bit) ve çıkarımı hızlandırır; ama hassasiyet düşer, dikkatli olmayan uygulamada perplexity 1-3 puan artabilir. AWQ gibi yöntemler bu kaybı büyük ölçüde azaltır.',
-      en: 'It cuts memory by 75% (4 bit / 16 bit) and speeds up inference; but precision drops, and careless application can increase perplexity by 1-3 points. Methods like AWQ reduce this loss significantly.',
+      tr: 'Ağırlıkları 16 bitten 4 bite indirmek ham ağırlık belleğini teorik olarak dörtte bire düşürür. Gerçek hız ve kalite etkisi model, çekirdek, kalibrasyon verisi ve görev değerlendirmesiyle ölçülmelidir.',
+      en: 'Reducing weights from 16 bits to 4 bits theoretically cuts raw weight memory to one quarter. Actual speed and quality effects must be measured for the model, kernel, calibration data, and task.',
     },
     tags: ['quantization', 'int4', 'tradeoff'],
   },
@@ -644,8 +644,8 @@ export const flashcards: Flashcard[] = [
       en: 'Which use case does ExLlamaV3 focus on?',
     },
     back: {
-      tr: 'Tüketici sınıfı NVIDIA GPU\'larda düşük bitli (EXL2/EXL3) nicemlenmiş LLM çıkarımı için optimize edilmiş deneysel bir motordur. Tek kullanıcı/yerel GPU senaryolarında hız arar.',
-      en: 'An experimental engine optimized for low-bit (EXL2/EXL3) quantized LLM inference on consumer NVIDIA GPUs. Targets single-user / local GPU workloads.',
+      tr: 'Tüketici sınıfı NVIDIA GPU\'larda düşük bitli (EXL2/EXL3) nicemlenmiş LLM çıkarımı için optimize edilen ve etkin biçimde geliştirilen bir motordur.',
+      en: 'An actively developed engine optimized for low-bit (EXL2/EXL3) quantized LLM inference on consumer NVIDIA GPUs.',
     },
     tags: ['exllamav3', 'quantization', 'consumer-gpu'],
   },
@@ -658,10 +658,10 @@ export const flashcards: Flashcard[] = [
       en: 'When do you pick ExLlamaV3, and when do you avoid it?',
     },
     back: {
-      tr: 'NVIDIA masaüstü GPU\'sunda nicemlenmiş modeller için idealdir. Dar donanım ve format kapsamı nedeniyle genel amaçlı çok sağlayıcılı sunum için uygun değildir; hızlı değişen deneysel projedir.',
-      en: 'Ideal for quantized models on NVIDIA desktop GPUs. Narrow hardware/format scope makes it unsuitable for general multi-provider serving; it is a fast-moving experimental project.',
+      tr: 'NVIDIA masaüstü GPU\'sunda nicemlenmiş modeller için idealdir. Dar donanım ve format kapsamı nedeniyle genel amaçlı çok sağlayıcılı sunum için uygun değildir; hızlı değişen sürüm ve uyumluluk matrisi izlenmelidir.',
+      en: 'Ideal for quantized models on NVIDIA desktop GPUs. Its narrow hardware and format scope does not fit general multi-provider serving; its fast-moving release and compatibility matrix must be tracked.',
     },
-    tags: ['exllamav3', 'local', 'experimental'],
+    tags: ['exllamav3', 'local', 'quantized'],
   },
 
   // ─── openvino-genai (2) ──────────────────────────────────────
@@ -918,10 +918,10 @@ export const flashcards: Flashcard[] = [
       en: 'Where does Hugging Face TGI stand today?',
     },
     back: {
-      tr: 'Tensor parallelism, streaming ve üretim sunumunu yaygınlaştıran eski bir proje; şu anda bakım kipinde tutulur. Yeni dağıtımlar için varsayılan öneri değildir; mevcut kurulumları anlamak için listelenir.',
-      en: 'An older project that popularized tensor parallelism, streaming, and production serving; now in maintenance mode. Not the default recommendation for new deployments; listed for ecosystem context.',
+      tr: 'Tensor paralelliği, akış ve üretim sunumunu yaygınlaştıran etkili bir projedir; deposu 21 Mart 2026\'da arşivlenip salt okunur hâle geldi. Yalnızca mevcut kurulumları ve ekosistem tarihini anlamak için listelenir.',
+      en: 'An influential project that popularized tensor parallelism, streaming, and production serving; its repository became archived and read-only on March 21, 2026. It is listed only to understand existing deployments and ecosystem history.',
     },
-    tags: ['hugging-face-tgi', 'serving', 'maintenance'],
+    tags: ['hugging-face-tgi', 'serving', 'archived'],
   },
   {
     id: 'solution:hugging-face-tgi:2',
@@ -932,8 +932,8 @@ export const flashcards: Flashcard[] = [
       en: 'When should you use Hugging Face TGI?',
     },
     back: {
-      tr: 'Mevcut TGI kurulumlarını anlamak ve sürdürmek için idealdir. Yeni projeler için varsayılan öneri değildir; yeni özellik geliştirmesi beklenmemelidir.',
-      en: 'Ideal for understanding and maintaining existing TGI deployments. Not the default recommendation for new projects; new feature development should not be expected.',
+      tr: 'Yalnızca mevcut TGI kurulumlarını anlamak, taşımak veya tarihsel davranışı korumak gerektiğinde değerlendirilir. Depo arşivlenmiş ve salt okunur olduğundan yeni projeler için seçilmemelidir.',
+      en: 'Consider it only to understand or migrate existing TGI deployments, or to preserve historical behavior. Because the repository is archived and read-only, it should not be selected for new projects.',
     },
     hint: {
       tr: 'Bakım kipinde.',
@@ -982,8 +982,8 @@ export const flashcards: Flashcard[] = [
       en: 'What does Docker Model Runner offer?',
     },
     back: {
-      tr: 'Yerel AI modellerini Docker iş akışları ve OCI paketleriyle çalıştıran Docker bileşeni. Model çekme, donanım hızlandırma ve OpenAI uyumlu uç noktaları geliştiricinin mevcut Docker deneyimine taşır.',
-      en: 'A Docker component that runs local AI models through Docker workflows and OCI packages. Brings model pulls, hardware acceleration, and OpenAI-compatible endpoints into the existing Docker developer workflow.',
+      tr: 'Yerel AI modellerini Docker iş akışları ve OCI paketleriyle çalıştırır; llama.cpp, vLLM ve Diffusers arka uçlarını uyumlu API uç noktalarıyla Docker deneyimine taşır.',
+      en: 'Runs local AI models through Docker workflows and OCI packages, bringing llama.cpp, vLLM, and Diffusers backends into the Docker experience through compatible API endpoints.',
     },
     tags: ['docker-model-runner', 'docker', 'local'],
   },
@@ -996,8 +996,8 @@ export const flashcards: Flashcard[] = [
       en: 'When is Docker Model Runner the right pick?',
     },
     back: {
-      tr: 'Docker kullanan ekiplerin yerel AI geliştirmesi için idealdir. Tek başına çok düğümlü Kubernetes çıkarım platformu değildir; platform ve sürüm desteği hızla gelişmektedir.',
-      en: 'Ideal for local AI development by teams already using Docker. Not a multi-node Kubernetes inference platform on its own; platform and version support are evolving quickly.',
+      tr: 'Docker kullanan ekiplerin yerel AI geliştirmesi için idealdir. Tek başına çok düğümlü Kubernetes çıkarım platformu değildir; arka uç ve hızlandırıcı desteği işletim sistemi ile Docker sürümüne göre doğrulanmalıdır.',
+      en: 'Ideal for local AI development by teams already using Docker. It is not a multi-node Kubernetes inference platform; backend and accelerator support must be checked for the operating system and Docker version.',
     },
     tags: ['docker-model-runner', 'docker', 'dev'],
   },
@@ -1192,8 +1192,8 @@ export const flashcards: Flashcard[] = [
       en: 'Which architectural problem does NVIDIA Dynamo solve?',
     },
     back: {
-      tr: 'Çok düğümlü üretken AI çıkarımını ayrıştırmak ve ölçeklemek için NVIDIA\'nın açık kaynaklı dağıtık çalışma zamanı. Akıllı yönlendirme, KV önbellek yönetimi ve prefill/decode ayrıştırmasını koordine eder.',
-      en: 'NVIDIA\'s open-source distributed runtime for disaggregating and scaling multi-node generative-AI inference. Coordinates smart routing, KV cache management, and prefill/decode disaggregation.',
+      tr: 'NVIDIA tarafından geliştirilen açık kaynaklı çerçeve, çok düğümlü üretken AI çıkarımında akıllı yönlendirme, KV önbellek yönetimi ve prefill/decode ayrıştırmasını koordine eder.',
+      en: 'This open-source framework developed by NVIDIA coordinates smart routing, KV-cache management, and prefill/decode disaggregation for multi-node generative-AI inference.',
     },
     tags: ['nvidia-dynamo', 'distributed', 'disaggregated'],
   },
@@ -1206,8 +1206,8 @@ export const flashcards: Flashcard[] = [
       en: 'Which scenario fits NVIDIA Dynamo?',
     },
     back: {
-      tr: 'Çok düğümlü yüksek ölçekli GPU kümeleri için idealdir. En güçlü entegrasyon NVIDIA ekosistemindedir; tek dizüstünde en basit yerel model çalıştırıcı değildir.',
-      en: 'Ideal for high-scale multi-node GPU clusters. Strongest integration is within the NVIDIA ecosystem; not the simplest local model runner for one laptop.',
+      tr: 'Kubernetes, Slurm veya yerel kümelerde çok düğümlü çıkarım için uygundur. NVIDIA, AMD ve Intel hızlandırıcı yolları dağıtım ve motor desteğine göre ayrıca doğrulanmalıdır; tek dizüstünde basit yerel çalıştırıcı değildir.',
+      en: 'Fits multi-node inference on Kubernetes, Slurm, or local clusters. NVIDIA, AMD, and Intel accelerator paths must be checked against the deployment and engine; it is not a simple local runner for one laptop.',
     },
     tags: ['nvidia-dynamo', 'cluster', 'scale'],
   },
@@ -1252,8 +1252,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the goal of the llm-d project?',
     },
     back: {
-      tr: 'Kubernetes üzerinde yüksek ölçekli dağıtık LLM çıkarımı için açık, bileşen tabanlı servis projesi. vLLM, Kubernetes Gateway API, akıllı yönlendirme ve KV/prefill-decode bileşenlerini açık bir mimaride birleştirir.',
-      en: 'An open, component-based project for high-scale distributed LLM inference on Kubernetes. Combines vLLM, Kubernetes Gateway API, smart routing, and KV/prefill-decode components in an open architecture.',
+      tr: 'Kubernetes üzerinde yüksek ölçekli dağıtık LLM çıkarımı için açık, bileşen tabanlı servis projesidir. vLLM ve SGLang motorlarını Gateway API, akıllı yönlendirme ve KV/prefill-decode bileşenleriyle birleştirir.',
+      en: 'An open, component-based serving project for high-scale distributed LLM inference on Kubernetes. It combines vLLM and SGLang with Gateway API, smart routing, and KV/prefill-decode components.',
     },
     tags: ['llm-d', 'kubernetes', 'distributed'],
   },
@@ -1266,10 +1266,10 @@ export const flashcards: Flashcard[] = [
       en: 'Which teams is llm-d a good fit for?',
     },
     back: {
-      tr: 'Kubernetes üzerinde açık dağıtık LLM yığını kuran platform ekipleri için idealdir. Erken aşamadadır; API ve operasyon kalıpları değişebilir. Yerel masaüstü deneyimi değildir.',
-      en: 'Ideal for platform teams building an open distributed LLM stack on Kubernetes. Early-stage; APIs and operational patterns may change. Not a local desktop experience.',
+      tr: 'Kubernetes üzerinde açık dağıtık LLM yığını kuran platform ekipleri için uygundur. Sürüm yükseltmelerinde desteklenen iyi aydınlatılmış yollar izlenmelidir; yerel masaüstü deneyimi değildir.',
+      en: 'Fits platform teams building an open distributed LLM stack on Kubernetes. Supported well-lit paths should be followed across upgrades; it is not a local desktop experience.',
     },
-    tags: ['llm-d', 'kubernetes', 'preview'],
+    tags: ['llm-d', 'kubernetes', 'distributed'],
   },
 
   // ─── kserve (2) ──────────────────────────────────────────────

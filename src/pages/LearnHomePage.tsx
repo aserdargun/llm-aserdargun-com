@@ -39,21 +39,21 @@ export function LearnHomePage() {
         <Link to={`/${locale}/learn/flashcards`} className="learn-card">
           <Brain size={28} aria-hidden="true" />
           <h2>{pick(locale, 'Kartlar', 'Flashcards')}</h2>
-          <p>{pick(locale, 'Spaced repetition ile her gün küçük bir set tekrar et.', 'Review a small daily set with spaced repetition.')}</p>
+          <p>{pick(locale, 'Aralıklı tekrar ile her gün küçük bir set tekrar et.', 'Review a small daily set with spaced repetition.')}</p>
           <span className="learn-card__count">{queueSize > 0 ? `${queueSize} ${learnCards.cardCount[locale]}` : learnCommon.noCards[locale]}</span>
           <span className="learn-card__cta">{learnHome.ctaCards[locale]} <ArrowRight size={16} /></span>
         </Link>
         <Link to={`/${locale}/learn/quiz`} className="learn-card">
           <Sparkles size={28} aria-hidden="true" />
-          <h2>{pick(locale, 'Quiz', 'Quiz')}</h2>
+          <h2>{pick(locale, 'Test', 'Quiz')}</h2>
           <p>{pick(locale, 'Kısa sorularla anlık geri bildirim al.', 'Instant feedback from short questions.')}</p>
-          <span className="learn-card__count">{pick(locale, 'Hızlı & rastgele', 'Quick & random')}</span>
+          <span className="learn-card__count">{pick(locale, 'Hızlı ve rastgele', 'Quick and random')}</span>
           <span className="learn-card__cta">{learnHome.ctaQuiz[locale]} <ArrowRight size={16} /></span>
         </Link>
         <Link to={`/${locale}/learn/lessons`} className="learn-card">
           <BookOpenCheck size={28} aria-hidden="true" />
           <h2>{pick(locale, 'Dersler', 'Lessons')}</h2>
-          <p>{pick(locale, '5-8 adımlı, görsel mini-dersler.', '5–8 step visual mini-lessons.')}</p>
+          <p>{pick(locale, '5–8 adımlı, görsel mini dersler.', 'Visual mini-lessons with 5–8 steps.')}</p>
           <span className="learn-card__count">{lessons.length} {pick(locale, 'ders', 'lessons')}</span>
           <span className="learn-card__cta">{learnHome.ctaLessons[locale]} <ArrowRight size={16} /></span>
         </Link>
