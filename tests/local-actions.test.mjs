@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs'
 import net from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
@@ -91,6 +91,16 @@ test('Codex environment delegates Setup, Run, Validate, and Stop to repository c
 test('production CSP permits Vite-inlined font assets', () => {
   const swaConfig = JSON.parse(readFileSync(path.join(root, 'public/staticwebapp.config.json'), 'utf8'))
   assert.match(swaConfig.globalHeaders['Content-Security-Policy'], /font-src 'self' data:/)
+})
+
+test('production theme bootstrap uses a same-origin script allowed by CSP', () => {
+  const indexHtml = readFileSync(path.join(root, 'index.html'), 'utf8')
+  const swaConfig = JSON.parse(readFileSync(path.join(root, 'public/staticwebapp.config.json'), 'utf8'))
+
+  assert.doesNotMatch(indexHtml, /<script>\s*\(function/)
+  assert.match(indexHtml, /<script src="\/theme-init\.js"><\/script>/)
+  assert.equal(existsSync(path.join(root, 'public/theme-init.js')), true)
+  assert.match(swaConfig.globalHeaders['Content-Security-Policy'], /script-src 'self'/)
 })
 
 test('Stop terminates a listener owned by this checkout', async (t) => {
