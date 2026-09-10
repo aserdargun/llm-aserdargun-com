@@ -1,0 +1,20 @@
+/** Collection revisions describe the exported data, not tool ranking inputs. */
+export const datasetRelease = {
+  schemaVersion: 1,
+  release: '2026-09-10-system-audit',
+  collections: {
+    categories: { schemaVersion: 1, revision: '2026-09-04' },
+    solutions: { schemaVersion: 1, revision: '2026-09-04' },
+    concepts: { schemaVersion: 2, revision: '2026-09-10' },
+    flashcards: { schemaVersion: 2, revision: '2026-09-10' },
+    quizzes: { schemaVersion: 2, revision: '2026-09-10' },
+    lessons: { schemaVersion: 1, revision: '2026-09-04' },
+  },
+  evidence: [
+    { topic: 'tokenization', collections: ['concepts', 'flashcards'], url: 'https://github.com/google/sentencepiece', checkedAt: '2026-09-10' },
+    { topic: 'kv-cache-and-attention', collections: ['concepts', 'flashcards', 'quizzes'], url: 'https://huggingface.co/docs/transformers/main/cache_explanation', checkedAt: '2026-09-10' },
+    { topic: 'temperature-and-reproducibility', collections: ['concepts', 'flashcards', 'quizzes'], url: 'https://docs.vllm.ai/en/latest/usage/reproducibility/', checkedAt: '2026-09-10' },
+    { topic: 'prompt-injection-boundaries', collections: ['concepts', 'flashcards'], url: 'https://genai.owasp.org/llmrisk/llm01-prompt-injection/', checkedAt: '2026-09-10' },
+  ],
+  note: 'Targeted learning-content corrections. This release does not claim a new full audit of all solution sources; individual solution verification dates remain authoritative.',
+} as const

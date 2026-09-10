@@ -13,6 +13,11 @@ describe('sm2 helpers', () => {
     expect(toIsoDay(next)).toBe('2026-02-04')
   })
 
+  it('advances calendar days across daylight-saving boundaries', () => {
+    expect(toIsoDay(addDays(new Date(2026, 9, 25, 0, 30), 1))).toBe('2026-10-26')
+    expect(toIsoDay(addDays(new Date(2026, 2, 29, 23, 30), 1))).toBe('2026-03-30')
+  })
+
   it('counts whole days between two ISO days', () => {
     expect(daysBetween('2026-08-19', '2026-08-26')).toBe(7)
     expect(daysBetween('2026-08-19', '2026-08-12')).toBe(-7)

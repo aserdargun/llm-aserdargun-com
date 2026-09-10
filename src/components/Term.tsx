@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
 const TOOLTIP_WIDTH = 280
@@ -12,6 +12,7 @@ const ESTIMATED_HEIGHT = 80
  * `overflow` içeren tablo ve filtre kaplarında bile kırpılmaz.
  */
 export function Term({ children, tip }: { children: ReactNode; tip: string }) {
+  const id = useId()
   const ref = useRef<HTMLSpanElement>(null)
   const [state, setState] = useState({ shown: false, top: 0, left: 0 })
 
@@ -29,9 +30,9 @@ export function Term({ children, tip }: { children: ReactNode; tip: string }) {
   const hide = () => setState((current) => ({ ...current, shown: false }))
 
   return (
-    <span className="term" ref={ref} tabIndex={0} onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
+    <span className="term" ref={ref} tabIndex={0} aria-describedby={id} onKeyDown={(event) => { if (event.key === 'Escape') hide() }} onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
       {children}
-      <span className={state.shown ? 'term-tooltip is-visible' : 'term-tooltip'} role="tooltip" style={{ top: state.top, left: state.left }}>{tip}</span>
+      <span id={id} className={state.shown ? 'term-tooltip is-visible' : 'term-tooltip'} role="tooltip" style={{ top: state.top, left: state.left }}>{tip}</span>
     </span>
   )
 }

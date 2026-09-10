@@ -43,7 +43,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: localUrl,
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? localUrl,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     ...(serverlessLaunchOptions ? { launchOptions: serverlessLaunchOptions } : {}),
@@ -52,7 +52,7 @@ export default defineConfig({
     { name: 'desktop-chromium', testMatch: '**/*.desktop.spec.ts', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 1000 } } },
     { name: 'mobile-chromium', testMatch: '**/*.mobile.spec.ts', use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
   ],
-  webServer: {
+  webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
     command: `npm run dev -- --host 127.0.0.1 --port ${localPort} --strictPort`,
     url: `${localUrl}/tr`,
     reuseExistingServer: !process.env.CI,

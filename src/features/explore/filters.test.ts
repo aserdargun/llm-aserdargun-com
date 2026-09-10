@@ -16,6 +16,12 @@ describe('explore filters', () => {
     expect(result.every(({ hardware }) => hardware.includes('Apple Silicon'))).toBe(true)
   })
 
+  it('searches hardware and translated category names', () => {
+    const state = parseExploreState(new URLSearchParams('q=Intel NPU'))
+    expect(filterSolutions(solutions, state, 'en').map((s) => s.slug)).toContain('openvino-genai')
+    expect(filterSolutions(solutions, { ...state, q: 'ağ geçitleri' }, 'tr').map((s) => s.slug)).toContain('litellm-proxy')
+  })
+
   it('searches names and localized editorial content', () => {
     expect(filterSolutions(solutions, { ...parseExploreState(new URLSearchParams()), q: 'llama' }, 'en').some(({ slug }) => slug === 'llama-cpp')).toBe(true)
     expect(filterSolutions(solutions, { ...parseExploreState(new URLSearchParams()), q: 'çevrimdışı' }, 'tr').some(({ slug }) => slug === 'gpt4all')).toBe(true)

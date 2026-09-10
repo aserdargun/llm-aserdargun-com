@@ -28,7 +28,8 @@ export function ComparePage() {
   const locale = useLocale()
   const compare = useCompareSelection()
   const [diffOnly, setDiffOnly] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState<string | null>(null)
+  const [copyError, setCopyError] = useState(false)
   const selected = compare.selected.map((slug) => solutions.find((item) => item.slug === slug)!).filter(Boolean)
   const cross = selectionsCrossCategories(compare.selected, solutions)
   const visibleRows = diffOnly ? rows.filter((row) => new Set(selected.map(row.value)).size > 1) : rows
@@ -38,13 +39,21 @@ export function ComparePage() {
     if (['Hardware', 'Execution backend', 'Model format', 'API protocol', 'Deployment scope'].includes(row.label[1])) return displayAtlasValues(locale, row.value(item).split(' · '))
     return row.value(item)
   }
-  const copyLink = async () => { if (navigator.clipboard) await navigator.clipboard.writeText(window.location.href); setCopied(true) }
+  const copyLink = async () => {
+    setCopyError(false)
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(window.location.href)
+    } catch { setCopyError(true); setCopied(null) }
+  }
+  const isCopied = copied === window.location.href
   return <div className="shell page-shell compare-page">
     <div className="page-heading compare-heading"><div><h1>{pick(locale, 'Çözümleri karşılaştırın', 'Compare solutions')}</h1><p>{pick(locale, 'Aynı katmandaki araçları karşılaştırın; farklı katmanları birlikte incelerken mimari rolü gözden kaçırmayın.', 'Compare tools within the same layer; keep architectural role in view when examining different layers together.')}</p></div><Link className="button secondary" to={`/${locale}/explore?compare=${compare.selected.join(',')}`}><Plus size={18} />{pick(locale, 'Çözüm ekle (en fazla 4)', 'Add solution (up to 4)')}</Link></div>
     {compare.invalid.length > 0 && <div className="notice" role="status">{pick(locale, 'Bilinmeyen seçimler yok sayıldı:', 'Unknown selections were ignored:')} {compare.invalid.join(', ')}</div>}
     {cross && <div className="layer-warning" role="alert"><AlertTriangle /><span>{pick(locale, 'Farklı mimari katmanları karşılaştırıyorsunuz. Bu araçlar birbirinin doğrudan alternatifi olmayabilir.', 'You are comparing different architectural layers. These tools may not be direct alternatives.')}</span></div>}
     {selected.length === 0 ? <div className="compare-empty"><h2>{pick(locale, 'Henüz çözüm seçilmedi', 'No solutions selected yet')}</h2><p>{pick(locale, 'Keşif ekranından en fazla dört çözüm ekleyin.', 'Add up to four solutions from Explore.')}</p><Link className="button primary" to={`/${locale}/explore`}>{pick(locale, 'Çözümleri keşfet', 'Explore solutions')}</Link></div> : <>
-      <div className="compare-controls"><label><input type="checkbox" checked={diffOnly} onChange={(event) => setDiffOnly(event.target.checked)} />{pick(locale, 'Yalnızca farklılıkları göster', 'Show differences only')}</label><button className="button secondary" type="button" onClick={copyLink}>{copied ? <Check size={17} /> : <Copy size={17} />}{copied ? pick(locale, 'Bağlantı kopyalandı', 'Link copied') : pick(locale, 'Paylaşılabilir bağlantıyı kopyala', 'Copy shareable link')}</button><button className="button ghost-danger" type="button" onClick={compare.clear}><Trash2 size={17} />{pick(locale, 'Seçimi temizle', 'Clear selection')}</button></div>
+      <div className="compare-controls"><label><input type="checkbox" checked={diffOnly} onChange={(event) => setDiffOnly(event.target.checked)} />{pick(locale, 'Yalnızca farklılıkları göster', 'Show differences only')}</label><button className="button secondary" type="button" onClick={copyLink}>{isCopied ? <Check size={17} /> : <Copy size={17} />}{isCopied ? pick(locale, 'Bağlantı kopyalandı', 'Link copied') : pick(locale, 'Paylaşılabilir bağlantıyı kopyala', 'Copy shareable link')}</button><button className="button ghost-danger" type="button" onClick={compare.clear}><Trash2 size={17} />{pick(locale, 'Seçimi temizle', 'Clear selection')}</button></div>
+      {copyError && <p role="status">{pick(locale, 'Kopyalanamadı. Adres çubuğundaki bağlantıyı kopyalayabilirsiniz.', 'Could not copy. You can copy the link from the address bar.')}</p>}
       <div className="compare-table-wrap"><table className="compare-table"><thead><tr><th aria-label={pick(locale, 'Karşılaştırma boyutu', 'Comparison dimension')} />{selected.map((item) => { const category = categories.find(({ id }) => id === item.primaryCategory)!; return <th key={item.slug}><span className="mono">{item.primaryCategory} · {category.name[locale]}</span><strong>{item.name}</strong><button type="button" aria-label={`${pick(locale, 'Kaldır', 'Remove')} ${item.name}`} onClick={() => compare.remove(item.slug)}><X size={17} /></button></th>})}</tr></thead><tbody>{visibleRows.map((row) => <tr key={row.label[1]}><th>{locale === 'tr' ? row.label[0] : row.label[1]}</th>{selected.map((item) => <td key={item.slug}>{row.label[1] === 'Project status' ? <StatusBadge status={item.projectStatus} locale={locale} /> : displayValue(row, item)}</td>)}</tr>)}</tbody></table></div>
     </>}
   </div>

@@ -11,7 +11,11 @@ type Filter = 'all' | string
 
 const selectQuestions = (all: QuizQuestion[], filter: Filter, count: number): QuizQuestion[] => {
   const pool = filter === 'all' ? all : all.filter((q) => q.tags.includes(filter))
-  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  const shuffled = [...pool]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
   return shuffled.slice(0, Math.min(count, shuffled.length))
 }
 
@@ -66,8 +70,8 @@ export function QuizPage() {
           </div>
         </header>
         <div className="quiz-filter">
-          <label>{learnQuiz.filter[locale]}</label>
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <label htmlFor="quiz-filter">{learnQuiz.filter[locale]}</label>
+          <select id="quiz-filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="all">{learnQuiz.filterAll[locale]}</option>
             {tags.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
@@ -96,13 +100,14 @@ export function QuizPage() {
 
   return (
     <div className="shell page-shell quiz-page">
-      <div className="quiz-page__meta">
+      <h1 className="sr-only">{learnQuiz.title[locale]}</h1>
+      <div className="quiz-page__meta" aria-live="polite">
         <span className="mono">{learnQuiz.title[locale]}</span>
         <strong>{index + 1} / {active.length}</strong>
       </div>
-      {q.kind === 'mcq' ? <Mcq q={q} picked={picked} onPick={(idx) => { setPicked(idx); const ok = idx === q.correct; if (ok) setCorrectCount((c) => c + 1); for (const t of q.tags) update((p) => recordQuiz(p, t, ok)) }} onNext={() => { if (index + 1 >= active.length) setPhase('done'); else { setIndex((i) => i + 1); setPicked(null) } }} locale={locale} /> : null}
-      {q.kind === 'truefalse' ? <TrueFalse q={q} picked={picked} onPick={(v) => { setPicked(v ? 1 : 0); const ok = v === q.correct; if (ok) setCorrectCount((c) => c + 1); for (const t of q.tags) update((p) => recordQuiz(p, t, ok)) }} onNext={() => { if (index + 1 >= active.length) setPhase('done'); else { setIndex((i) => i + 1); setPicked(null) } }} locale={locale} /> : null}
-      {q.kind === 'match' ? <MatchQuestion q={q} onNext={() => { if (index + 1 >= active.length) setPhase('done'); else setIndex((i) => i + 1) }} locale={locale} /> : null}
+      {q.kind === 'mcq' ? <Mcq q={q} picked={picked} onPick={(idx) => { setPicked(idx); const ok = idx === q.correct; if (ok) setCorrectCount((c) => c + 1); update((p) => recordQuiz(p, q.tags, ok)) }} onNext={() => { if (index + 1 >= active.length) setPhase('done'); else { setIndex((i) => i + 1); setPicked(null) } }} locale={locale} /> : null}
+      {q.kind === 'truefalse' ? <TrueFalse q={q} picked={picked} onPick={(v) => { setPicked(v ? 1 : 0); const ok = v === q.correct; if (ok) setCorrectCount((c) => c + 1); update((p) => recordQuiz(p, q.tags, ok)) }} onNext={() => { if (index + 1 >= active.length) setPhase('done'); else { setIndex((i) => i + 1); setPicked(null) } }} locale={locale} /> : null}
+      {q.kind === 'match' ? <MatchQuestion key={q.id} q={q} onAnswer={(ok) => { if (ok) setCorrectCount((c) => c + 1); update((p) => recordQuiz(p, q.tags, ok)) }} onNext={() => { if (index + 1 >= active.length) setPhase('done'); else { setIndex((i) => i + 1); setPicked(null) } }} locale={locale} /> : null}
     </div>
   )
 }
@@ -163,14 +168,16 @@ function TrueFalse({ q, picked, onPick, onNext, locale }: { q: QuizTrueFalse; pi
   )
 }
 
-function MatchQuestion({ q, onNext, locale }: { q: QuizMatch; onNext: () => void; locale: ReturnType<typeof useLocale> }) {
+function MatchQuestion({ q, onAnswer, onNext, locale }: { q: QuizMatch; onAnswer: (correct: boolean) => void; onNext: () => void; locale: ReturnType<typeof useLocale> }) {
   const [picks, setPicks] = useState<Record<number, number>>({})
+  const [submitted, setSubmitted] = useState(false)
+  const [rightOrder] = useState(() => q.pairs.map((_, i) => i).reverse())
   const [activeLeft, setActiveLeft] = useState<number | null>(null)
   const completed = Object.keys(picks).length === q.pairs.length
   const onLeft = (i: number) => setActiveLeft((cur) => (cur === i ? null : i))
   const onRight = (j: number) => {
-    if (activeLeft === null) return
-    setPicks((p) => ({ ...p, [activeLeft]: j }))
+    if (activeLeft === null || submitted) return
+    setPicks((p) => ({ ...Object.fromEntries(Object.entries(p).filter(([, value]) => value !== j)), [activeLeft]: j }))
     setActiveLeft(null)
   }
   return (
@@ -180,19 +187,20 @@ function MatchQuestion({ q, onNext, locale }: { q: QuizMatch; onNext: () => void
         <ul>
           {q.pairs.map((p, i) => (
             <li key={i}>
-              <button type="button" className={`quiz-option ${activeLeft === i ? 'is-correct' : ''} ${picks[i] !== undefined ? 'is-wrong' : ''}`} onClick={() => onLeft(i)}>
-                {p.left[locale]}
+              <button type="button" className={`quiz-option ${activeLeft === i ? 'is-correct' : ''} ${submitted ? (picks[i] === i ? 'is-correct' : 'is-wrong') : ''}`} onClick={() => onLeft(i)} disabled={submitted} aria-pressed={activeLeft === i}>
+                {p.left[locale]}{picks[i] !== undefined ? ` → ${q.pairs[picks[i]].right[locale]}` : ''}
               </button>
             </li>
           ))}
         </ul>
         <ul>
-          {q.pairs.map((p, j) => {
+          {rightOrder.map((j) => {
+            const p = q.pairs[j]
             const matchedLeft = Object.entries(picks).find(([, r]) => r === j)?.[0]
             const matchedRight = matchedLeft !== undefined && q.pairs[Number(matchedLeft)].right[locale] === p.right[locale]
             return (
               <li key={j}>
-                <button type="button" className={`quiz-option ${activeLeft !== null && picks[activeLeft] === j ? 'is-correct' : ''} ${matchedRight ? 'is-correct' : ''}`} onClick={() => onRight(j)} disabled={picks[activeLeft ?? -1] === j}>
+                <button type="button" className={`quiz-option ${activeLeft !== null && picks[activeLeft] === j ? 'is-correct' : ''} ${submitted && matchedRight ? 'is-correct' : ''}`} onClick={() => onRight(j)} disabled={submitted || activeLeft === null}>
                   {p.right[locale]}
                 </button>
               </li>
@@ -201,8 +209,9 @@ function MatchQuestion({ q, onNext, locale }: { q: QuizMatch; onNext: () => void
         </ul>
       </div>
       {completed ? (
-        <div className="quiz-explain">
-          <button type="button" className="button primary" onClick={onNext}>{learnCommon.next[locale]}</button>
+        <div className="quiz-explain" aria-live="polite">
+          {submitted ? <><p>{q.pairs.map((p) => `${p.left[locale]} → ${p.right[locale]}`).join(' · ')}</p><button type="button" className="button primary" onClick={onNext}>{learnCommon.next[locale]}</button></> :
+            <button type="button" className="button primary" onClick={() => { setSubmitted(true); onAnswer(q.pairs.every((_, i) => picks[i] === i)) }}>{pick(locale, 'Yanıtı kontrol et', 'Check answer')}</button>}
         </div>
       ) : null}
     </div>

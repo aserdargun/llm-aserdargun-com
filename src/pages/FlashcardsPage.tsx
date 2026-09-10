@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { flashcards } from '@/data/flashcards'
 import { reviewCard, useProgress } from '@/features/learning/progress'
@@ -16,16 +16,15 @@ export function FlashcardsPage() {
   const [shown, setShown] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [queue, setQueue] = useState<Flashcard[]>([])
-  const today = useMemo(() => new Date(), [])
 
   const start = useCallback(() => {
-    const q = buildQueue(flashcards, state, today)
+    const q = buildQueue(flashcards, state, new Date())
     const items = [...q.due, ...q.new]
     setQueue(items)
     setShown(0)
     setFlipped(false)
     setPhase(items.length > 0 ? 'showing' : 'done')
-  }, [state, today])
+  }, [state])
 
   useEffect(() => {
     if (flashcards.length === 0) setPhase('done')
@@ -34,13 +33,13 @@ export function FlashcardsPage() {
   const grade = useCallback((quality: number) => {
     const card = queue[shown]
     if (!card) return
-    update((prev) => reviewCard(prev, card.id, quality, today))
+    update((prev) => reviewCard(prev, card.id, quality, new Date()))
+    setShown((n) => n + 1)
     if (shown + 1 >= queue.length) setPhase('done')
     else {
-      setShown((n) => n + 1)
       setFlipped(false)
     }
-  }, [queue, shown, today, update])
+  }, [queue, shown, update])
 
   if (flashcards.length === 0) {
     return (
@@ -83,7 +82,8 @@ export function FlashcardsPage() {
   const card = queue[shown]
   return (
     <div className="shell page-shell flashcards-page">
-      <div className="flashcards-page__meta">
+      <h1 className="sr-only">{learnCards.title[locale]}</h1>
+      <div className="flashcards-page__meta" aria-live="polite">
         <span className="mono">{learnCards.session[locale]}</span>
         <strong>{shown + 1} / {queue.length}</strong>
       </div>
@@ -92,16 +92,16 @@ export function FlashcardsPage() {
         role="button"
         tabIndex={0}
         onClick={() => setFlipped((v) => !v)}
-        onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') setFlipped((v) => !v) }}
+        onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setFlipped((v) => !v) } }}
         aria-label={flipped ? pick(locale, 'Cevap gösteriliyor; soruya dön', 'Answer shown; return to question') : learnCommon.showAnswer[locale]}
       >
         <div className="flashcard__inner">
-          <div className="flashcard__face flashcard__face--front">
-            <span className="mono">{card.source}</span>
+          <div className="flashcard__face flashcard__face--front" aria-hidden={flipped}>
+            <span className="mono">{card.source === 'concept' ? pick(locale, 'Kavram', 'Concept') : pick(locale, 'Çözüm', 'Solution')}</span>
             <p>{card.front[locale]}</p>
             {card.hint ? <small>{card.hint[locale]}</small> : null}
           </div>
-          <div className="flashcard__face flashcard__face--back">
+          <div className="flashcard__face flashcard__face--back" aria-hidden={!flipped}>
             <p>{card.back[locale]}</p>
           </div>
         </div>

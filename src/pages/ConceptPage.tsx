@@ -49,12 +49,23 @@ export function ConceptPage() {
       <div className="concept-visual">
         <ConceptVisual kind={concept.visual} label={concept.name[locale]} />
       </div>
-      <div className="concept-level-toggle" role="tablist">
+      <div className="concept-level-toggle" role="tablist" aria-label={learnCommon.level[locale]} onKeyDown={(event) => {
+        const levels = Object.keys(levelLabel) as Level[]
+        const current = levels.indexOf(level)
+        const next = event.key === 'ArrowRight' ? (current + 1) % levels.length : event.key === 'ArrowLeft' ? (current + levels.length - 1) % levels.length : event.key === 'Home' ? 0 : event.key === 'End' ? levels.length - 1 : -1
+        if (next < 0) return
+        event.preventDefault()
+        setLevel(levels[next])
+        event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus()
+      }}>
         {(Object.keys(levelLabel) as Level[]).map((l) => (
           <button
             key={l}
             type="button"
             role="tab"
+            id={`level-${l}`}
+            aria-controls="concept-content"
+            tabIndex={level === l ? 0 : -1}
             aria-selected={level === l}
             className={level === l ? 'active' : ''}
             onClick={() => setLevel(l)}
@@ -63,7 +74,7 @@ export function ConceptPage() {
           </button>
         ))}
       </div>
-      <section className="concept-body" role="tabpanel">
+      <section id="concept-content" aria-labelledby={`level-${level}`} className="concept-body" role="tabpanel" tabIndex={0}>
         <p>{body[locale]}</p>
       </section>
 
@@ -101,6 +112,7 @@ export function ConceptPage() {
         </section>
       ) : null}
 
+      {concept.sources?.length ? <section><h2>{pick(locale, 'Kaynaklar', 'Sources')}</h2><ul>{concept.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>)}</ul></section> : null}
       <button
         type="button"
         className={`button ${isRead ? 'secondary' : 'primary'}`}

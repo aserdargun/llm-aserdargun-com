@@ -62,3 +62,18 @@ test('mobile header controls expose 44px touch targets', async ({ page }) => {
     expect(box!.width).toBeGreaterThanOrEqual(44)
   }
 })
+
+test('mobile filter dialog traps keyboard focus and restores page scrolling', async ({ page }) => {
+  await page.goto('/en/explore')
+  await page.getByRole('button', { name: 'Filters', exact: true }).click()
+  const dialog = page.getByRole('dialog', { name: 'Filters' })
+  await dialog.press('Shift+Tab')
+  await expect(dialog.getByRole('button', { name: /show results/ })).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(dialog.getByRole('button', { name: 'Close filters' })).toBeFocused()
+  await expect(page.locator('body')).toHaveCSS('overflow', 'hidden')
+  await page.keyboard.press('Escape')
+  await expect(dialog).not.toBeVisible()
+  await expect(page.getByRole('button', { name: 'Filters', exact: true })).toBeFocused()
+  await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden')
+})

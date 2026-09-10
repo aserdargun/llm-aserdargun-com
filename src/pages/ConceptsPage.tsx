@@ -29,10 +29,10 @@ export function ConceptsPage() {
   const { state } = useProgress()
   const readSet = useMemo(() => new Set(state.readConcepts), [state.readConcepts])
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
+    const q = query.trim().toLocaleLowerCase(locale)
     if (!q) return concepts
     return concepts.filter((c) => {
-      const hay = `${c.name[locale]} ${c.short[locale]}`.toLowerCase()
+      const hay = `${c.name[locale]} ${c.short[locale]}`.toLocaleLowerCase(locale)
       return hay.includes(q)
     })
   }, [query, locale])
@@ -57,8 +57,8 @@ export function ConceptsPage() {
         />
       </div>
 
-      {concepts.length === 0 ? (
-        <p className="empty-state" style={{ marginTop: 32 }}>{learnCommon.noConcepts[locale]}</p>
+      {filtered.length === 0 ? (
+        <p className="empty-state" style={{ marginTop: 32 }}>{query ? pick(locale, 'Eşleşen kavram yok. Başka bir terim deneyin.', 'No matching concepts. Try another term.') : learnCommon.noConcepts[locale]}</p>
       ) : (
         <ul className="concept-list">
           {filtered.map((c) => (

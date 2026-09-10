@@ -4,11 +4,14 @@ import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from './App'
 
-const renderAt = (path: string) => render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
+const renderAt = async (path: string) => {
+  render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
+  await screen.findByRole('heading', { level: 1 }, { timeout: 5000 })
+}
 
-describe('atlas routes', () => {
-  it('renders the complete English home entry', () => {
-    renderAt('/en')
+describe('atlas routes', async () => {
+  it('renders the complete English home entry', async () => {
+    await renderAt('/en')
     expect(document.documentElement).toHaveAttribute('lang', 'en')
     expect(document.title).toBe('LLM Atlas — Runtime & Serving Field Guide')
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'Compare 31 LLM runtime and serving solutions across seven architectural layers using official sources.')
@@ -21,7 +24,7 @@ describe('atlas routes', () => {
 
   it('expands an architectural layer and links to its filtered explorer', async () => {
     const user = userEvent.setup()
-    renderAt('/tr')
+    await renderAt('/tr')
 
     const servingLayer = screen.getByRole('button', { name: /SRV · Model Sunucuları ve Servis Çerçeveleri/ })
     expect(servingLayer).toHaveAttribute('aria-expanded', 'false')
@@ -36,7 +39,7 @@ describe('atlas routes', () => {
 
   it('filters the explorer from URL state and adds a comparison', async () => {
     const user = userEvent.setup()
-    renderAt('/en/explore?category=INF')
+    await renderAt('/en/explore?category=INF')
     expect(screen.getByText('8 results')).toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: 'TensorRT-LLM' }).length).toBeGreaterThan(0)
     expect(screen.queryAllByRole('link', { name: 'vLLM' })).toHaveLength(0)
@@ -44,40 +47,40 @@ describe('atlas routes', () => {
     expect(screen.getByText('1 solution selected')).toBeInTheDocument()
   })
 
-  it('warns about cross-layer comparisons', () => {
-    renderAt('/en/compare?compare=tensorrt-llm,ollama')
+  it('warns about cross-layer comparisons', async () => {
+    await renderAt('/en/compare?compare=tensorrt-llm,ollama')
     expect(screen.getByRole('alert')).toHaveTextContent('different architectural layers')
     expect(screen.getByText('Execution backend')).toBeInTheDocument()
   })
 
-  it('describes the differences-only control as a filter', () => {
-    renderAt('/tr/compare?compare=tensorrt-llm,llama-cpp')
+  it('describes the differences-only control as a filter', async () => {
+    await renderAt('/tr/compare?compare=tensorrt-llm,llama-cpp')
     expect(screen.getByRole('checkbox', { name: 'Yalnızca farklılıkları göster' })).toBeInTheDocument()
   })
 
-  it('localizes Turkish compatibility values and source types', () => {
-    renderAt('/tr/solutions/llama-cpp')
+  it('localizes Turkish compatibility values and source types', async () => {
+    await renderAt('/tr/solutions/llama-cpp')
     expect(screen.getByText('Yerel · Masaüstü · Uç · Sunucu')).toBeInTheDocument()
     expect(screen.getByText(/Resmî proje deposu/)).toBeInTheDocument()
     expect(screen.queryByText(/official-repository/)).not.toBeInTheDocument()
   })
 
-  it('uses natural Turkish labels throughout the learning hub', () => {
-    renderAt('/tr/learn')
+  it('uses natural Turkish labels throughout the learning hub', async () => {
+    await renderAt('/tr/learn')
     expect(screen.getByRole('heading', { name: 'Test' })).toBeInTheDocument()
     expect(screen.getByText('Aralıklı tekrar ile her gün küçük bir set tekrar et.')).toBeInTheDocument()
     expect(screen.getByText('Hızlı ve rastgele')).toBeInTheDocument()
     expect(screen.getByText('5–8 adımlı, görsel mini dersler.')).toBeInTheDocument()
   })
 
-  it('shows archived projects with a clear historical-context notice', () => {
-    renderAt('/tr/solutions/hugging-face-tgi')
+  it('shows archived projects with a clear historical-context notice', async () => {
+    await renderAt('/tr/solutions/hugging-face-tgi')
     expect(screen.getByText('Arşivlendi')).toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('salt okunur')
   })
 
-  it('renders a source-backed solution profile', () => {
-    renderAt('/en/solutions/vllm')
+  it('renders a source-backed solution profile', async () => {
+    await renderAt('/en/solutions/vllm')
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('vLLM')
     expect(screen.getByText('What it does')).toBeInTheDocument()
     expect(screen.getByText('WHERE IN THE STACK')).toBeInTheDocument()
@@ -85,21 +88,21 @@ describe('atlas routes', () => {
     expect(screen.getByRole('link', { name: /vLLM Documentation/ })).toHaveAttribute('target', '_blank')
   })
 
-  it('explains methodology without a universal ranking', () => {
-    renderAt('/en/methodology')
+  it('explains methodology without a universal ranking', async () => {
+    await renderAt('/en/methodology')
     expect(screen.getByText('TTFT')).toBeInTheDocument()
     expect(screen.getByText('How long until you hear the first word.')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Why there is no universal speed ranking/ })).toBeInTheDocument()
   })
 
-  it('starts the five-question selection guide', () => {
-    renderAt('/en/guide')
+  it('starts the five-question selection guide', async () => {
+    await renderAt('/en/guide')
     expect(screen.getByText('Question 1 of 5')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Apple Silicon' })).toBeInTheDocument()
   })
 
-  it('explains the seven layers with analogies on the learn intro page', () => {
-    renderAt('/en/learn/intro')
+  it('explains the seven layers with analogies on the learn intro page', async () => {
+    await renderAt('/en/learn/intro')
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Understand the LLM world')
     expect(screen.getByText('Seven layers, seven different jobs')).toBeInTheDocument()
     expect(screen.getByText('Mini glossary')).toBeInTheDocument()

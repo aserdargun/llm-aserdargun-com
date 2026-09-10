@@ -8,6 +8,7 @@ export const concepts: Concept[] = [
   // ─── Core (8) ────────────────────────────────────────────────
   {
     slug: 'tokenization',
+    sources: ['https://github.com/google/sentencepiece'],
     name: { tr: 'Tokenization', en: 'Tokenization' },
     short: {
       tr: 'Modelin metni anlayabilmesi için onu küçük sayısal parçalara (token) bölme işlemi.',
@@ -22,8 +23,8 @@ export const concepts: Concept[] = [
       en: 'Most modern LLMs use subword tokenizers such as BPE or SentencePiece. Frequent sequences may become one token while rare words split into several pieces. Token count directly affects context capacity, cost, and latency. Agglutinative languages such as Turkish can use more tokens than equivalent English text with some tokenizers; the ratio must be measured with the model’s actual tokenizer.',
     },
     advanced: {
-      tr: 'Tokenleştirici seçimi, bir modelin her dilde ne kadar verimli çalıştığının sessiz belirleyicisidir. SentencePiece, eğitim verisinden dil-agnostik alt-kelime dağarcığı öğrenirken, BPE byte seviyesine inerek OOV (out-of-vocabulary) sorununu kökten çözer. Pratik bir mühendis olarak bilmeniz gereken: (1) her model kendi tokenizer’ı ile gelir, başka bir modelin dağarcığı kullanılamaz; (2) token sayısı ≈ API maliyeti; (3) "gpt-4" kelimesi genellikle 2-3 token olarak bölünür, oysa "merhaba" Türkçe’de 2 token yer alabilir. Aynı prompt’un farklı dillerde maliyetini karşılaştırırken bu fark kritik önem taşır.',
-      en: 'Tokenizer choice is the silent determinant of how efficiently a model works in any language. SentencePiece learns a language-agnostic subword vocabulary from training data, while BPE goes down to the byte level and eliminates OOV (out-of-vocabulary) issues entirely. As a practical engineer you should know: (1) every model ships with its own tokenizer, and you cannot reuse another model’s vocabulary; (2) token count ≈ API cost; (3) the word "gpt-4" usually splits into 2-3 tokens, while "merhaba" in Turkish can take 2 tokens. Comparing the cost of the same prompt across languages makes this gap critical.',
+      tr: 'Tokenleştirici modelin sözlüğü, özel tokenları ve sohbet şablonuyla birlikte kullanılmalıdır. SentencePiece, BPE ve unigram gibi algoritmaları destekleyen bir araçtır; her BPE uygulaması byte düzeyinde değildir. Token sayısı normalizasyon, sözlük ve metne bağlıdır. Dil veya kelime başına sabit bir oran varsaymak yerine gerçek modelin tokenleştiricisiyle ölçün. Maliyet ayrıca giriş, çıkış ve önbellek fiyatlandırmasına bağlıdır.',
+      en: 'Use the tokenizer with the model vocabulary, special tokens and chat template. SentencePiece is a toolkit supporting algorithms such as BPE and unigram; not every BPE implementation operates on bytes. Token counts depend on normalization, vocabulary and text. Measure with the actual model tokenizer instead of assuming a fixed ratio per language or word. Cost also depends on input, output and cache pricing.',
     },
     visual: 'token-grid',
     relatedConcepts: ['context-window', 'embedding', 'prompt', 'system-prompt'],
@@ -128,14 +129,15 @@ export const concepts: Concept[] = [
   },
   {
     slug: 'temperature',
+    sources: ['https://docs.vllm.ai/en/latest/usage/reproducibility/'],
     name: { tr: 'Temperature (Sıcaklık)', en: 'Temperature' },
     short: {
       tr: 'Modelin bir sonraki token’ı seçerken ne kadar "rastgele" davranacağını kontrol eden parametre.',
       en: 'A parameter that controls how much randomness the model uses when choosing the next token.',
     },
     beginner: {
-      tr: 'Bir arkadaşına "bana bir film öner" diye sorduğunda, bazen aynı soruya hep aynı filmi söyler, bazen farklı farklı filmler önerir. Temperature, modelin bu "farklılık" derecesini ayarlayan düğmedir. 0’a yakın değerlerde model her zaman en olası cevabı seçer (daha tutarlı, daha "robotik"); 1’in üzerine çıkarsan cevaplar daha yaratıcı ama bazen saçma olabilir.',
-      en: 'When you ask a friend "suggest me a movie", sometimes they name the same film every time, sometimes different ones each time. Temperature is the knob that controls how much of that "variation" the model shows. Near 0, the model always picks the most likely answer (more consistent, more "robotic"); above 1 the answers get more creative but can sometimes be nonsense.',
+      tr: 'Sıcaklık, bir sonraki token seçimindeki rastgeleliği etkiler. Düşük değerler daha olası tokenları öne çıkarır; yüksek değerler daha çeşitli seçimlere izin verir. Birçok motor sıfır değerini en olası tokenı seçmek için kullanır. Bu ayar doğruluğu veya her çalıştırmada aynı cevabı garanti etmez.',
+      en: 'Temperature affects randomness when choosing the next token. Lower values favor more likely tokens; higher values allow more varied choices. Many engines use zero to select the most likely token. This setting does not guarantee correctness or the same answer on every run.',
     },
     intermediate: {
       tr: 'Matematiksel olarak temperature, logitleri softmax öncesinde yeniden ölçekler: P(token) = softmax(logits / T). Düşük değerler dağılımı keskinleştirir, yüksek değerler düzleştirir. T=0 davranışı ve izin verilen aralık sağlayıcıya göre değişebilir. Bu yüzden başlangıç değerleri model, görev ve değerlendirme kümesinde denenmeli; API varsayılanları sürüm bazında kontrol edilmelidir.',
@@ -176,22 +178,23 @@ export const concepts: Concept[] = [
   },
   {
     slug: 'system-prompt',
+    sources: ['https://genai.owasp.org/llmrisk/llm01-prompt-injection/'],
     name: { tr: 'System Prompt (Sistem İstemi)', en: 'System Prompt' },
     short: {
       tr: 'Modelin "görev tanımı" ve davranış kuralları — kullanıcı mesajlarından ayrı tutulan başlangıç talimatı.',
       en: 'The model’s "task definition" and behavioral rules — an initial instruction kept separate from user messages.',
     },
     beginner: {
-      tr: 'Bir restorana girdiğinde garson sana menüden değil, "günün çorbası, ana yemek şu, içecek şunlar" şeklinde günün teklifini söyler. System prompt, modelin "garson" rolünü üstlendiği başlangıç talimatıdır. Kullanıcı her yeni mesaj yazdığında bu çerçeve değişmez — model "Türkçe konuşan, kısa cevap veren bir yazılım asistanısın" gibi bir rolü hep hatırlar.',
-      en: 'When you walk into a restaurant, the waiter does not read the menu — they tell you "today’s soup, the main course is X, drinks are Y". The system prompt is the initial instruction where the model takes on a "waiter" role. Every time the user writes a new message, that frame does not change — the model always remembers a role like "you are a Turkish-speaking, short-answer software assistant".',
+      tr: 'Sistem istemi, modele rolünü, görevini ve yanıt biçimini anlatan başlangıç talimatıdır. Modelin bu çerçeveye uyması beklenir, fakat talimatlar gizli kasa veya güvenlik duvarı değildir. Uygulama gerekli talimatları bağlama eklemeli ve hassas işlemleri kendi izin kontrolleriyle sınırlandırmalıdır.',
+      en: 'A system prompt introduces the model role, task and response format. The model is expected to follow this frame, but instructions are neither a secret vault nor a security firewall. The application must include the necessary instructions in context and enforce its own permissions for sensitive actions.',
     },
     intermediate: {
-      tr: 'API tasarımında üç mesaj tipi vardır: system (operatör tarafından, kullanıcıya görünmez), user (kullanıcı girdisi), assistant (modelin geçmiş cevapları). System prompt, modelin persona’sını, çıktı formatını, kısıtlamaları ve araç çağrı izinlerini tanımlar. OpenAI’ın modelleri system mesajına daha yüksek ağırlık verir; bu yüzden talimatı oraya koymak user mesajına koymaktan daha etkilidir. Üretimde sık karşılaşılan pattern: system prompt’a sıkı güvenlik kuralları, user mesajına iş verisi, assistant mesajlarına ise few-shot örnekleri yerleştirilir.',
-      en: 'There are three message types in API design: system (set by the operator, invisible to the user), user (user input), assistant (model’s past replies). The system prompt defines the model’s persona, output format, constraints, and tool-calling permissions. OpenAI’s models weight system messages more heavily, so placing instructions there is more effective than putting them in the user message. A common production pattern is: strict safety rules in the system prompt, task data in the user message, and few-shot examples in assistant messages.',
+      tr: 'Mesaj rolleri ve öncelikleri kullanılan API ile sohbet şablonuna bağlıdır; system, developer, user, assistant ve tool gibi roller bulunabilir. Rol ayrımı talimat ile verinin kaynağını belirtir. Sistem istemi çıktı biçimini tarif edebilir ama tek başına şema uyumu veya araç yetkisi uygulamaz. Şema doğrulama, kimlik doğrulama ve araç izinleri uygulama tarafından denetlenmelidir.',
+      en: 'Message roles and priorities depend on the API and chat template; roles can include system, developer, user, assistant and tool. Roles distinguish instruction and data provenance. A system prompt can describe a response format, but it does not itself enforce schema conformance or tool authorization. The application must enforce schema validation, authentication and tool permissions.',
     },
     advanced: {
-      tr: 'System prompt güvenliği, üretim sistemlerinde birinci sınıf bir endişedir. Saldırı yüzeyi: (1) "instruction override" — kullanıcı "system prompt’u yoksay" derse ne olur?; (2) "prompt injection" — kullanıcının yüklediği belge içine gizlenmiş talimatlar; (3) "system prompt extraction" — modelin gizli talimatlarını sızdırması. Savunma: (a) system prompt’a sıkı çıktı formatı (JSON-schema) kısıtı, (b) kullanıcı içeriğini <data>...</data> gibi açık sınırlayıcılarla izole et, (c) izleme katmanında (Langfuse, Helicone) system prompt değişikliklerini logla, (d) modeli saldırıya karşı düzenli kırmızı takım testine sok. Atlas’ta serving motoru system prompt’u işlemden geçirirken güvenilir sayar; gerçek sınır uygulama katmanındadır.',
-      en: 'System prompt security is a first-class concern in production systems. Attack surface: (1) "instruction override" — what if a user says "ignore the system prompt"?; (2) "prompt injection" — instructions hidden in documents the user uploads; (3) "system prompt extraction" — the model leaking its hidden instructions. Defenses: (a) tight output format (JSON-schema) constraints in the system prompt, (b) isolate user content with explicit delimiters like <data>...</data>, (c) log system prompt changes in the observability layer (Langfuse, Helicone), (d) regularly red-team the model against attacks. In the Atlas, the serving engine treats the system prompt as trusted when processing it; the real boundary is at the application layer.',
+      tr: 'Prompt injection, güvenilmeyen kullanıcı veya belge içeriğinin model davranışını yönlendirmesidir. Etiketler ve ayırıcılar talimat/veri ayrımını anlatmaya yardımcı olur; güvenlik sınırı oluşturmaz. JSON şeması çıktı biçimini sınırlar, niyeti veya eylem yetkisini doğrulamaz. Savunma katmanları: en az araç yetkisi, sunucu tarafında kaynak ve eylem doğrulaması, yüksek etkili işlemler için kullanıcı onayı, güvenilmeyen içeriğin ayrılması ve saldırı testleri. Sistem istemlerine sır koymayın; günlüklerde hassas verileri azaltın.',
+      en: 'Prompt injection occurs when untrusted user or document content redirects model behavior. Tags and delimiters help express instruction/data separation but do not create a security boundary. A JSON schema restricts output shape, not intent or action authority. Defenses include least-privilege tools, server-side resource and action validation, user approval for high-impact actions, untrusted-content separation and adversarial tests. Keep secrets out of system prompts and minimize sensitive logging.',
     },
     visual: 'token-grid',
     relatedConcepts: ['prompt', 'tokenization', 'temperature', 'context-window'],
@@ -202,18 +205,19 @@ export const concepts: Concept[] = [
   // ─── Serving (6) ─────────────────────────────────────────────
   {
     slug: 'kv-cache',
+    sources: ['https://huggingface.co/docs/transformers/main/cache_explanation'],
     name: { tr: 'KV Cache', en: 'KV Cache' },
     short: {
-      tr: 'Önceki tokenların Key/Value vektörlerini saklayarak her adımda dikkat hesabını yeniden yapmaktan kurtaran önbellek.',
-      en: 'A cache that stores Key/Value vectors of past tokens, avoiding recomputing attention at every step.',
+      tr: 'Önceki tokenların Key/Value vektörlerini saklayıp yeniden üretimlerini önleyen önbellek; yeni sorgunun geçmişe dikkati yine hesaplanır.',
+      en: 'A cache that reuses past Key/Value vectors; the new query still computes attention over the history.',
     },
     beginner: {
       tr: 'Bir sayfalık metni her seferinde baştan okumaktansa, satır satır ilerlerken önceki satırları "aklında tutmak" gibidir. Model token üretirken önceki tokenların Key ve Value bilgisini bellekte tutar. Böylece her adımda tüm geçmişi yeniden hesaplamak yerine yalnızca yeni tokenı önbelleğe ekler; bunun karşılığında bağlam ve eşzamanlılık arttıkça bellek kullanımı büyür.',
       en: 'It is like reading a page while keeping previous lines "in mind" instead of starting from the top every time. During generation, the model keeps Key and Value data for past tokens in memory. It adds only the new token instead of recomputing the full history at every step, trading computation for memory that grows with context and concurrency.',
     },
     intermediate: {
-      tr: 'Self-attention’da her yeni token için Q yeni hesaplanır ama K ve V geçmiş tokenlardan gelir. KV cache bu K/V matrislerini katman başına saklar: her katman için (num_heads, seq_len, head_dim) boyutunda bir tensör. Formül: token başına bellek ≈ 2 × num_layers × num_kv_heads × head_dim × dtype_bytes. Llama 3 8B için 1K bağlamda yaklaşık 60 MB, 128K bağlamda ise 7-8 GB. Bu yüzden uzun bağlamlı çok sayıda eşzamanlı istek, GPU belleğinin en büyük tüketicisidir. PagedAttention, KV cache’i işletim sistemindeki "sayfalama" gibi yöneterek bu soruna çözüm getirir.',
-      en: 'In self-attention, Q is computed fresh for each new token, but K and V come from past tokens. KV cache stores these K/V matrices per layer: a tensor of (num_heads, seq_len, head_dim) per layer. Formula: per-token memory ≈ 2 × num_layers × num_kv_heads × head_dim × dtype_bytes. For Llama 3 8B, about 60 MB at 1K context, 7-8 GB at 128K context. That is why many concurrent requests with long context are the biggest GPU memory consumer. PagedAttention addresses this by managing KV cache like paging in operating systems.',
+      tr: 'Her decode adımında yeni tokenın Q, K ve V vektörleri hesaplanır; geçmiş K/V vektörleri önbellekten alınır. Yeni Q ile geçmiş K/V üzerindeki dikkat hesabı devam eder. Standart yoğun KV saklamada bellek ≈ 2 × katman sayısı × KV başlığı sayısı × başlık boyutu × token sayısı × öğe başına bayt × eşzamanlı dizi sayısıdır. Örnek varsayım: 32 katman, 8 KV başlığı, 128 boyut ve 2 bayt ile token başına 128 KiB; 1.024 tokenda 128 MiB, 131.072 tokenda 16 GiB/dizi. Bu, model desteği iddiası olmayan bir hesap örneğidir; ağırlıklar, geçici alanlar ve yönetim ek yükü hariçtir.',
+      en: 'Each decode step computes Q, K and V for the new token and retrieves past K/V from the cache. The new Q still attends to past K/V. For standard dense KV storage, memory ≈ 2 × layers × KV heads × head dimension × tokens × bytes per element × concurrent sequences. Illustrative assumptions: 32 layers, 8 KV heads, dimension 128 and 2-byte elements yield 128 KiB per token; 128 MiB at 1,024 tokens and 16 GiB per sequence at 131,072 tokens. This arithmetic example does not claim model support and excludes weights, workspace and management overhead.',
     },
     advanced: {
       tr: 'KV cache yönetiminde üç eksen vardır: model mimarisi GQA/MQA ile K/V başlığı sayısını azaltabilir; daha düşük hassasiyetli KV biçimleri belleği azaltırken kaliteyi etkileyebilir; sayfalama ise değişken uzunluklu isteklerde parçalanma ve ön ayırma israfını sınırlar. Prefix paylaşımı ortak bağlamı yeniden kullanabilir, ayrıştırılmış sunum prefill ve decode havuzlarını ayırabilir. Kapasite; model, veri türü, blok boyutu, bağlam dağılımı ve eşzamanlılıkla ölçülmelidir.',

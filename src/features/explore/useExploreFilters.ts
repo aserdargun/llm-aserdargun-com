@@ -1,9 +1,10 @@
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { emptyExploreState, parseExploreState, serializeExploreState, type ExploreState, type FilterKey } from './filters'
 
 export function useExploreFilters() {
   const [params, setParams] = useSearchParams()
-  const state = parseExploreState(params)
+  const state = useMemo(() => parseExploreState(params), [params])
   const commit = (next: ExploreState) => {
     const compare = params.get('compare')
     const serialized = serializeExploreState(next)

@@ -64,7 +64,7 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'Q (Query) "ne arıyorum?", K (Key) "neler sunuyorum?", V (Value) "bulunursa ne katkı sağlarım?" sorularını temsil eder; dikkat skoru softmax(Q·Kᵀ / √d_k) · V formülüyle hesaplanır.',
+      tr: 'Q (Query) "ne arıyorum?", K (Key) "neler sunuyorum?", V (Value) "bulunursa ne katkı sağlarım?" sorularını temsil eder; dikkat çıktısı softmax(Q·Kᵀ / √d_k) · V formülüyle hesaplanır.',
       en: 'Q (Query) means "what am I looking for?", K (Key) "what do I offer?", V (Value) "what do I contribute if I\'m found?"; the attention score is softmax(Q·Kᵀ / √d_k) · V.',
     },
     tags: ['attention', 'concept', 'transformer'],
@@ -124,8 +124,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'T=0.0 greedy decoding\'dir; model her zaman en yüksek olasılıklı token\'ı seçer. Tutarlı ve tekrarlanabilir sonuç verir, kod ve veri çıkarma gibi deterministik görevler için idealdir.',
-      en: 'T=0.0 is greedy decoding: the model always picks the highest-probability token. It gives consistent, reproducible output, ideal for deterministic tasks like code and data extraction.',
+      tr: 'T=0.0 greedy decoding\'dir; model her zaman en yüksek olasılıklı token\'ı seçer. Tekrarlanabilirliği artırabilir, fakat donanım, çekirdek ve sunucu davranışı nedeniyle aynı çıktıyı garanti etmez.',
+      en: 'T=0.0 is greedy decoding: the model always picks the highest-probability token. It can improve repeatability, but hardware, kernels and serving behavior mean identical output is not guaranteed.',
     },
     tags: ['temperature', 'concept', 'sampling'],
   },

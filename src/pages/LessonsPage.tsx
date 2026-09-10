@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Check, Copy, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { NotFoundPage } from './NotFoundPage'
 import { ConceptVisual } from '@/components/ConceptVisual'
 import { lessons } from '@/data/lessons'
 import { useProgress } from '@/features/learning/progress'
@@ -21,6 +22,8 @@ export function LessonsPage() {
       </div>
     )
   }
+
+  if (slug && !lesson) return <NotFoundPage />
 
   if (!lesson) {
     return (
@@ -50,7 +53,7 @@ export function LessonsPage() {
     )
   }
 
-  return <LessonRunner slug={lesson.slug} />
+  return <LessonRunner key={lesson.slug} slug={lesson.slug} />
 }
 
 function LessonRunner({ slug }: { slug: string }) {

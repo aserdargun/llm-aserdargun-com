@@ -1,8 +1,10 @@
 import type { CardProgress, ProgressState } from '@/types/learning'
-import { grade, initialCardProgress, toIsoDay } from './sm2'
+import { addDays, grade, initialCardProgress, toIsoDay } from './sm2'
+import { useCallback, useSyncExternalStore } from 'react'
+import { z } from 'zod'
 
 const STORAGE_KEY = 'atlas.learn.v1.progress'
-const DAY_MS = 24 * 60 * 60 * 1000
+
 
 const emptyState = (): ProgressState => ({
   schema: 1,
@@ -14,34 +16,83 @@ const emptyState = (): ProgressState => ({
   completedLessons: [],
 })
 
+const count = z.number().int().nonnegative().finite()
+const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
+  const date = new Date(`${value}T12:00:00Z`)
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+})
+const strings = z.array(z.string()).transform((items) => [...new Set(items)]).catch([])
+const cardSchema = z.object({
+  ef: z.number().finite().min(1.3), interval: count, due: day, reps: count, lapses: count,
+  firstReviewed: day.optional(),
+})
+const progressSchema = z.object({
+  schema: z.literal(1),
+  cards: z.record(z.unknown()).catch({}).transform((cards) => Object.fromEntries(
+    Object.entries(cards).flatMap(([id, value]) => {
+      const parsed = cardSchema.safeParse(value)
+      return parsed.success ? [[id, parsed.data]] : []
+    }),
+  )),
+  quizStats: z.object({
+    totalAnswered: count, correctRate: z.number().finite().min(0).max(1),
+    byTag: z.record(z.object({ c: count, t: count }).refine(({ c, t }) => c <= t)),
+  }).catch({ totalAnswered: 0, correctRate: 0, byTag: {} }),
+  streak: z.object({ current: count, longest: count, lastDay: z.union([day, z.literal('')]) })
+    .refine(({ current, longest }) => current <= longest)
+    .catch({ current: 0, longest: 0, lastDay: '' }),
+  favorites: z.object({ concepts: strings, solutions: strings }).catch({ concepts: [], solutions: [] }),
+  readConcepts: strings,
+  completedLessons: strings,
+})
+
+function parseProgress(raw: string | null): ProgressState {
+  try {
+    const parsed = progressSchema.safeParse(JSON.parse(raw ?? 'null'))
+    return parsed.success ? parsed.data : emptyState()
+  } catch { return emptyState() }
+}
+
 export function loadProgress(): ProgressState {
-  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return emptyState()
+  try { return parseProgress(window.localStorage.getItem(STORAGE_KEY)) }
+  catch { return emptyState() }
+}
+
+const CHANGE_EVENT = 'atlas-progress-change'
+let cachedRaw: string | null | undefined
+let cachedState = emptyState()
+let memoryOnly = false
+
+function getSnapshot(): ProgressState {
+  if (memoryOnly) return cachedState
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return emptyState()
-    const parsed = JSON.parse(raw) as Partial<ProgressState>
-    if (parsed.schema !== 1) return emptyState()
-    return { ...emptyState(), ...parsed } as ProgressState
-  } catch {
-    return emptyState()
-  }
+    if (raw !== cachedRaw) { cachedRaw = raw; cachedState = parseProgress(raw) }
+  } catch { memoryOnly = true }
+  return cachedState
 }
 
 export function saveProgress(state: ProgressState): void {
-  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch {
-    // localStorage may be full or disabled; silently skip rather than crash UX.
-  }
+  cachedState = state
+  cachedRaw = JSON.stringify(state)
+  try { window.localStorage.setItem(STORAGE_KEY, cachedRaw) }
+  catch { memoryOnly = true }
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(CHANGE_EVENT))
 }
 
 export function clearProgress(): void {
-  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return
-  try {
-    window.localStorage.removeItem(STORAGE_KEY)
-  } catch {
-    // ignore
+  saveProgress(emptyState())
+}
+
+function subscribe(onChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY || event.key === null) onChange()
+  }
+  window.addEventListener(CHANGE_EVENT, onChange)
+  window.addEventListener('storage', onStorage)
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, onChange)
+    window.removeEventListener('storage', onStorage)
   }
 }
 
@@ -59,7 +110,7 @@ export function reviewCard(state: ProgressState, cardId: string, quality: number
   const { next } = grade(prev, quality, now)
   return {
     ...state,
-    cards: { ...state.cards, [cardId]: next },
+    cards: { ...state.cards, [cardId]: { ...next, firstReviewed: prev.firstReviewed ?? toIsoDay(now) } },
   }
 }
 
@@ -68,7 +119,7 @@ export function reviewCard(state: ProgressState, cardId: string, quality: number
 export function bumpStreak(state: ProgressState, now: Date): ProgressState {
   const today = toIsoDay(now)
   if (state.streak.lastDay === today) return state
-  const yesterday = toIsoDay(new Date(now.getTime() - DAY_MS))
+  const yesterday = toIsoDay(addDays(now, -1))
   const current = state.streak.lastDay === yesterday ? state.streak.current + 1 : 1
   return {
     ...state,
@@ -82,11 +133,11 @@ export function bumpStreak(state: ProgressState, now: Date): ProgressState {
 
 // ─── Quiz helpers ───────────────────────────────────────────
 
-export function recordQuiz(state: ProgressState, tag: string, correct: boolean): ProgressState {
-  const prevTag = state.quizStats.byTag[tag] ?? { c: 0, t: 0 }
-  const byTag = {
-    ...state.quizStats.byTag,
-    [tag]: { c: prevTag.c + (correct ? 1 : 0), t: prevTag.t + 1 },
+export function recordQuiz(state: ProgressState, tags: string | string[], correct: boolean): ProgressState {
+  const byTag = { ...state.quizStats.byTag }
+  for (const tag of new Set(typeof tags === 'string' ? [tags] : tags)) {
+    const prevTag = byTag[tag] ?? { c: 0, t: 0 }
+    byTag[tag] = { c: prevTag.c + (correct ? 1 : 0), t: prevTag.t + 1 }
   }
   const totalAnswered = state.quizStats.totalAnswered + 1
   const totalCorrect = state.quizStats.correctRate * state.quizStats.totalAnswered + (correct ? 1 : 0)
@@ -120,15 +171,12 @@ export function markLessonDone(state: ProgressState, slug: string): ProgressStat
 
 // ─── React hook ─────────────────────────────────────────────
 
-import { useCallback, useEffect, useState } from 'react'
-
 export function useProgress() {
-  const [state, setState] = useState<ProgressState>(() => loadProgress())
-  useEffect(() => {
-    saveProgress(state)
-  }, [state])
+  const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
   const update = useCallback((mutator: (prev: ProgressState) => ProgressState) => {
-    setState((prev) => mutator(prev))
+    const previous = getSnapshot()
+    const next = mutator(previous)
+    if (next !== previous) saveProgress(bumpStreak(next, new Date()))
   }, [])
-  return { state, setState, update, clear: () => setState(emptyState()) }
+  return { state, update, clear: clearProgress, persistent: !memoryOnly }
 }

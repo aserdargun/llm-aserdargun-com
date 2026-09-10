@@ -30,7 +30,7 @@ Toplam 31 kaydın resmî kaynak uçları 4 Eylül 2026 tarihinde yeniden denetle
 - Beş soruluk, gerekçeli kısa liste üreten seçim rehberi.
 - Her çözüm için rol, ideal kullanım, uyumluluk, yaşam döngüsü ve resmî kaynak profili.
 - Masaüstü tablo ve mobil kart/çekmece deneyimi.
-- **Öğrenme katmanı**: 30 kavram (3 seviye derinlik + görsel), 92 bilgi kartı (SM-2 aralıklı tekrar), 90 test sorusu ve 6 mini ders; tüm ilerleme cihazda saklanır, hesap gerekmez.
+- **Öğrenme katmanı**: 30 kavram (3 seviye derinlik + görsel), 92 bilgi kartı (SM-2 tabanlı günlük tekrar), 90 test sorusu ve 6 mini ders; tüm ilerleme cihazda saklanır, hesap gerekmez.
 
 ### Yerel geliştirme
 
@@ -76,7 +76,7 @@ Official source endpoints for all 31 records were checked again on September 4, 
 - Five-question selection guide that returns a justified short list.
 - Per-solution profile: role, ideal use, compatibility, lifecycle, official sources.
 - Desktop table and mobile card/drawer experience.
-- **Learning layer**: 30 concepts (3 readability levels + visual), 92 flashcards (SM-2 spaced repetition), 90 quiz questions and 6 mini-lessons. All progress is stored on-device, no account required.
+- **Learning layer**: 30 concepts (3 readability levels + visual), 92 flashcards (SM-2-derived daily repetition), 90 quiz questions and 6 mini-lessons. All progress is stored on-device, no account required.
 
 ### Stack
 

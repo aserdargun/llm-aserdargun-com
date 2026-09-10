@@ -8,6 +8,7 @@ export type ConceptCategory = 'core' | 'serving' | 'optimization' | 'hardware' |
 
 /** A single concept with three readability levels and an SVG visual key. */
 export interface Concept {
+  sources?: string[]
   slug: string
   name: LocalizedText
   /** 1-sentence summary shown in lists and tooltips. */
@@ -111,6 +112,7 @@ export interface Lesson {
 // ─────────────────────────────────────────────────────────────
 
 export interface CardProgress {
+  firstReviewed?: string
   ef: number
   interval: number
   due: string

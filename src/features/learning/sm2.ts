@@ -1,7 +1,9 @@
 import type { CardProgress } from '@/types/learning'
 
 /**
- * SM-2 spaced repetition algorithm (Piotr Wozniak, 1990).
+ * SM-2-derived daily scheduler (Piotr Wozniak, 1990).
+ * Adaptation: rounded intervals, updated ease factor, and next-day failure review;
+ * the original algorithm also repeats low-quality answers within the same session.
  *
  * Quality scale 0-5:
  *  0 — total blackout
@@ -50,7 +52,9 @@ export function toIsoDay(date: Date): string {
 }
 
 export function addDays(date: Date, days: number): Date {
-  return new Date(date.getTime() + days * MS_PER_DAY)
+  const next = new Date(date)
+  next.setDate(next.getDate() + days)
+  return next
 }
 
 export function daysBetween(fromIsoDay: string, toIsoDay: string): number {

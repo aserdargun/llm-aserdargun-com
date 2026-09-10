@@ -1,20 +1,22 @@
+import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import { ThemeProvider } from '@/theme/ThemeProvider'
-import { ComparePage } from '@/pages/ComparePage'
-import { ConceptPage } from '@/pages/ConceptPage'
-import { ConceptsPage } from '@/pages/ConceptsPage'
-import { ExplorePage } from '@/pages/ExplorePage'
-import { FlashcardsPage } from '@/pages/FlashcardsPage'
-import { GuidePage } from '@/pages/GuidePage'
 import { HomePage } from '@/pages/HomePage'
-import { LearnHomePage } from '@/pages/LearnHomePage'
-import { LearnPage } from '@/pages/LearnPage'
-import { LessonsPage } from '@/pages/LessonsPage'
-import { MethodologyPage } from '@/pages/MethodologyPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
-import { QuizPage } from '@/pages/QuizPage'
-import { SolutionPage } from '@/pages/SolutionPage'
+
+const ComparePage = lazy(() => import('@/pages/ComparePage').then((module) => ({ default: module.ComparePage })))
+const ConceptPage = lazy(() => import('@/pages/ConceptPage').then((module) => ({ default: module.ConceptPage })))
+const ConceptsPage = lazy(() => import('@/pages/ConceptsPage').then((module) => ({ default: module.ConceptsPage })))
+const ExplorePage = lazy(() => import('@/pages/ExplorePage').then((module) => ({ default: module.ExplorePage })))
+const FlashcardsPage = lazy(() => import('@/pages/FlashcardsPage').then((module) => ({ default: module.FlashcardsPage })))
+const GuidePage = lazy(() => import('@/pages/GuidePage').then((module) => ({ default: module.GuidePage })))
+const LearnHomePage = lazy(() => import('@/pages/LearnHomePage').then((module) => ({ default: module.LearnHomePage })))
+const LearnPage = lazy(() => import('@/pages/LearnPage').then((module) => ({ default: module.LearnPage })))
+const LessonsPage = lazy(() => import('@/pages/LessonsPage').then((module) => ({ default: module.LessonsPage })))
+const MethodologyPage = lazy(() => import('@/pages/MethodologyPage').then((module) => ({ default: module.MethodologyPage })))
+const QuizPage = lazy(() => import('@/pages/QuizPage').then((module) => ({ default: module.QuizPage })))
+const SolutionPage = lazy(() => import('@/pages/SolutionPage').then((module) => ({ default: module.SolutionPage })))
 
 export function App() {
   return <ThemeProvider>

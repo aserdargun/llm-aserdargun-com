@@ -33,7 +33,7 @@ export const flashcards: Flashcard[] = [
       en: 'Why can Turkish text be disadvantaged in tokenization?',
     },
     back: {
-      tr: 'Sondan eklemeli bir dil olduğu için aynı içerik genellikle İngilizce’den 2-3 kat daha fazla token üretir; bu da API maliyetini artırır ve context window’u hızla doldurur.',
+      tr: 'Türkçe gibi sondan eklemeli diller bazı tokenleştiricilerde eşdeğer İngilizce metinden daha çok token kullanabilir. Oran modele ve metne bağlıdır; gerçek tokenleştiriciyle ölçün.',
       en: 'Agglutinative languages such as Turkish can use more tokens than equivalent English text with some tokenizers, increasing cost and context use. Measure with the model’s actual tokenizer.',
     },
     tags: ['tokenization', 'multilingual', 'cost'],
@@ -83,7 +83,7 @@ export const flashcards: Flashcard[] = [
       en: 'What do Q, K, V mean in the self-attention mechanism?',
     },
     back: {
-      tr: 'Q (Query) "ne arıyorum?", K (Key) "neler sunuyorum?", V (Value) "bulunursa ne katkı sağlarım?" sorularını temsil eder. Dikkat skoru softmax(Q·Kᵀ / √d_k) · V formülüyle hesaplanır.',
+      tr: 'Q (Query) "ne arıyorum?", K (Key) "neler sunuyorum?", V (Value) "bulunursa ne katkı sağlarım?" sorularını temsil eder. Dikkat çıktısı softmax(Q·Kᵀ / √d_k) · V formülüyle hesaplanır.',
       en: 'Q (Query) means "what am I looking for?", K (Key) "what do I offer?", V (Value) "what do I contribute if I’m found?". The attention score is computed with softmax(Q·Kᵀ / √d_k) · V.',
     },
     tags: ['attention', 'transformer', 'math'],
@@ -177,8 +177,8 @@ export const flashcards: Flashcard[] = [
       en: 'What does temperature=0 mean?',
     },
     back: {
-      tr: 'Greedy decoding: model her zaman en yüksek olasılıklı token’ı seçer. Tutarlı ve tekrarlanabilir sonuç verir, kod ve veri çıkarma gibi deterministik görevler için idealdir.',
-      en: 'Greedy decoding: the model always picks the highest-probability token. It gives consistent, reproducible output and is ideal for deterministic tasks like code and data extraction.',
+      tr: 'Greedy decoding: model her zaman en yüksek olasılıklı token’ı seçer. Tekrarlanabilirliği artırabilir, fakat donanım, çekirdek ve sunucu davranışı nedeniyle aynı çıktıyı garanti etmez.',
+      en: 'Greedy decoding: the model always picks the highest-probability token. It can improve repeatability, but hardware, kernels and serving behavior mean identical output is not guaranteed.',
     },
     tags: ['temperature', 'sampling', 'determinism'],
   },
@@ -251,8 +251,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the first line of defense against prompt injection attacks?',
     },
     back: {
-      tr: 'Kullanıcı içeriğini <data>...</data> gibi açık sınırlayıcılarla izole etmek, system prompt’a sıkı JSON-schema kısıtı koymak ve kullanıcı talimatlarına asla güvenmemek. Saldırıyı tamamen engellemek zor olduğundan uygulama katmanında doğrulama da şarttır.',
-      en: 'Isolate user content with explicit delimiters like <data>...</data>, put strict JSON-schema constraints in the system prompt, and never trust user instructions. Because full prevention is hard, application-layer validation is also required.',
+      tr: 'Güvenilmeyen içeriği ayırın, araçlara en az yetki verin ve kaynak/eylem izinlerini uygulamada doğrulayın. Ayırıcılar ve JSON şeması tek başına saldırıyı önlemez; yüksek etkili işlemler onay ve saldırı testleri gerektirir.',
+      en: 'Separate untrusted content, grant tools least privilege, and enforce resource/action permissions in the application. Delimiters and JSON schemas alone do not prevent injection; high-impact actions require approval and adversarial testing.',
     },
     tags: ['system-prompt', 'security', 'injection'],
   },

@@ -1,5 +1,5 @@
 import type { Flashcard, ProgressState } from '@/types/learning'
-import { countDue, isDue } from './sm2'
+import { daysBetween, isDue, toIsoDay } from './sm2'
 
 /** Group cards into "due today", "new", and "upcoming". */
 export interface CardQueue {
@@ -33,17 +33,13 @@ export function buildQueue(
   // Sort due by overdue length (most overdue first).
   due.sort((a, b) => (state.cards[a.id].due < state.cards[b.id].due ? -1 : 1))
   // Cap new cards per day.
-  const newCards = fresh.slice(0, newPerDay)
-  // For "upcoming" we just need the count for badges; we don't materialize all.
-  void upcoming
+  const introducedToday = Object.values(state.cards).filter((card) => card.firstReviewed === toIsoDay(now)).length
+  const newCards = fresh.slice(0, Math.max(0, newPerDay - introducedToday))
   return {
     due,
     new: newCards,
     upcoming,
-    totalDue: countDue(
-      Object.values(state.cards),
-      now,
-    ),
+    totalDue: due.length,
     totalNew: fresh.length,
   }
 }
@@ -71,7 +67,7 @@ export interface Achievements {
   hasAnyActivity: boolean
 }
 
-export function summarize(state: ProgressState, totalLessons: number): Achievements {
+export function summarize(state: ProgressState, totalLessons: number, now = new Date()): Achievements {
   const cardsReviewed = Object.keys(state.cards).length
   const conceptsRead = state.readConcepts.length
   const lessonsCompleted = state.completedLessons.length
@@ -83,7 +79,7 @@ export function summarize(state: ProgressState, totalLessons: number): Achieveme
     conceptsRead,
     lessonsCompleted,
     quizzesAnswered,
-    streakDays: state.streak.current,
+    streakDays: state.streak.lastDay && daysBetween(state.streak.lastDay, toIsoDay(now)) >= 0 && daysBetween(state.streak.lastDay, toIsoDay(now)) <= 1 ? state.streak.current : 0,
     longestStreak: state.streak.longest,
     hasAnyActivity,
   }

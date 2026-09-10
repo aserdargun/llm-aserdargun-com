@@ -280,7 +280,7 @@ body, button, input, select { font: inherit; } button, a { color: inherit; -webk
   .mobile-solution-list dl { display: grid; gap: 8px; margin: 16px 0 12px; } .mobile-solution-list dl div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; }
   .mobile-solution-list dt { color: var(--amber); font-size: 8px; text-transform: uppercase; } .mobile-solution-list dd { min-width: 0; margin: 0; color: var(--muted); font-size: 9px; overflow-wrap: anywhere; }
   .drawer-backdrop { display: block; } .solution-cards { grid-template-columns: 1fr; } .compare-tokens { display: none; } .compare-bar-inner { min-height: 82px; } .compare-summary { flex: 1; }
-  .compare-bar .text-button { display: none; } .compare-controls { align-items: stretch; flex-direction: column; } .compare-controls label { margin: 0; } .compare-table-wrap { margin-inline: -16px; }
+  .compare-bar .text-button { display: none; } .compare-controls { align-items: stretch; flex-direction: column; } .compare-controls label { margin: 0; } .compare-table-wrap { margin-inline: -14px; }
   .detail-header { grid-template-columns: 1fr; } .detail-status { align-items: flex-start; } .detail-intro, .detail-columns, .compatibility dl, .related > div { grid-template-columns: 1fr; }
   .detail-intro section, .detail-columns section { border-right: 0; } .detail-columns section { border-bottom: 1px solid var(--border-strong); } .compatibility dl div, .related a { border-right: 1px solid var(--border-strong); }
   .answer-grid { grid-template-columns: 1fr; } .question-card { padding: 28px 20px; } .results-title { grid-template-columns: 1fr; } .results-title button { grid-column: 1; grid-row: auto; width: fit-content; }

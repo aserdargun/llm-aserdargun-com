@@ -1,3 +1,5 @@
+import { categories } from '@/data/categories'
+import { displayAtlasValues } from '@/i18n/atlas-labels'
 import type { Locale, Solution } from '@/types/atlas'
 
 export const filterKeys = ['category', 'hardware', 'backend', 'format', 'protocol', 'scope', 'status'] as const
@@ -37,7 +39,7 @@ const includesOne = (actual: string[], wanted: string[]) => wanted.length === 0 
 export function filterSolutions(items: Solution[], state: ExploreState, locale: Locale): Solution[] {
   const query = state.q.toLocaleLowerCase(locale === 'tr' ? 'tr-TR' : 'en-US')
   return items.filter((item) => {
-    const searchable = [item.name, item.primaryCategory, item.summary[locale], item.description[locale], ...item.capabilityTags].join(' ').toLocaleLowerCase(locale === 'tr' ? 'tr-TR' : 'en-US')
+    const searchable = [item.name, item.primaryCategory, item.summary[locale], item.description[locale], ...item.capabilityTags, ...item.hardware, ...item.executionBackends, ...item.modelFormats, ...item.deploymentScopes, displayAtlasValues(locale, item.hardware), categories.find((category) => category.id === item.primaryCategory)?.name[locale] ?? ''].join(' ').toLocaleLowerCase(locale === 'tr' ? 'tr-TR' : 'en-US')
     return (!query || searchable.includes(query))
       && (!state.category.length || state.category.includes(item.primaryCategory))
       && includesOne(item.hardware, state.hardware)
