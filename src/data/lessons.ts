@@ -162,12 +162,12 @@ export const lessons: Lesson[] = [
           en: 'Start the vLLM server',
         },
         body: {
-          tr: '`vllm serve` komutu, OpenAI uyumlu bir HTTP sunucusu açar. KV cache ve batching ayarları otomatik yapılır; GPU sayısına göre --tensor-parallel-size değiştirilir. Sonraki adımda bu uç noktayı test edeceğiz.',
-          en: '`vllm serve` opens an OpenAI-compatible HTTP server. KV cache and batching are configured automatically; set --tensor-parallel-size to your GPU count. In the next step we will hit this endpoint.',
+          tr: '`vllm serve` komutu, OpenAI uyumlu bir HTTP sunucusu açar. KV cache ve batching ayarları otomatik yapılır; GPU sayısına göre --tensor-parallel-size değiştirilir. v0.29.0 ile `python -m vllm.entrypoints.openai.api_server` çağrısı kullanım dışı bırakıldı (henüz kaldırılmadı) — yeni CLI olarak `vllm serve` kullanılır. v0.29.0 ayrıca kuyruk kabul sınırlarını belirleyen `--max-num-queued-reqs` ve `--max-num-queued-tokens` bayraklarını ekledi; bu bayraklar yüksek eşzamanlılıkta admission control için tasarlanmıştır. Model Runner V2 artık tüm modeller için varsayılan; MRV1 yalnızca MRV2’nin henüz desteklemediği birkaç ROCm modeli ve özellik yolu için geri düşüş olarak kalır. Sonraki adımda bu uç noktayı test edeceğiz.',
+          en: '`vllm serve` opens an OpenAI-compatible HTTP server. KV cache and batching are configured automatically; set --tensor-parallel-size to your GPU count. As of v0.29.0, the legacy `python -m vllm.entrypoints.openai.api_server` invocation is deprecated in favor of `vllm serve` (not yet removed). v0.29.0 also introduced `--max-num-queued-reqs` and `--max-num-queued-tokens` for admission control under high concurrency. Model Runner V2 is now the default for all models; MRV1 only remains as a fallback for the ROCm models and feature paths MRV2 does not yet support. In the next step we will hit this endpoint.',
         },
         codeBlock: {
           lang: 'bash',
-          code: '#!/bin/bash\n# Tek GPU ile 8B modeli serve et\nvllm serve <MODEL_NAME> \\\n  --host 0.0.0.0 --port 8000 \\\n  --max-model-len 8192 \\\n  --gpu-memory-utilization 0.90',
+          code: '#!/bin/bash\n# Tek GPU ile 8B modeli serve et\nvllm serve <MODEL_NAME> \\\n  --host 0.0.0.0 --port 8000 \\\n  --max-model-len 8192 \\\n  --max-num-queued-reqs 256 \\\n  --max-num-queued-tokens 8192 \\\n  --gpu-memory-utilization 0.90',
         },
       },
       {

@@ -1,20 +1,21 @@
 /** Collection revisions describe the exported data, not tool ranking inputs. */
 export const datasetRelease = {
   schemaVersion: 1,
-  release: '2026-09-10-system-audit',
+  release: '2026-09-18-vllm-v0.29.0',
   collections: {
     categories: { schemaVersion: 1, revision: '2026-09-04' },
-    solutions: { schemaVersion: 1, revision: '2026-09-04' },
+    solutions: { schemaVersion: 1, revision: '2026-09-18' },
     concepts: { schemaVersion: 2, revision: '2026-09-10' },
     flashcards: { schemaVersion: 2, revision: '2026-09-10' },
     quizzes: { schemaVersion: 2, revision: '2026-09-10' },
-    lessons: { schemaVersion: 1, revision: '2026-09-04' },
+    lessons: { schemaVersion: 1, revision: '2026-09-18' },
   },
   evidence: [
     { topic: 'tokenization', collections: ['concepts', 'flashcards'], url: 'https://github.com/google/sentencepiece', checkedAt: '2026-09-10' },
     { topic: 'kv-cache-and-attention', collections: ['concepts', 'flashcards', 'quizzes'], url: 'https://huggingface.co/docs/transformers/main/cache_explanation', checkedAt: '2026-09-10' },
     { topic: 'temperature-and-reproducibility', collections: ['concepts', 'flashcards', 'quizzes'], url: 'https://docs.vllm.ai/en/latest/usage/reproducibility/', checkedAt: '2026-09-10' },
     { topic: 'prompt-injection-boundaries', collections: ['concepts', 'flashcards'], url: 'https://genai.owasp.org/llmrisk/llm01-prompt-injection/', checkedAt: '2026-09-10' },
+    { topic: 'vllm-v0.29.0-release', collections: ['solutions', 'lessons'], url: 'https://github.com/vllm-project/vllm/releases/tag/v0.29.0', checkedAt: '2026-09-18' },
   ],
-  note: 'Targeted learning-content corrections. This release does not claim a new full audit of all solution sources; individual solution verification dates remain authoritative.',
+  note: 'Targeted vLLM v0.29.0 (Sep 9, 2026) review: MRV2 default for all models, --max-num-queued-reqs/--max-num-queued-tokens admission flags, `python -m vllm.entrypoints.openai.api_server` deprecated in favor of `vllm serve` (not removed), and first-party artifact specificity for CUDA/ROCm/CPU/XPU recorded. Only the vLLM solution record and the production-api-vllm lesson were touched; other solution records keep their previous verification dates.',
 } as const
