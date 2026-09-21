@@ -38,6 +38,15 @@
     },
     "evidence": [
       {
+        "topic": "vllm-v0.29.0-release",
+        "collections": [
+          "solutions",
+          "lessons"
+        ],
+        "url": "https://github.com/vllm-project/vllm/releases/tag/v0.29.0",
+        "checkedAt": "2026-09-18"
+      },
+      {
         "topic": "tokenization",
         "collections": [
           "concepts",
@@ -326,7 +335,7 @@
       },
       {
         "solution": "vllm",
-        "url": "https://docs.vllm.ai/en/latest/"
+        "url": "https://github.com/vllm-project/vllm/releases/tag/v0.29.0"
       },
       {
         "solution": "sglang",
@@ -1412,12 +1421,12 @@
         "distributed-serving"
       ],
       "summary": {
-        "tr": "Sürekli batching ve verimli KV önbelleğiyle yüksek eşzamanlı LLM sunumu için açık kaynaklı sunucu.",
-        "en": "An open-source server for high-concurrency LLM serving with continuous batching and efficient KV-cache management."
+        "tr": "Sürekli batching ve verimli KV önbelleğiyle yüksek eşzamanlı LLM sunumu için açık kaynaklı sunucu; v0.29.0’da Model Runner V2 tüm modeller için varsayılandır.",
+        "en": "An open-source server for high-concurrency LLM serving with continuous batching and efficient KV-cache management; in v0.29.0, Model Runner V2 is the default for all models."
       },
       "description": {
-        "tr": "OpenAI uyumlu API, geniş model desteği ve tek GPU’dan dağıtık çalışmaya uzanan üretim servis yolları sağlar.",
-        "en": "Provides an OpenAI-compatible API, broad model support, and production paths from one GPU to distributed execution."
+        "tr": "OpenAI uyumlu API, geniş model desteği ve tek GPU’dan dağıtık çalışmaya uzanan üretim servis yolları sağlar. v0.29.0 ile Model Runner V2 tüm modeller için varsayılan oldu; MRV1 yalnızca MRV2’nin henüz desteklemediği birkaç ROCm modeli ve özellik yolu için MRV2’den geri düşer. Yeni kuyruk kabul sınırları `--max-num-queued-reqs` ve `--max-num-queued-tokens` ile admission control ayarlanır. Eski `python -m vllm.entrypoints.openai.api_server` çağrısı, `vllm serve` lehine kullanım dışı bırakıldı (henüz kaldırılmadı).",
+        "en": "Provides an OpenAI-compatible API, broad model support, and production paths from one GPU to distributed execution. In v0.29.0, Model Runner V2 became the default for all models; MRV1 is only retained for a few ROCm models and features MRV2 does not yet support, and vLLM falls back to MRV1 when those paths are configured. The new `--max-num-queued-reqs` and `--max-num-queued-tokens` CLI flags set admission-control limits. The legacy `python -m vllm.entrypoints.openai.api_server` invocation is deprecated in favor of `vllm serve` (not yet removed)."
       },
       "notFor": {
         "tr": "Grafik masaüstü istemcisi veya sağlayıcılar arası ağ geçidi değildir.",
@@ -1426,19 +1435,25 @@
       "strengths": {
         "tr": [
           "Yüksek eşzamanlı sunum için güçlü varsayılan",
-          "Geniş model ve donanım ekosistemi"
+          "Geniş model ve donanım ekosistemi",
+          "v0.29.0’da MRV2 varsayılanı ve yeni admission control bayrakları"
         ],
         "en": [
           "Strong default for concurrent serving",
-          "Broad model and hardware ecosystem"
+          "Broad model and hardware ecosystem",
+          "MRV2 default and new admission-control flags as of v0.29.0"
         ]
       },
       "limitations": {
         "tr": [
-          "En iyi ayarlar iş yükü ve donanıma göre ölçülmelidir"
+          "En iyi ayarlar iş yükü ve donanıma göre ölçülmelidir",
+          "MRV1 yalnızca MRV2’nin henüz desteklemediği ROCm modelleri ve özellik yolları için geçerlidir",
+          "Birinci taraf artifact’lar CUDA, ROCm, CPU ve XPU için yayımlanır; evrensel “her donanım desteklenir” iddiası değildir"
         ],
         "en": [
-          "Best settings must be measured per workload and hardware"
+          "Best settings must be measured per workload and hardware",
+          "MRV1 only applies to ROCm models and feature paths MRV2 does not yet support",
+          "First-party artifacts ship for CUDA, ROCm, CPU, and XPU; not a universal \"all-hardware supported\" claim"
         ]
       },
       "idealFor": {
@@ -1457,7 +1472,8 @@
       "hardware": [
         "NVIDIA GPU",
         "AMD GPU",
-        "CPU"
+        "CPU",
+        "Intel GPU"
       ],
       "modelFormats": [
         "Hugging Face",
@@ -1482,19 +1498,19 @@
         "lmdeploy"
       ],
       "id": "vllm",
-      "lastVerified": "2026-08-12",
+      "lastVerified": "2026-09-18",
       "sources": [
         {
-          "title": "vLLM Documentation",
+          "title": "vLLM v0.29.0 Release Notes",
           "publisher": "vLLM Project",
-          "url": "https://docs.vllm.ai/en/latest/",
-          "sourceType": "official-docs",
+          "url": "https://github.com/vllm-project/vllm/releases/tag/v0.29.0",
+          "sourceType": "official-repository",
           "supportsClaims": [
             "overview",
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-08-12"
+          "verifiedAt": "2026-09-18"
         }
       ]
     },
@@ -9529,12 +9545,12 @@
             "en": "Start the vLLM server"
           },
           "body": {
-            "tr": "Önce yerel tek GPU denemesi yapın. `<MODEL_NAME>` yerine erişebildiğiniz ve belleğe sığan bir model kimliği yazın. 8192 token ve %90 bellek kullanımı örnek ayarlardır. 127.0.0.1 yalnızca yerelden erişilir; üretim için kimlik doğrulama, TLS, kota ve yük testi ekleyin.",
-            "en": "Start with a local single-GPU trial. Replace <MODEL_NAME> with an accessible model that fits memory. The 8192-token and 90% memory settings are illustrative. Binding to 127.0.0.1 limits access to the local machine; production needs authentication, TLS, quotas and load testing."
+            "tr": "Önce yerel tek GPU denemesi yapın. `<MODEL_NAME>` yerine erişebildiğiniz ve belleğe sığan bir model kimliği yazın. 8192 token ve %90 bellek kullanımı örnek ayarlardır. 127.0.0.1 yalnızca yerelden erişilir; üretim için kimlik doğrulama, TLS, kota ve yük testi ekleyin. `vllm serve` OpenAI uyumlu HTTP sunucusunu başlatır. v0.29.0 ile `python -m vllm.entrypoints.openai.api_server` çağrısı kullanım dışı bırakıldı (henüz kaldırılmadı). Model Runner V2 varsayılandır; henüz desteklenmeyen ROCm modelleri ve özellik yolları MRV1 kullanabilir. `--max-num-queued-reqs` ve `--max-num-queued-tokens` kuyruk kabul sınırlarını belirler; aşağıdaki değerler örnektir ve yük testi gerektirir.",
+            "en": "Start with a local single-GPU trial. Replace <MODEL_NAME> with an accessible model that fits memory. The 8192-token and 90% memory settings are illustrative. Binding to 127.0.0.1 limits access to the local machine; production needs authentication, TLS, quotas and load testing. `vllm serve` starts the OpenAI-compatible HTTP server. In v0.29.0, `python -m vllm.entrypoints.openai.api_server` is deprecated (not yet removed). Model Runner V2 is the default; unsupported ROCm models and feature paths may use MRV1. `--max-num-queued-reqs` and `--max-num-queued-tokens` set queue admission limits; the values below are examples requiring load testing."
           },
           "codeBlock": {
             "lang": "bash",
-            "code": "vllm serve <MODEL_NAME> \\\n  --host 127.0.0.1 --port 8000 \\\n  --max-model-len 8192 \\\n  --gpu-memory-utilization 0.90"
+            "code": "vllm serve <MODEL_NAME> \\\n  --host 127.0.0.1 --port 8000 \\\n  --max-model-len 8192 \\\n  --max-num-queued-reqs 256 \\\n  --max-num-queued-tokens 8192 \\\n  --gpu-memory-utilization 0.90"
           }
         },
         {

@@ -38,7 +38,7 @@ export const sourceAudit = {
     },
     {
       "solution": "vllm",
-      "url": "https://docs.vllm.ai/en/latest/"
+      "url": "https://github.com/vllm-project/vllm/releases/tag/v0.29.0"
     },
     {
       "solution": "sglang",

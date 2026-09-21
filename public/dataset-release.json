@@ -37,6 +37,15 @@
   },
   "evidence": [
     {
+      "topic": "vllm-v0.29.0-release",
+      "collections": [
+        "solutions",
+        "lessons"
+      ],
+      "url": "https://github.com/vllm-project/vllm/releases/tag/v0.29.0",
+      "checkedAt": "2026-09-18"
+    },
+    {
       "topic": "tokenization",
       "collections": [
         "concepts",

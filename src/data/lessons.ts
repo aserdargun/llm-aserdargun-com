@@ -162,12 +162,12 @@ export const lessons: Lesson[] = [
           "en": "Start the vLLM server"
         },
         "body": {
-          "tr": "Önce yerel tek GPU denemesi yapın. `<MODEL_NAME>` yerine erişebildiğiniz ve belleğe sığan bir model kimliği yazın. 8192 token ve %90 bellek kullanımı örnek ayarlardır. 127.0.0.1 yalnızca yerelden erişilir; üretim için kimlik doğrulama, TLS, kota ve yük testi ekleyin.",
-          "en": "Start with a local single-GPU trial. Replace <MODEL_NAME> with an accessible model that fits memory. The 8192-token and 90% memory settings are illustrative. Binding to 127.0.0.1 limits access to the local machine; production needs authentication, TLS, quotas and load testing."
+          "tr": "Önce yerel tek GPU denemesi yapın. `<MODEL_NAME>` yerine erişebildiğiniz ve belleğe sığan bir model kimliği yazın. 8192 token ve %90 bellek kullanımı örnek ayarlardır. 127.0.0.1 yalnızca yerelden erişilir; üretim için kimlik doğrulama, TLS, kota ve yük testi ekleyin. `vllm serve` OpenAI uyumlu HTTP sunucusunu başlatır. v0.29.0 ile `python -m vllm.entrypoints.openai.api_server` çağrısı kullanım dışı bırakıldı (henüz kaldırılmadı). Model Runner V2 varsayılandır; henüz desteklenmeyen ROCm modelleri ve özellik yolları MRV1 kullanabilir. `--max-num-queued-reqs` ve `--max-num-queued-tokens` kuyruk kabul sınırlarını belirler; aşağıdaki değerler örnektir ve yük testi gerektirir.",
+          "en": "Start with a local single-GPU trial. Replace <MODEL_NAME> with an accessible model that fits memory. The 8192-token and 90% memory settings are illustrative. Binding to 127.0.0.1 limits access to the local machine; production needs authentication, TLS, quotas and load testing. `vllm serve` starts the OpenAI-compatible HTTP server. In v0.29.0, `python -m vllm.entrypoints.openai.api_server` is deprecated (not yet removed). Model Runner V2 is the default; unsupported ROCm models and feature paths may use MRV1. `--max-num-queued-reqs` and `--max-num-queued-tokens` set queue admission limits; the values below are examples requiring load testing."
         },
         "codeBlock": {
           "lang": "bash",
-          "code": "vllm serve <MODEL_NAME> \\\n  --host 127.0.0.1 --port 8000 \\\n  --max-model-len 8192 \\\n  --gpu-memory-utilization 0.90"
+          "code": "vllm serve <MODEL_NAME> \\\n  --host 127.0.0.1 --port 8000 \\\n  --max-model-len 8192 \\\n  --max-num-queued-reqs 256 \\\n  --max-num-queued-tokens 8192 \\\n  --gpu-memory-utilization 0.90"
         }
       },
       {

@@ -94,7 +94,9 @@ describe('atlas routes', async () => {
     expect(screen.getByText('What it does')).toBeInTheDocument()
     expect(screen.getByText('WHERE IN THE STACK')).toBeInTheDocument()
     expect(screen.getByText('The CPU and GPU types this tool can run the model on.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /vLLM Documentation/ })).toHaveAttribute('target', '_blank')
+    const vllmReleaseLink = screen.getByRole('link', { name: /vLLM v0\.29\.0 Release Notes/ })
+    expect(vllmReleaseLink).toHaveAttribute('href', 'https://github.com/vllm-project/vllm/releases/tag/v0.29.0')
+    expect(vllmReleaseLink).toHaveAttribute('target', '_blank')
   })
 
   it('explains methodology without a universal ranking', async () => {
