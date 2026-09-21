@@ -35,7 +35,7 @@ describe('curated atlas dataset', () => {
   it('tracks current lifecycle and compatibility for fast-moving records', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
+    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-21', modelFormats: ['EXL3'] })
     expect(bySlug('onnx-runtime-genai')).toMatchObject({ projectStatus: 'preview', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner').executionBackends).toEqual(expect.arrayContaining(['llama.cpp', 'vLLM', 'Diffusers']))

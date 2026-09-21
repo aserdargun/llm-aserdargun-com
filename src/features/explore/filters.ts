@@ -2,7 +2,7 @@ import { categories } from '@/data/categories'
 import { displayAtlasValues } from '@/i18n/atlas-labels'
 import type { Locale, Solution } from '@/types/atlas'
 
-export const filterKeys = ['category', 'hardware', 'backend', 'format', 'protocol', 'scope', 'status'] as const
+export const filterKeys = ['category', 'hardware', 'backend', 'format', 'protocol', 'scope'] as const
 export type FilterKey = typeof filterKeys[number]
 export interface ExploreState {
   q: string
@@ -12,11 +12,10 @@ export interface ExploreState {
   format: string[]
   protocol: string[]
   scope: string[]
-  status: string[]
   view: 'list' | 'card'
 }
 
-export const emptyExploreState = (): ExploreState => ({ q: '', category: [], hardware: [], backend: [], format: [], protocol: [], scope: [], status: [], view: 'list' })
+export const emptyExploreState = (): ExploreState => ({ q: '', category: [], hardware: [], backend: [], format: [], protocol: [], scope: [], view: 'list' })
 
 export function parseExploreState(params: URLSearchParams): ExploreState {
   const state = emptyExploreState()
@@ -47,6 +46,5 @@ export function filterSolutions(items: Solution[], state: ExploreState, locale: 
       && includesOne(item.modelFormats, state.format)
       && includesOne(item.apiProtocols, state.protocol)
       && includesOne(item.deploymentScopes, state.scope)
-      && (!state.status.length || state.status.includes(item.projectStatus))
   })
 }

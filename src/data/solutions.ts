@@ -2,8 +2,8 @@ import type { LocalizedList, LocalizedText, Solution } from '@/types/atlas'
 
 const text = (tr: string, en: string): LocalizedText => ({ tr, en })
 const list = (tr: string[], en: string[]): LocalizedList => ({ tr, en })
-type Draft = Omit<Solution, 'id' | 'lastVerified' | 'sources'> & { source: { title: string; publisher: string; url: string }; verifiedAt?: string }
-const make = ({ source, verifiedAt = '2026-08-12', ...draft }: Draft): Solution => ({
+type Draft = Omit<Solution, 'id' | 'lastVerified' | 'sources'> & { source: { title: string; publisher: string; url: string }; verifiedAt: string }
+const make = ({ source, verifiedAt, ...draft }: Draft): Solution => ({
   ...draft,
   id: draft.slug,
   lastVerified: verifiedAt,
@@ -13,14 +13,44 @@ const make = ({ source, verifiedAt = '2026-08-12', ...draft }: Draft): Solution 
 export const solutions: Solution[] = [
   make({
     slug: 'tensorrt-llm', name: 'TensorRT-LLM', primaryCategory: 'INF', capabilityTags: ['optimized-inference', 'quantization', 'multi-gpu'],
-    summary: text('NVIDIA GPU’larda üretim odaklı LLM çıkarımı için derleyici ve çalışma zamanı.', 'A compiler and runtime for production-oriented LLM inference on NVIDIA GPUs.'),
-    description: text('Model tanımlarını NVIDIA GPU çekirdeklerine ve TensorRT optimizasyonlarına yaklaştırarak düşük gecikme ve yüksek verim hedefler.', 'Brings model definitions close to NVIDIA GPU kernels and TensorRT optimizations to target low latency and high throughput.'),
+    summary: {
+      "tr": "NVIDIA GPU’larında LLM çıkarımı ve sunumu için PyTorch tabanlı optimizasyon kütüphanesi.",
+      "en": "A PyTorch-based optimization library for LLM inference and serving on NVIDIA GPUs."
+    },
+    description: {
+      "tr": "Güncel belgeler PyTorch yürütmesini ve doğrudan model yüklemeyi temel alır; eski TensorRT engine oluşturma arka ucu kaldırılmıştır. Nicemleme, KV yönetimi ve çoklu GPU yolları sürüme göre doğrulanmalıdır.",
+      "en": "Current documentation centers PyTorch execution and direct model loading; the legacy TensorRT engine-build backend has been removed. Validate quantization, KV management and multi-GPU paths for the release in use."
+    },
     notFor: text('Tek başına son kullanıcı arayüzü veya sağlayıcılar arası ağ geçidi değildir.', 'It is not, by itself, an end-user interface or cross-provider gateway.'),
     strengths: list(['NVIDIA donanımı için derin optimizasyon', 'Nicemleme ve çoklu GPU seçenekleri'], ['Deep optimization for NVIDIA hardware', 'Quantization and multi-GPU options']),
-    limitations: list(['CUDA/NVIDIA ekosistemine sıkı bağlılık', 'Kurulum ve model hazırlama maliyeti'], ['Tight coupling to the CUDA/NVIDIA ecosystem', 'Setup and model-preparation overhead']),
+    limitations: {
+      "tr": [
+        "CUDA/NVIDIA ekosistemine bağlılık",
+        "Eski engine-build tariflerinden geçiş ve sürüm uyumu gerekir"
+      ],
+      "en": [
+        "Coupled to the CUDA/NVIDIA ecosystem",
+        "Migration from legacy engine-build recipes and release compatibility require review"
+      ]
+    },
     idealFor: list(['NVIDIA GPU üzerinde uzman ekiplerin üretim çıkarımı'], ['Production inference on NVIDIA GPUs with specialist teams']),
-    executionBackends: ['TensorRT', 'CUDA'], hardware: ['NVIDIA GPU'], modelFormats: ['Hugging Face', 'TensorRT engine'], apiProtocols: ['Python API', 'C++ API'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['vllm', 'sglang', 'lmdeploy'],
-    source: { title: 'TensorRT-LLM Overview', publisher: 'NVIDIA', url: 'https://nvidia.github.io/TensorRT-LLM/overview.html' },
+    executionBackends: [
+      "PyTorch",
+      "CUDA"
+    ], hardware: ['NVIDIA GPU'], modelFormats: [
+      "Hugging Face",
+      "Safetensors"
+    ], apiProtocols: [
+      "Python API",
+      "OpenAI-compatible",
+      "HTTP"
+    ], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['vllm', 'sglang', 'lmdeploy'],
+    source: {
+      "title": "TensorRT LLM — TensorRT backend removal and migration",
+      "publisher": "NVIDIA",
+      "url": "https://nvidia.github.io/TensorRT-LLM/legacy/tensorrt-backend-removal.html"
+    },
+    verifiedAt: "2026-09-21",
   }),
   make({
     slug: 'llama-cpp', name: 'llama.cpp', primaryCategory: 'INF', capabilityTags: ['local-inference', 'quantization', 'portable'],
@@ -32,6 +62,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Yerel, çevrimdışı ve kaynak kısıtlı çıkarım'], ['Local, offline, and resource-constrained inference']),
     executionBackends: ['CPU', 'CUDA', 'Metal', 'Vulkan', 'SYCL'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon', 'Intel GPU'], modelFormats: ['GGUF'], apiProtocols: ['C API', 'HTTP', 'OpenAI-compatible'], deploymentScopes: ['Local', 'Desktop', 'Edge', 'Server'], license: 'MIT', projectStatus: 'mature', alternatives: ['mlx-lm', 'mlc-llm', 'exllamav3'],
     source: { title: 'llama.cpp', publisher: 'ggml-org', url: 'https://github.com/ggml-org/llama.cpp' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'mlx-lm', name: 'MLX-LM', primaryCategory: 'INF', capabilityTags: ['apple-silicon', 'local-inference', 'fine-tuning'],
@@ -43,6 +74,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Mac üzerinde araştırma, prototipleme ve kişisel kullanım'], ['Research, prototyping, and personal use on Mac']),
     executionBackends: ['MLX', 'Metal'], hardware: ['Apple Silicon'], modelFormats: ['Hugging Face', 'MLX'], apiProtocols: ['Python API'], deploymentScopes: ['Local', 'Desktop'], license: 'MIT', projectStatus: 'active', alternatives: ['llama-cpp', 'mlc-llm'],
     source: { title: 'MLX-LM', publisher: 'MLX Community', url: 'https://github.com/ml-explore/mlx-lm' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'mlc-llm', name: 'MLC LLM', primaryCategory: 'INF', capabilityTags: ['compiler', 'cross-platform', 'webgpu'],
@@ -54,6 +86,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Aynı model ailesini farklı cihaz sınıflarına taşımak'], ['Taking one model family across multiple device classes']),
     executionBackends: ['TVM', 'CUDA', 'Metal', 'Vulkan', 'WebGPU'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon', 'Browser'], modelFormats: ['Hugging Face', 'MLC'], apiProtocols: ['Python API', 'C++ API', 'JavaScript API'], deploymentScopes: ['Local', 'Browser', 'Mobile', 'Edge', 'Server'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['llama-cpp', 'onnx-runtime-genai', 'webllm'],
     source: { title: 'MLC LLM Documentation', publisher: 'MLC AI', url: 'https://llm.mlc.ai/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'lmdeploy', name: 'LMDeploy', primaryCategory: 'INF', capabilityTags: ['serving', 'quantization', 'turbomind'],
@@ -65,6 +98,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Model sıkıştırma ile üretim servisini birlikte isteyen ekipler'], ['Teams wanting model compression and production serving together']),
     executionBackends: ['TurboMind', 'PyTorch', 'CUDA'], hardware: ['NVIDIA GPU'], modelFormats: ['Hugging Face', 'AWQ'], apiProtocols: ['Python API', 'OpenAI-compatible'], deploymentScopes: ['Server', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['tensorrt-llm', 'vllm', 'sglang'],
     source: { title: 'LMDeploy Documentation', publisher: 'OpenMMLab', url: 'https://lmdeploy.readthedocs.io/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'exllamav3', name: 'ExLlamaV3', primaryCategory: 'INF', capabilityTags: ['quantized-inference', 'consumer-gpu', 'cuda'],
@@ -74,9 +108,11 @@ export const solutions: Solution[] = [
     strengths: list(['Tüketici GPU’sunda düşük bitli çıkarım odağı'], ['Low-bit inference focus on consumer GPUs']),
     limitations: list(['Daha dar donanım ve model formatı kapsamı', 'Hızlı değişen sürüm ve uyumluluk matrisi'], ['Narrower hardware and format scope', 'Fast-moving release and compatibility matrix']),
     idealFor: list(['NVIDIA masaüstü GPU’sunda nicemlenmiş modeller'], ['Quantized models on NVIDIA desktop GPUs']),
-    executionBackends: ['CUDA'], hardware: ['NVIDIA GPU'], modelFormats: ['EXL3', 'EXL2'], apiProtocols: ['Python API'], deploymentScopes: ['Local', 'Desktop'], license: 'MIT', projectStatus: 'active', alternatives: ['llama-cpp', 'tensorrt-llm'],
+    executionBackends: ['CUDA'], hardware: ['NVIDIA GPU'], modelFormats: [
+      "EXL3"
+    ], apiProtocols: ['Python API'], deploymentScopes: ['Local', 'Desktop'], license: 'MIT', projectStatus: 'active', alternatives: ['llama-cpp', 'tensorrt-llm'],
     source: { title: 'ExLlamaV3', publisher: 'turboderp-org', url: 'https://github.com/turboderp-org/exllamav3' },
-    verifiedAt: '2026-09-04',
+    verifiedAt: "2026-09-21",
   }),
   make({
     slug: 'openvino-genai', name: 'OpenVINO GenAI', primaryCategory: 'INF', capabilityTags: ['intel', 'npu', 'edge'],
@@ -88,7 +124,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Intel tabanlı istemci, uç ve sunucu dağıtımları'], ['Intel-based client, edge, and server deployments']),
     executionBackends: ['OpenVINO'], hardware: ['CPU', 'Intel GPU', 'Intel NPU'], modelFormats: ['OpenVINO IR', 'Hugging Face'], apiProtocols: ['Python API', 'C++ API'], deploymentScopes: ['Local', 'Edge', 'Server'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['onnx-runtime-genai', 'mlc-llm'],
     source: { title: 'OpenVINO GenAI', publisher: 'Intel', url: 'https://docs.openvino.ai/2026/openvino-workflow-generative/inference-with-genai.html' },
-    verifiedAt: '2026-09-04',
+    verifiedAt: "2026-09-04",
   }),
   make({
     slug: 'onnx-runtime-genai', name: 'ONNX Runtime GenAI', primaryCategory: 'INF', capabilityTags: ['onnx', 'cross-platform', 'hardware-acceleration'],
@@ -100,7 +136,7 @@ export const solutions: Solution[] = [
     idealFor: list(['ONNX standardı kullanan çok platformlu uygulamalar'], ['Cross-platform applications standardized on ONNX']),
     executionBackends: ['ONNX Runtime', 'CUDA', 'DirectML', 'OpenVINO', 'QNN', 'WebGPU'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Intel GPU', 'Intel NPU', 'Qualcomm NPU', 'Browser'], modelFormats: ['ONNX'], apiProtocols: ['Python API', 'C++ API', 'C# API', 'Java API'], deploymentScopes: ['Local', 'Desktop', 'Browser', 'Mobile', 'Edge', 'Server'], license: 'MIT', projectStatus: 'preview', alternatives: ['openvino-genai', 'mlc-llm'],
     source: { title: 'ONNX Runtime Generate API', publisher: 'Microsoft', url: 'https://onnxruntime.ai/docs/genai/' },
-    verifiedAt: '2026-09-04',
+    verifiedAt: "2026-09-04",
   }),
 
   make({
@@ -113,6 +149,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Açık kaynak modellerle üretim API hizmeti'], ['Production API services for open models']),
     executionBackends: ['PyTorch', 'CUDA', 'ROCm'], hardware: ['NVIDIA GPU', 'AMD GPU', 'CPU'], modelFormats: ['Hugging Face', 'GGUF', 'AWQ', 'GPTQ'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'mature', alternatives: ['sglang', 'tensorrt-llm', 'lmdeploy'],
     source: { title: 'vLLM Documentation', publisher: 'vLLM Project', url: 'https://docs.vllm.ai/en/latest/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'sglang', name: 'SGLang', primaryCategory: 'SRV', capabilityTags: ['structured-generation', 'radix-cache', 'distributed-serving'],
@@ -123,7 +160,12 @@ export const solutions: Solution[] = [
     limitations: list(['Hızlı gelişen yüzey alanı operasyonel takip ister'], ['A fast-moving surface requires operational tracking']),
     idealFor: list(['Yapılandırılmış çıktı ve karmaşık ajan/üretim akışları'], ['Structured output and complex agent/generation workflows']),
     executionBackends: ['PyTorch', 'CUDA', 'ROCm'], hardware: ['NVIDIA GPU', 'AMD GPU'], modelFormats: ['Hugging Face', 'AWQ', 'FP8'], apiProtocols: ['OpenAI-compatible', 'HTTP', 'Python API'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['vllm', 'lmdeploy', 'tensorrt-llm'],
-    source: { title: 'SGLang Documentation', publisher: 'SGLang Project', url: 'https://docs.sglang.ai/' },
+    source: {
+      "title": "SGLang Documentation",
+      "publisher": "SGLang Project",
+      "url": "https://docs.sglang.io/"
+    },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'nvidia-triton', name: 'NVIDIA Triton Inference Server', primaryCategory: 'SRV', capabilityTags: ['multi-framework', 'dynamic-batching', 'observability'],
@@ -135,6 +177,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Aynı platformda farklı AI model türlerini sunmak'], ['Serving different AI model types on one platform']),
     executionBackends: ['TensorRT-LLM', 'TensorRT', 'PyTorch', 'ONNX Runtime', 'Python'], hardware: ['NVIDIA GPU', 'CPU'], modelFormats: ['TensorRT engine', 'ONNX', 'TorchScript'], apiProtocols: ['HTTP', 'gRPC'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'BSD-3-Clause', projectStatus: 'mature', alternatives: ['vllm', 'bentoml', 'kserve'],
     source: { title: 'Triton Inference Server', publisher: 'NVIDIA', url: 'https://www.nvidia.com/en-us/ai/dynamo-triton/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'localai', name: 'LocalAI', primaryCategory: 'SRV', capabilityTags: ['openai-api', 'multi-backend', 'self-hosted'],
@@ -146,6 +189,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Tek API ile farklı yerel motorları denemek'], ['Trying multiple local engines behind one API']),
     executionBackends: ['llama.cpp', 'vLLM', 'Transformers'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['GGUF', 'Hugging Face'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Local', 'Server', 'Container', 'Kubernetes'], license: 'MIT', projectStatus: 'active', alternatives: ['xinference', 'ollama', 'bentoml'],
     source: { title: 'LocalAI Overview', publisher: 'LocalAI', url: 'https://localai.io/docs/overview/index.html' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'xinference', name: 'Xinference', primaryCategory: 'SRV', capabilityTags: ['multi-model', 'openai-api', 'distributed-serving'],
@@ -157,6 +201,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Birden çok üretken AI model türünü tek platformda işletmek'], ['Operating several generative-AI model types on one platform']),
     executionBackends: ['vLLM', 'llama.cpp', 'Transformers'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['Hugging Face', 'GGUF'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Local', 'Server', 'Cluster', 'Kubernetes'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['localai', 'bentoml', 'vllm'],
     source: { title: 'Xinference Documentation', publisher: 'Xorbits', url: 'https://inference.readthedocs.io/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'bentoml', name: 'BentoML', primaryCategory: 'SRV', capabilityTags: ['application-framework', 'deployment', 'observability'],
@@ -168,6 +213,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Özel Python mantığı içeren üretim model servisleri'], ['Production model services with custom Python logic']),
     executionBackends: ['vLLM', 'PyTorch', 'Transformers'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU'], modelFormats: ['Hugging Face', 'Python model'], apiProtocols: ['HTTP', 'OpenAI-compatible'], deploymentScopes: ['Server', 'Container', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['nvidia-triton', 'kserve', 'xinference'],
     source: { title: 'LLM inference with vLLM', publisher: 'BentoML', url: 'https://docs.bentoml.org/en/latest/examples/vllm.html' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'hugging-face-tgi', name: 'Hugging Face TGI', primaryCategory: 'SRV', capabilityTags: ['text-generation', 'open-source', 'legacy-context'],
@@ -179,7 +225,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Mevcut TGI kurulumlarını anlamak ve sürdürmek'], ['Understanding and maintaining existing TGI deployments']),
     executionBackends: ['PyTorch', 'CUDA'], hardware: ['NVIDIA GPU'], modelFormats: ['Hugging Face', 'Safetensors'], apiProtocols: ['HTTP', 'Messages API'], deploymentScopes: ['Server', 'Container', 'Kubernetes'], license: 'Apache-2.0', projectStatus: 'archived', alternatives: ['vllm', 'sglang'],
     source: { title: 'Text Generation Inference', publisher: 'Hugging Face', url: 'https://github.com/huggingface/text-generation-inference' },
-    verifiedAt: '2026-09-04',
+    verifiedAt: "2026-09-04",
   }),
 
   make({
@@ -192,6 +238,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Yerel geliştirme, prototipleme ve kişisel kullanım'], ['Local development, prototyping, and personal use']),
     executionBackends: ['llama.cpp'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['Ollama model', 'GGUF'], apiProtocols: ['Ollama API', 'OpenAI-compatible'], deploymentScopes: ['Local', 'Desktop', 'Container'], license: 'MIT', projectStatus: 'mature', alternatives: ['docker-model-runner', 'ramalama', 'lm-studio'],
     source: { title: 'Ollama Quickstart', publisher: 'Ollama', url: 'https://docs.ollama.com/quickstart' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'docker-model-runner', name: 'Docker Model Runner', primaryCategory: 'RUN', capabilityTags: ['containers', 'local-models', 'oci'],
@@ -203,7 +250,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Docker kullanan ekiplerin yerel AI geliştirmesi'], ['Local AI development for teams already using Docker']),
     executionBackends: ['llama.cpp', 'vLLM', 'Diffusers', 'Docker'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['OCI artifact', 'GGUF', 'Safetensors'], apiProtocols: ['OpenAI-compatible', 'Ollama API', 'Anthropic-compatible', 'Docker API'], deploymentScopes: ['Local', 'Desktop', 'Container'], license: 'Docker product terms / open components', projectStatus: 'active', alternatives: ['ollama', 'ramalama'],
     source: { title: 'Docker Model Runner', publisher: 'Docker', url: 'https://docs.docker.com/ai/model-runner/' },
-    verifiedAt: '2026-09-04',
+    verifiedAt: "2026-09-04",
   }),
   make({
     slug: 'ramalama', name: 'RamaLama', primaryCategory: 'RUN', capabilityTags: ['containers', 'rootless', 'multi-registry'],
@@ -215,6 +262,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Container güvenliği ve taşınabilirliği isteyen yerel ekipler'], ['Local teams wanting container isolation and portability']),
     executionBackends: ['llama.cpp', 'vLLM', 'MLX', 'Podman', 'Docker'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon', 'Intel GPU'], modelFormats: ['GGUF', 'Hugging Face', 'OCI artifact'], apiProtocols: ['REST', 'CLI'], deploymentScopes: ['Local', 'Container', 'Server'], license: 'MIT', projectStatus: 'active', alternatives: ['ollama', 'docker-model-runner'],
     source: { title: 'RamaLama', publisher: 'containers', url: 'https://github.com/containers/ramalama' },
+    verifiedAt: "2026-08-12",
   }),
 
   make({
@@ -227,6 +275,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Mac/Windows/Linux üzerinde model keşfi ve yerel geliştirme'], ['Model discovery and local development on Mac, Windows, and Linux']),
     executionBackends: ['llama.cpp', 'MLX'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['GGUF', 'MLX'], apiProtocols: ['OpenAI-compatible', 'REST'], deploymentScopes: ['Desktop', 'Local'], license: 'Proprietary freeware', projectStatus: 'mature', alternatives: ['jan', 'gpt4all', 'ollama'],
     source: { title: 'LM Studio Offline Operation', publisher: 'LM Studio', url: 'https://lmstudio.ai/docs/app/offline' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'jan', name: 'Jan', primaryCategory: 'APP', capabilityTags: ['desktop', 'open-source', 'local-api'],
@@ -238,6 +287,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Açık kaynaklı, genişletilebilir yerel asistan deneyimi'], ['An open and extensible local assistant experience']),
     executionBackends: ['llama.cpp'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['GGUF'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Desktop', 'Local'], license: 'AGPL-3.0', projectStatus: 'active', alternatives: ['lm-studio', 'gpt4all', 'open-webui'],
     source: { title: 'Jan Documentation', publisher: 'Jan', url: 'https://www.jan.ai/docs/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'gpt4all', name: 'GPT4All', primaryCategory: 'APP', capabilityTags: ['desktop', 'local-documents', 'offline'],
@@ -249,6 +299,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Kişisel çevrimdışı sohbet ve yerel dokümanlar'], ['Personal offline chat and local documents']),
     executionBackends: ['llama.cpp'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon'], modelFormats: ['GGUF'], apiProtocols: ['Local API'], deploymentScopes: ['Desktop', 'Local'], license: 'MIT / product components', projectStatus: 'mature', alternatives: ['lm-studio', 'jan'],
     source: { title: 'GPT4All Documentation', publisher: 'Nomic AI', url: 'https://docs.gpt4all.io/index.html' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'anythingllm', name: 'AnythingLLM', primaryCategory: 'APP', capabilityTags: ['rag', 'agents', 'multi-provider'],
@@ -260,6 +311,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Belge tabanlı ekip asistanları ve hızlı RAG prototipleri'], ['Document-based team assistants and rapid RAG prototypes']),
     executionBackends: ['Ollama', 'LocalAI', 'Cloud APIs'], hardware: ['CPU', 'NVIDIA GPU', 'Apple Silicon', 'Cloud'], modelFormats: ['Provider-dependent'], apiProtocols: ['OpenAI-compatible', 'Provider APIs'], deploymentScopes: ['Desktop', 'Server', 'Container'], license: 'MIT', projectStatus: 'active', alternatives: ['open-webui', 'jan'],
     source: { title: 'AnythingLLM Documentation', publisher: 'Mintplex Labs', url: 'https://docs.anythingllm.com/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'open-webui', name: 'Open WebUI', primaryCategory: 'APP', capabilityTags: ['web-ui', 'multi-provider', 'rag'],
@@ -271,6 +323,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Mevcut model API’lerinin üstünde ekip sohbet arayüzü'], ['A team chat interface over existing model APIs']),
     executionBackends: ['Ollama', 'OpenAI-compatible servers'], hardware: ['Backend-dependent'], modelFormats: ['Backend-dependent'], apiProtocols: ['OpenAI-compatible', 'Ollama API'], deploymentScopes: ['Server', 'Container', 'Kubernetes', 'Local'], license: 'BSD-3-Clause with branding clause', projectStatus: 'active', alternatives: ['anythingllm', 'jan'],
     source: { title: 'Open WebUI Documentation', publisher: 'Open WebUI', url: 'https://docs.openwebui.com/' },
+    verifiedAt: "2026-08-12",
   }),
 
   make({
@@ -282,8 +335,12 @@ export const solutions: Solution[] = [
     limitations: list(['Genç ve karmaşık operasyonel yüzey', 'Donanım ve motor desteği dağıtım yoluna göre değişir'], ['Young and complex operational surface', 'Hardware and engine support varies by deployment path']),
     idealFor: list(['Kubernetes, Slurm veya yerel kümelerde çok düğümlü çıkarım'], ['Multi-node inference on Kubernetes, Slurm, or local clusters']),
     executionBackends: ['TensorRT-LLM', 'vLLM', 'SGLang'], hardware: ['NVIDIA GPU', 'AMD GPU', 'Intel GPU'], modelFormats: ['Backend-dependent'], apiProtocols: ['OpenAI-compatible', 'gRPC'], deploymentScopes: ['Local', 'Kubernetes', 'Cluster', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['llm-d', 'ray-serve-llm'],
-    source: { title: 'NVIDIA Dynamo Documentation', publisher: 'NVIDIA', url: 'https://docs.nvidia.com/dynamo/dev/welcome' },
-    verifiedAt: '2026-09-04',
+    source: {
+      "title": "NVIDIA Dynamo Documentation",
+      "publisher": "NVIDIA",
+      "url": "https://docs.nvidia.com/dynamo/dev/"
+    },
+    verifiedAt: "2026-09-04",
   }),
   make({
     slug: 'ray-serve-llm', name: 'Ray Serve LLM', primaryCategory: 'DST', capabilityTags: ['autoscaling', 'distributed-python', 'multi-model'],
@@ -295,6 +352,7 @@ export const solutions: Solution[] = [
     idealFor: list(['LLM’i daha geniş dağıtık Python uygulamalarıyla birleştirmek'], ['Combining LLMs with broader distributed Python applications']),
     executionBackends: ['vLLM', 'Ray Serve'], hardware: ['NVIDIA GPU', 'AMD GPU', 'CPU'], modelFormats: ['Hugging Face'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Cluster', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['nvidia-dynamo', 'kserve'],
     source: { title: 'Ray Serve LLM', publisher: 'Anyscale / Ray', url: 'https://docs.ray.io/en/latest/serve/llm/index.html' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'llm-d', name: 'llm-d', primaryCategory: 'DST', capabilityTags: ['kubernetes', 'disaggregated-serving', 'gateway-api'],
@@ -306,7 +364,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Kubernetes üzerinde açık dağıtık LLM yığını kuran platform ekipleri'], ['Platform teams building an open distributed LLM stack on Kubernetes']),
     executionBackends: ['vLLM', 'SGLang'], hardware: ['NVIDIA GPU', 'AMD GPU', 'Intel GPU', 'Google TPU', 'CPU'], modelFormats: ['Hugging Face'], apiProtocols: ['OpenAI-compatible', 'Kubernetes Gateway API'], deploymentScopes: ['Kubernetes', 'Cluster', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['nvidia-dynamo', 'kserve'],
     source: { title: 'llm-d', publisher: 'llm-d Project', url: 'https://llm-d.ai/' },
-    verifiedAt: '2026-09-04',
+    verifiedAt: "2026-09-04",
   }),
   make({
     slug: 'kserve', name: 'KServe', primaryCategory: 'DST', capabilityTags: ['kubernetes', 'autoscaling', 'model-serving'],
@@ -318,6 +376,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Kubernetes üzerinde ortak model servis platformu'], ['A shared model-serving platform on Kubernetes']),
     executionBackends: ['vLLM', 'Hugging Face', 'Triton'], hardware: ['NVIDIA GPU', 'AMD GPU', 'CPU'], modelFormats: ['Hugging Face', 'Backend-dependent'], apiProtocols: ['OpenAI-compatible', 'HTTP', 'gRPC'], deploymentScopes: ['Kubernetes', 'Cluster', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['llm-d', 'ray-serve-llm', 'bentoml'],
     source: { title: 'KServe LLMInferenceService Overview', publisher: 'KServe', url: 'https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/llmisvc-overview' },
+    verifiedAt: "2026-08-12",
   }),
 
   make({
@@ -330,6 +389,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Birden çok bulut/yerel model API’sini yöneten ekipler'], ['Teams managing multiple cloud and local model APIs']),
     executionBackends: ['Provider APIs'], hardware: ['Provider-dependent'], modelFormats: ['Provider-dependent'], apiProtocols: ['OpenAI-compatible', 'Provider APIs'], deploymentScopes: ['Server', 'Container', 'Kubernetes', 'Cloud'], license: 'MIT / enterprise features', projectStatus: 'active', alternatives: ['kong-ai-gateway'],
     source: { title: 'LiteLLM Documentation', publisher: 'BerriAI', url: 'https://docs.litellm.ai/docs/' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'kong-ai-gateway', name: 'Kong AI Gateway', primaryCategory: 'GTW', capabilityTags: ['api-gateway', 'policy', 'security'],
@@ -341,6 +401,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Kong kullanan kurumlarda merkezi LLM API yönetişimi'], ['Central LLM API governance in organizations using Kong']),
     executionBackends: ['Provider APIs'], hardware: ['Provider-dependent'], modelFormats: ['Provider-dependent'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0 / commercial products', projectStatus: 'active', alternatives: ['litellm-proxy'],
     source: { title: 'Kong AI Gateway', publisher: 'Kong', url: 'https://developer.konghq.com/ai-gateway/' },
+    verifiedAt: "2026-08-12",
   }),
 
   make({
@@ -353,6 +414,7 @@ export const solutions: Solution[] = [
     idealFor: list(['Mobil uygulama ve gömülü cihaz içine model gömmek'], ['Embedding models inside mobile apps and embedded devices']),
     executionBackends: ['Core ML', 'XNNPACK', 'Qualcomm AI Engine', 'Vulkan'], hardware: ['CPU', 'Mobile GPU', 'NPU'], modelFormats: ['PyTorch Export', 'ExecuTorch program'], apiProtocols: ['C++ API', 'Java/Kotlin API', 'Swift/Objective-C API'], deploymentScopes: ['Mobile', 'Edge', 'Embedded'], license: 'BSD-3-Clause', projectStatus: 'active', alternatives: ['mlc-llm', 'onnx-runtime-genai'],
     source: { title: 'ExecuTorch Documentation', publisher: 'PyTorch', url: 'https://docs.pytorch.org/executorch/stable/index.html' },
+    verifiedAt: "2026-08-12",
   }),
   make({
     slug: 'webllm', name: 'WebLLM', primaryCategory: 'EDG', capabilityTags: ['browser', 'webgpu', 'privacy'],
@@ -364,5 +426,6 @@ export const solutions: Solution[] = [
     idealFor: list(['Sunucusuz web demoları ve istemci tarafı AI özellikleri'], ['Serverless web demos and client-side AI features']),
     executionBackends: ['WebGPU', 'MLC'], hardware: ['Browser', 'GPU'], modelFormats: ['MLC'], apiProtocols: ['JavaScript API', 'OpenAI-like API'], deploymentScopes: ['Browser', 'Edge', 'Local'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['mlc-llm', 'executorch'],
     source: { title: 'WebLLM Deployment', publisher: 'MLC AI', url: 'https://llm.mlc.ai/docs/deploy/webllm.html' },
+    verifiedAt: "2026-08-12",
   }),
 ]

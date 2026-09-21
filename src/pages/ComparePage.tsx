@@ -19,8 +19,12 @@ const rows: Row[] = [
   { label: ['Model formatı', 'Model format'], value: (item) => item.modelFormats.join(' · ') },
   { label: ['API protokolü', 'API protocol'], value: (item) => item.apiProtocols.join(' · ') },
   { label: ['Dağıtım kapsamı', 'Deployment scope'], value: (item) => item.deploymentScopes.join(' · ') },
-  { label: ['Proje durumu', 'Project status'], value: (item) => item.projectStatus },
   { label: ['Lisans', 'License'], value: (item) => item.license },
+]
+
+// Observer context remains visible and never participates in difference selection.
+const observerRows: Row[] = [
+  { label: ['Proje durumu', 'Project status'], value: (item) => item.projectStatus },
   { label: ['Son doğrulama', 'Last verified'], value: (item) => item.lastVerified },
 ]
 
@@ -54,7 +58,7 @@ export function ComparePage() {
     {selected.length === 0 ? <div className="compare-empty"><h2>{pick(locale, 'Henüz çözüm seçilmedi', 'No solutions selected yet')}</h2><p>{pick(locale, 'Keşif ekranından en fazla dört çözüm ekleyin.', 'Add up to four solutions from Explore.')}</p><Link className="button primary" to={`/${locale}/explore`}>{pick(locale, 'Çözümleri keşfet', 'Explore solutions')}</Link></div> : <>
       <div className="compare-controls"><label><input type="checkbox" checked={diffOnly} onChange={(event) => setDiffOnly(event.target.checked)} />{pick(locale, 'Yalnızca farklılıkları göster', 'Show differences only')}</label><button className="button secondary" type="button" onClick={copyLink}>{isCopied ? <Check size={17} /> : <Copy size={17} />}{isCopied ? pick(locale, 'Bağlantı kopyalandı', 'Link copied') : pick(locale, 'Paylaşılabilir bağlantıyı kopyala', 'Copy shareable link')}</button><button className="button ghost-danger" type="button" onClick={compare.clear}><Trash2 size={17} />{pick(locale, 'Seçimi temizle', 'Clear selection')}</button></div>
       {copyError && <p role="status">{pick(locale, 'Kopyalanamadı. Adres çubuğundaki bağlantıyı kopyalayabilirsiniz.', 'Could not copy. You can copy the link from the address bar.')}</p>}
-      <div className="compare-table-wrap"><table className="compare-table"><thead><tr><th aria-label={pick(locale, 'Karşılaştırma boyutu', 'Comparison dimension')} />{selected.map((item) => { const category = categories.find(({ id }) => id === item.primaryCategory)!; return <th key={item.slug}><span className="mono">{item.primaryCategory} · {category.name[locale]}</span><strong>{item.name}</strong><button type="button" aria-label={`${pick(locale, 'Kaldır', 'Remove')} ${item.name}`} onClick={() => compare.remove(item.slug)}><X size={17} /></button></th>})}</tr></thead><tbody>{visibleRows.map((row) => <tr key={row.label[1]}><th>{locale === 'tr' ? row.label[0] : row.label[1]}</th>{selected.map((item) => <td key={item.slug}>{row.label[1] === 'Project status' ? <StatusBadge status={item.projectStatus} locale={locale} /> : displayValue(row, item)}</td>)}</tr>)}</tbody></table></div>
+      <div className="compare-table-wrap"><table className="compare-table"><thead><tr><th aria-label={pick(locale, 'Karşılaştırma boyutu', 'Comparison dimension')} />{selected.map((item) => { const category = categories.find(({ id }) => id === item.primaryCategory)!; return <th key={item.slug}><span className="mono">{item.primaryCategory} · {category.name[locale]}</span><strong>{item.name}</strong><button type="button" aria-label={`${pick(locale, 'Kaldır', 'Remove')} ${item.name}`} onClick={() => compare.remove(item.slug)}><X size={17} /></button></th>})}</tr></thead><tbody>{[...visibleRows, ...observerRows].map((row) => <tr key={row.label[1]}><th scope="row">{locale === 'tr' ? row.label[0] : row.label[1]}</th>{selected.map((item) => <td key={item.slug}>{row.label[1] === 'Project status' ? <StatusBadge status={item.projectStatus} locale={locale} /> : displayValue(row, item)}</td>)}</tr>)}</tbody></table></div>
     </>}
   </div>
 }

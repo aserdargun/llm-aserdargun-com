@@ -1,7 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import { matchGuide, type GuideAnswers } from './matcher'
+import { solutions } from '@/data/solutions'
 
 describe('selection guide matcher', () => {
+  it('keeps the shortlist unchanged when observer metadata changes', () => {
+    const answers: GuideAnswers = { hardware: 'nvidia', scope: 'production', interface: 'api', scale: 'multi', platform: 'server' }
+    const before = matchGuide(answers)
+    const saved = solutions.map(({ projectStatus, lastVerified, sources }) => ({ projectStatus, lastVerified, sources }))
+    try {
+      solutions.forEach((solution) => Object.assign(solution, { projectStatus: 'archived', lastVerified: '2000-01-01', sources: [] }))
+      expect(matchGuide(answers)).toEqual(before)
+    } finally {
+      solutions.forEach((solution, index) => Object.assign(solution, saved[index]))
+    }
+  })
   it.each([
     [{ hardware: 'apple', scope: 'local', interface: 'desktop', scale: 'single', platform: 'none' }, 'lm-studio'],
     [{ hardware: 'nvidia', scope: 'local', interface: 'developer', scale: 'single', platform: 'none' }, 'ollama'],

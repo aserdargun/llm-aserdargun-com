@@ -29,7 +29,7 @@ export function matchGuide(answers: GuideAnswers): GuideMatch[] {
   const hardware = { apple: 'Apple Silicon', nvidia: 'NVIDIA GPU', cpu: 'CPU', edge: 'Mobile GPU' }[answers.hardware]
   return candidates(answers).filter((match) => {
     const solution = solutions.find((item) => item.slug === match.slug)
-    if (!solution || solution.projectStatus === 'archived') return false
+    if (!solution) return false
     if (answers.platform === 'browser') return solution.deploymentScopes.includes('Browser') && answers.hardware !== 'cpu'
     if (answers.hardware === 'edge') return solution.deploymentScopes.some((scope) => ['Mobile', 'Edge', 'Embedded'].includes(scope))
     return solution.hardware.includes(hardware)
@@ -52,7 +52,7 @@ function candidates(answers: GuideAnswers): GuideMatch[] {
   ]
   if (answers.platform === 'kubernetes' || answers.scale === 'cluster') return [
     reason('kserve', 'Kubernetes üzerinde standart LLM servis kaynakları ve ölçekleme sunar.', 'Provides standardized LLM-serving resources and scaling on Kubernetes.', 'Kubernetes işletme maliyetini hesaba katın.', 'Account for Kubernetes operational overhead.'),
-    reason('llm-d', 'Dağıtık LLM bileşenlerini açık Kubernetes mimarisinde birleştirir.', 'Combines distributed LLM components in an open Kubernetes architecture.', 'Proje erken aşamadadır.', 'The project is early-stage.'),
+    reason('llm-d', 'Dağıtık LLM bileşenlerini açık Kubernetes mimarisinde birleştirir.', 'Combines distributed LLM components in an open Kubernetes architecture.', 'Desteklenen dağıtım tarifini ve motor sürümünü doğrulayın.', 'Verify the supported deployment recipe and engine release.'),
     reason('nvidia-dynamo', 'Çok düğümlü GPU çıkarımını ayrıştırılmış servisle hedefler.', 'Targets multi-node GPU inference through disaggregated serving.', 'NVIDIA ekosistem bağımlılığını değerlendirin.', 'Evaluate NVIDIA ecosystem coupling.'),
   ]
   if (answers.hardware === 'apple' && (answers.scope === 'production' || answers.interface === 'api' || answers.scale === 'multi' || answers.platform === 'server')) return [
@@ -75,7 +75,7 @@ function candidates(answers: GuideAnswers): GuideMatch[] {
   ]
   if (answers.hardware === 'nvidia') return [
     reason('ollama', 'Yerel NVIDIA GPU geliştirmesine en düşük sürtünmeli başlangıçlardan biridir.', 'One of the lowest-friction starts for local NVIDIA-GPU development.', 'Üretim ölçeği için servis katmanını ayrıca değerlendirin.', 'Evaluate a dedicated serving layer for production scale.'),
-    reason('exllamav3', 'Tüketici NVIDIA GPU’larında düşük bitli modellere odaklanır.', 'Focuses on low-bit models on consumer NVIDIA GPUs.', 'Deneysel proje durumunu göz önünde bulundurun.', 'Account for its experimental status.'),
+    reason('exllamav3', 'Tüketici NVIDIA GPU’larında düşük bitli modellere odaklanır.', 'Focuses on low-bit models on consumer NVIDIA GPUs.', 'EXL3 model biçimini ve GPU desteğini doğrulayın.', 'Verify the EXL3 model format and GPU support.'),
     reason('llama-cpp', 'CUDA yanında farklı donanımlara taşınabilir.', 'Can move to other hardware beyond CUDA.', 'En hızlı ayarlar modele göre değişir.', 'Best settings vary by model.'),
   ]
   return [reason('llama-cpp', 'CPU üzerinde taşınabilir yerel çıkarım sunar.', 'Offers portable local inference on CPU.', 'Model boyutunu kullanılabilir belleğe göre seçin.', 'Size the model to available memory.')]

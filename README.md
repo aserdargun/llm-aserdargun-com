@@ -15,12 +15,12 @@ Atlas, TensorRT-LLM, vLLM, SGLang, Ollama ve LM Studio gibi farklı sorumlulukla
 | INF | Çıkarım Motorları ve Çalışma Zamanları | 8 |
 | SRV | Model Sunucuları ve Servis Çerçeveleri | 7 |
 | RUN | Yerel Model Çalıştırıcıları ve Yöneticileri | 3 |
-| APP | Masaüstü Yerel LLM Çalışma Alanları | 5 |
+| APP | Masaüstü ve Web LLM Çalışma Alanları | 5 |
 | DST | Dağıtık Çıkarım Platformları | 4 |
 | GTW | LLM Ağ Geçitleri ve Yönlendiriciler | 2 |
 | EDG | Uç ve Cihaz Üzeri Çalışma Zamanları | 2 |
 
-Toplam 31 kaydın resmî kaynak uçları 4 Eylül 2026 tarihinde yeniden denetlendi. Hızlı değişen yaşam döngüsü ve uyumluluk kayıtları güncellendi; her profil kendi son doğrulama tarihini taşır. İzlenen yaklaşım uygulamanın Metodoloji sayfasında açıklanır.
+31 kaydın resmî kaynak uçları 21 Eylül 2026 tarihinde erişim ve genel kapsam açısından incelendi. TensorRT-LLM mimarisi, EXL3 biçimi ve kaynak adresleri düzeltildi; her profil kendi iddia doğrulama tarihini korur. Uç nokta erişimi, bütün uyumluluk ve lisans iddialarının yeniden doğrulanması anlamına gelmez.
 
 ### Özellikler
 
@@ -45,9 +45,12 @@ npm run dev
 Kalite kontrolleri:
 
 ```bash
-npm run check
-npm run test:e2e
+npm run validate
 ```
+
+`npm run validate:data`, sürüm/kanıt kaydını `public/dataset-release.json` ve tüm iki dilli içeriği `public/atlas-data.json` dosyasına üretir; ikisi de statik çıktıya dahil edilir. Kaynak, güncellik ve yaşam döngüsü metadatası filtreleme veya eşleştirme girdisi değildir.
+
+AIA, GPU, USL, CTX, HNS ve TFL öğrenme bağlantıları aserdargun.com portföyüyle uyumludur. TFL süreleri simülasyondur; gerçek çıkarım ölçümü değildir. Ders komutları sürüm/donanım kontrolü ve yer tutucu değişikliği gerektiren şablonlardır; bu depoda GPU çıkarımı veya eğitim doğrulandığı iddia edilmez.
 
 Üretim çıktısı `dist/` dizinine yazılır. Uygulama çalışma zamanında sır veya sunucu tarafı API kullanmaz.
 
@@ -66,7 +69,7 @@ LLM Runtime & Serving Atlas is a source-backed field guide that maps the LLM run
 
 It explains why tools such as TensorRT-LLM, vLLM, SGLang, Ollama, and LM Studio should not be reduced to one universal speed ranking. The atlas instead presents architectural role, hardware and deployment compatibility, project status, and official sources together.
 
-Official source endpoints for all 31 records were checked again on September 4, 2026. Fast-moving lifecycle and compatibility records were refreshed, while every profile retains its own last-verified date. See the in-app Methodology page for the evidence, freshness, lifecycle, and performance policies.
+All 31 official source endpoints were reviewed for access and overview on September 21, 2026. TensorRT-LLM architecture, EXL3 format and source addresses were corrected. Individual claim-verification dates remain authoritative; endpoint access does not reverify every compatibility or license claim.
 
 ### Features
 
@@ -77,6 +80,14 @@ Official source endpoints for all 31 records were checked again on September 4, 
 - Per-solution profile: role, ideal use, compatibility, lifecycle, official sources.
 - Desktop table and mobile card/drawer experience.
 - **Learning layer**: 30 concepts (3 readability levels + visual), 92 flashcards (SM-2-derived daily repetition), 90 quiz questions and 6 mini-lessons. All progress is stored on-device, no account required.
+
+### Content release and portfolio
+
+`npm run validate:data` generates `public/dataset-release.json` (versions and evidence) and `public/atlas-data.json` (all bilingual records and learning content); both are included in the static build. Source, freshness and lifecycle metadata do not drive filtering or guide matching.
+
+Learning links connect AIA, GPU, USL, CTX, HNS and TFL within aserdargun.com. TFL timings are simulated, not measured inference. Lesson commands are templates requiring release/hardware checks and placeholder substitution; this repository does not certify GPU inference or training execution.
+
+Run `npm run validate` for data, unit, lifecycle, lint, TypeScript, build, browser and diff checks.
 
 ### Stack
 

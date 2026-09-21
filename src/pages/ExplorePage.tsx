@@ -13,7 +13,7 @@ import { filterSolutions, filterKeys, type FilterKey } from '@/features/explore/
 import { useExploreFilters } from '@/features/explore/useExploreFilters'
 import { fieldTip } from '@/features/glossary'
 import { layerColors } from '@/features/layers'
-import { displayAtlasValue, displayAtlasValues, projectStatusLabel } from '@/i18n/atlas-labels'
+import { displayAtlasValue, displayAtlasValues } from '@/i18n/atlas-labels'
 import { pick, useLocale } from '@/i18n/copy'
 
 const valuesFor: Record<FilterKey, string[]> = {
@@ -23,7 +23,6 @@ const valuesFor: Record<FilterKey, string[]> = {
   format: [...new Set(solutions.flatMap(({ modelFormats }) => modelFormats))].sort(),
   protocol: [...new Set(solutions.flatMap(({ apiProtocols }) => apiProtocols))].sort(),
   scope: [...new Set(solutions.flatMap(({ deploymentScopes }) => deploymentScopes))].sort(),
-  status: ['active', 'mature', 'preview', 'maintenance', 'archived'],
 }
 
 export function ExplorePage() {
@@ -53,10 +52,10 @@ export function ExplorePage() {
     setDrawer(false)
     requestAnimationFrame(() => mobileFilterButton.current?.focus())
   }
-  const labels: Record<FilterKey, string> = { category: pick(locale, 'Kategori', 'Category'), hardware: pick(locale, 'Donanım', 'Hardware'), backend: pick(locale, 'Çalıştırma arka ucu', 'Execution backend'), format: pick(locale, 'Model formatı', 'Model format'), protocol: pick(locale, 'API protokolü', 'API protocol'), scope: pick(locale, 'Dağıtım kapsamı', 'Deployment scope'), status: pick(locale, 'Proje durumu', 'Project status') }
+  const labels: Record<FilterKey, string> = { category: pick(locale, 'Kategori', 'Category'), hardware: pick(locale, 'Donanım', 'Hardware'), backend: pick(locale, 'Çalıştırma arka ucu', 'Execution backend'), format: pick(locale, 'Model formatı', 'Model format'), protocol: pick(locale, 'API protokolü', 'API protocol'), scope: pick(locale, 'Dağıtım kapsamı', 'Deployment scope') }
   const rail = <div className="filter-content">
     <label className="search-field"><Search size={18} /><span className="sr-only">{pick(locale, 'Çözüm ara', 'Search solutions')}</span><input value={state.q} onChange={(event) => setQuery(event.target.value)} placeholder={pick(locale, 'Çözüm, kategori veya donanım ara', 'Search solution, category, or hardware')} /></label>
-    {filterKeys.map((key) => <details key={key} open={['category', 'hardware'].includes(key)}><summary><Term tip={fieldTip(key, locale)}>{labels[key]}</Term>{state[key].length > 0 && <span>{state[key].length}</span>}</summary><div className="filter-options">{valuesFor[key].map((value) => <label key={value}><input type="checkbox" checked={state[key].includes(value)} onChange={() => toggle(key, value)} /><span>{key === 'status' ? projectStatusLabel(locale, value as Parameters<typeof projectStatusLabel>[1]) : displayAtlasValue(locale, value)}</span></label>)}</div></details>)}
+    {filterKeys.map((key) => <details key={key} open={['category', 'hardware'].includes(key)}><summary><Term tip={fieldTip(key, locale)}>{labels[key]}</Term>{state[key].length > 0 && <span>{state[key].length}</span>}</summary><div className="filter-options">{valuesFor[key].map((value) => <label key={value}><input type="checkbox" checked={state[key].includes(value)} onChange={() => toggle(key, value)} /><span>{displayAtlasValue(locale, value)}</span></label>)}</div></details>)}
     <button className="text-button clear-filters" type="button" onClick={clear}>{pick(locale, 'Tüm filtreleri temizle', 'Clear all filters')}</button>
   </div>
   return <div className="shell page-shell explore-page">

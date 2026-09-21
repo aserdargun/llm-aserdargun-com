@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const localizedTextSchema = z.object({ tr: z.string().min(1), en: z.string().min(1) })
 const localizedListSchema = z.object({ tr: z.array(z.string().min(1)).min(1), en: z.array(z.string().min(1)).min(1) })
-const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD').refine((value) => !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value, 'Expected a real calendar date')
 const categoryIdSchema = z.enum(['INF', 'SRV', 'RUN', 'APP', 'DST', 'GTW', 'EDG'])
 
 export const categorySchema = z.object({

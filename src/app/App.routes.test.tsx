@@ -15,7 +15,7 @@ describe('atlas routes', async () => {
     expect(document.documentElement).toHaveAttribute('lang', 'en')
     expect(document.title).toBe('LLM Atlas — Runtime & Serving Field Guide')
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'Compare 31 LLM runtime and serving solutions across seven architectural layers using official sources.')
-    expect(screen.getByText('DATASET REVIEWED · 2026-09-04')).toBeInTheDocument()
+    expect(screen.getByText('SOURCE ENDPOINT REVIEW · 2026-09-21')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Not one market')
     expect(screen.getByRole('link', { name: 'Open the selection guide' })).toHaveAttribute('href', '/en/guide')
     expect(within(screen.getByRole('navigation')).getAllByRole('link', { name: 'Learn' })).toHaveLength(1)
@@ -47,6 +47,15 @@ describe('atlas routes', async () => {
     expect(screen.getByText('1 solution selected')).toBeInTheDocument()
   })
 
+  it('keeps observer dates visible when showing capability differences only', async () => {
+    const user = userEvent.setup()
+    await renderAt('/en/compare?compare=llama-cpp,mlx-lm')
+    await user.click(screen.getByRole('checkbox', { name: 'Show differences only' }))
+    expect(screen.getByRole('rowheader', { name: 'Last verified' })).toBeInTheDocument()
+    expect(screen.getByRole('rowheader', { name: 'Project status' })).toBeInTheDocument()
+    expect(screen.queryByRole('rowheader', { name: 'License' })).not.toBeInTheDocument()
+  })
+
   it('warns about cross-layer comparisons', async () => {
     await renderAt('/en/compare?compare=tensorrt-llm,ollama')
     expect(screen.getByRole('alert')).toHaveTextContent('different architectural layers')
@@ -70,7 +79,7 @@ describe('atlas routes', async () => {
     expect(screen.getByRole('heading', { name: 'Test' })).toBeInTheDocument()
     expect(screen.getByText('Aralıklı tekrar ile her gün küçük bir set tekrar et.')).toBeInTheDocument()
     expect(screen.getByText('Hızlı ve rastgele')).toBeInTheDocument()
-    expect(screen.getByText('5–8 adımlı, görsel mini dersler.')).toBeInTheDocument()
+    expect(screen.getByText('4–7 adımlı, görsel mini dersler.')).toBeInTheDocument()
   })
 
   it('shows archived projects with a clear historical-context notice', async () => {

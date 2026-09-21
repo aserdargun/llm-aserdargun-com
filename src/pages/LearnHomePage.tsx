@@ -1,3 +1,4 @@
+import { PortfolioLearning } from '@/components/PortfolioLearning'
 import { ArrowRight, BookOpenCheck, Brain, Layers, Sparkles, Timer } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
@@ -53,11 +54,13 @@ export function LearnHomePage() {
         <Link to={`/${locale}/learn/lessons`} className="learn-card">
           <BookOpenCheck size={28} aria-hidden="true" />
           <h2>{pick(locale, 'Dersler', 'Lessons')}</h2>
-          <p>{pick(locale, '5–8 adımlı, görsel mini dersler.', 'Visual mini-lessons with 5–8 steps.')}</p>
+          <p>{pick(locale, '4–7 adımlı, görsel mini dersler.', 'Visual mini-lessons with 4–7 steps.')}</p>
           <span className="learn-card__count">{lessons.length} {pick(locale, 'ders', 'lessons')}</span>
           <span className="learn-card__cta">{learnHome.ctaLessons[locale]} <ArrowRight size={16} /></span>
         </Link>
       </section>
+
+      <PortfolioLearning />
 
       <section className="learn-progress" aria-labelledby="progress-title">
         <div className="section-heading">

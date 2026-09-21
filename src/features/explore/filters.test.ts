@@ -3,6 +3,12 @@ import { solutions } from '@/data/solutions'
 import { filterSolutions, parseExploreState, serializeExploreState } from './filters'
 
 describe('explore filters', () => {
+  it('ignores legacy lifecycle filters and observer metadata', () => {
+    const state = parseExploreState(new URLSearchParams('category=SRV&status=archived&lastVerified=2000-01-01'))
+    expect(serializeExploreState(state).toString()).toBe('category=SRV')
+    const changed = solutions.map((solution) => ({ ...solution, projectStatus: 'archived' as const, lastVerified: '2000-01-01', sources: [] }))
+    expect(filterSolutions(changed, state, 'en').map((solution) => solution.slug)).toEqual(filterSolutions(solutions, state, 'en').map((solution) => solution.slug))
+  })
   it('parses known URL dimensions and drops unknown dimensions', () => {
     const state = parseExploreState(new URLSearchParams('q=llama&category=INF&hardware=NVIDIA+GPU&nope=x'))
     expect(state).toMatchObject({ q: 'llama', category: ['INF'], hardware: ['NVIDIA GPU'] })

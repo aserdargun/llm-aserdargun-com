@@ -39,12 +39,12 @@ export const concepts: Concept[] = [
       en: 'The maximum number of tokens a model can "see" in a single call.',
     },
     beginner: {
-      tr: 'Bir insanın sohbette aklında tutabildiği son birkaç cümle gibi düşünün: modelin de bir "kısa süreli hafızası" var. Context window, modelin bir seferde işleyebildiği toplam metin miktarıdır — hem senin sorun hem de modelin verdiği cevap bu sınıra dahildir. Bu sınırı aşarsan, modelin konuşmanın başını unutması beklenir.',
-      en: 'Think of it like a person’s short-term memory in a chat: a model also has a "short-term memory." The context window is the total amount of text a model can process at once — both your question and its answer count toward this limit. If you exceed it, you can expect the model to forget the beginning of the conversation.',
+      "tr": "Bağlam penceresi modelin bir çağrıda işleyebildiği token bütçesidir. Girdi, sohbet şablonu ve ayrılan çıktı bu bütçeyi paylaşır. Sınır aşılırsa API isteği reddedebilir veya uygulama geçmişi kesebilir; model kendiliğinden güvenilir bir özet oluşturmaz.",
+      "en": "The context window is the token budget for one model call. Input, chat formatting and reserved output share that budget. Exceeding it can cause an API error or application-side truncation; the model does not automatically produce a reliable summary."
     },
     intermediate: {
-      tr: 'Context window genellikle token cinsinden ifade edilir. GPT-4 sınıfı modeller 8K, 32K, 128K hatta 1M token’a kadar destekleyebilir. Ancak uzun bağlamda dikkat (attention) mekanizmasının maliyeti O(n²) olduğundan bellek ve gecikme hızla artar. Ayrıca "lost in the middle" etkisi: modeller uzun bağlamda ortadaki bilgiyi kenarlardakinden daha az hatırlar. Bu yüzden uzun belgelerde RAG veya özetleme stratejileri genellikle context window’u şişirmekten daha sağlıklıdır.',
-      en: 'Context window is usually expressed in tokens. GPT-4-class models can support 8K, 32K, 128K, even 1M tokens. But because the attention mechanism has O(n²) cost, memory and latency grow quickly as the context grows. There is also the "lost in the middle" effect: in long contexts, models recall information in the middle less reliably than at the edges. That is why, for long documents, RAG or summarization strategies are usually healthier than just inflating the context window.',
+      "tr": "Bağlam kapasitesi modele ve sunucu ayarına bağlıdır. Yoğun attention için prefill hesaplaması uzunlukla yaklaşık karesel büyür; KV önbelleği ise standart depolamada token sayısıyla doğrusal büyür. FlashAttention bellek trafiğini azaltır fakat yoğun attention hesaplamasının karesel karakterini kaldırmaz. Uzun bağlamda erişim kalitesini görev üzerinde ölçün.",
+      "en": "Context capacity depends on the model and server configuration. Dense-attention prefill computation grows approximately quadratically with length, while standard KV storage grows linearly with token count. FlashAttention reduces memory traffic without removing the quadratic arithmetic of dense attention. Evaluate retrieval quality on the target long-context task."
     },
     advanced: {
       tr: 'İlan edilen bağlam penceresi, modelin o uzunluğun tamamını aynı doğrulukla kullanabildiği anlamına gelmez. Uzun bağlam kalitesi görev ve değerlendirme yöntemine göre değişir; tek bir needle-in-a-haystack sonucu yeterli değildir. Üretimde hem ilgili bilgiye erişim başarısı hem de KV önbelleğinin bağlamla doğrusal büyüyen bellek maliyeti, hedef istek dağılımında ölçülmelidir.',
@@ -54,6 +54,10 @@ export const concepts: Concept[] = [
     relatedConcepts: ['tokenization', 'attention', 'kv-cache', 'prompt'],
     relatedSolutions: ['vllm', 'llama-cpp', 'ollama', 'nvidia-dynamo'],
     category: 'core',
+    sources: [
+      "https://huggingface.co/docs/transformers/main/cache_explanation",
+      "https://arxiv.org/abs/2307.03172"
+    ],
   },
   {
     slug: 'attention',
@@ -91,8 +95,8 @@ export const concepts: Concept[] = [
       en: 'A prompt is everything you write to a model: question, task, instruction, examples — all of it. When you say "Translate this sentence to Turkish: How are you?" to a model, "Translate this sentence to Turkish:" is the instruction, and "How are you?" is the content — together they form the prompt. If you ask the same model the same question in different ways, you can get different answers. That is why "writing a good prompt" is often more effective than fine-tuning.',
     },
     intermediate: {
-      tr: 'İyi bir prompt genellikle dört bileşenden oluşur: (1) Rol/Kişilik ("Sen deneyimli bir editörsün"), (2) Görev tanımı ("Aşağıdaki metni özetle"), (3) Bağlam/veri (kaynak metin), (4) Format/kısıt ("3 madde halinde, her madde 20 kelimeyi geçmesin"). Few-shot prompting, modele 2-5 örnek vererek kalıbı öğretir; chain-of-thought ise "adım adım düşün" diyerek muhakemeyi zorlar. Bir prompt mühendisi olarak temel ilke: netlik, kısıt, örnek ve doğrulama — belirsiz bir prompt pahalı tokenlarla gelen belirsiz bir cevap demektir.',
-      en: 'A good prompt usually has four components: (1) Role/persona ("You are an experienced editor"), (2) Task definition ("Summarize the text below"), (3) Context/data (the source text), (4) Format/constraint ("In 3 bullet points, each no longer than 20 words"). Few-shot prompting teaches the pattern by giving the model 2-5 examples; chain-of-thought forces reasoning by saying "think step by step". As a prompt engineer, the basic principles are: clarity, constraint, example, and validation — an ambiguous prompt means an ambiguous answer paid for with expensive tokens.',
+      "tr": "Rol, görev, bağlam ve çıktı biçimi yararlı bir başlangıç şablonudur; her görev bunların hepsini gerektirmez. Few-shot istemler örneklerle örüntü gösterir. Adım adım açıklama istemek bazı modellerde yardımcı olabilir ama doğru akıl yürütmeyi zorunlu kılmaz. Model ve görev değiştiğinde istemi sabit bir değerlendirme kümesinde yeniden deneyin.",
+      "en": "Role, task, context and output format are a useful starting template, not mandatory ingredients for every task. Few-shot prompts demonstrate a pattern with examples. Asking for a stepwise explanation may help some models but cannot force correct reasoning. Re-evaluate prompts on a fixed task set when the model or task changes."
     },
     advanced: {
       tr: 'Üretim prompt tasarımı bir mühendislik döngüsüdür: girdiler sürümlenir, token bütçesi izlenir, yapılandırılmış çıktılar uygulama tarafında doğrulanır ve değişiklikler sabit bir değerlendirme kümesinde ölçülür. Bağlam, talimat ve çıktı için ayrılacak bütçe göreve göre belirlenir; evrensel bir yüzde yoktur. Model veya sürüm değiştiğinde aynı prompt farklı davranabileceği için regresyon değerlendirmeleri yeniden çalıştırılır.',
@@ -119,13 +123,16 @@ export const concepts: Concept[] = [
       en: 'Embedding models (e.g. text-embedding-3-small, BGE-M3, E5) produce dense vectors of 384-3072 dimensions at sentence/paragraph level. These vectors are the building blocks of semantic search (RAG), clustering, anomaly detection, and classification. For similarity, cosine similarity, dot product, or Euclidean distance is used. Important distinction: embeddings from the same model form a consistent space — vectors from different models cannot be compared. In production, embeddings are typically stored in vector databases like pgvector, Qdrant, or Milvus.',
     },
     advanced: {
-      tr: 'Embedding seçimi, RAG kalitesini doğrudan belirler. Üç kritik metrik: (1) MTEB sıralaması — genel kalite, (2) Maksimum context — uzun belgelerde chunklama, (3) Çok dillilik — Türkçe için BGE-M3 veya multilingual-e5-large tercih edilir. Üretim tuzakları: (a) aynı modelin farklı versiyonları bile vektör uzayını değiştirir — migration sırasında tüm veriyi yeniden embed etmeniz gerekir; (b) chunk stratejisi 512 tokenlık sabit parçalar yerine semantik sınırlandırmayla daha iyi sonuç verir; (c) hybrid search (BM25 + dense) salt dense’ten çoğu benchmarkta üstündür. Atlas’ta embedding üreten çözümler genellikle ayrı modellerdir (örn. BGE, E5) ve serving altyapısından farklıdır.',
-      en: 'Embedding choice directly determines RAG quality. Three critical metrics: (1) MTEB ranking — general quality, (2) Maximum context — chunking for long documents, (3) Multilingual support — for Turkish, BGE-M3 or multilingual-e5-large are preferred. Production pitfalls: (a) even different versions of the same model change the vector space — during migration you must re-embed all data; (b) chunk strategy yields better results with semantic boundaries than fixed 512-token chunks; (c) hybrid search (BM25 + dense) outperforms pure dense on most benchmarks. In the Atlas, embedding-producing solutions are usually separate models (e.g. BGE, E5) and differ from the serving infrastructure.',
+      "tr": "Embedding modelini dil, alan, giriş uzunluğu ve kendi erişim değerlendirme kümenize göre seçin. Boyut, normalizasyon ve query/passage önekleri model sözleşmesinin parçasıdır. Model veya sürüm değiştiğinde eski vektörlerle uyumu doğrulayın; gerekirse koleksiyonu yeniden gömün. Chunking, hibrit arama ve reranking için evrensel üstünlük varsaymayın.",
+      "en": "Choose an embedding model for language, domain, input length and your retrieval evaluation set. Dimensions, normalization and query/passage prefixes are part of its contract. Check compatibility with stored vectors after a model or version change and re-embed when needed. Do not assume universal gains from a chunking, hybrid-search or reranking strategy."
     },
     visual: 'embedding',
     relatedConcepts: ['tokenization', 'context-window', 'prompt', 'attention'],
     relatedSolutions: ['vllm', 'xinference', 'open-webui', 'litellm-proxy'],
     category: 'core',
+    sources: [
+      "https://huggingface.co/intfloat/multilingual-e5-large"
+    ],
   },
   {
     slug: 'temperature',
@@ -164,8 +171,8 @@ export const concepts: Concept[] = [
       en: 'Suppose the model has many candidates for the next token. Top-p=0.9 keeps the highest-probability candidates until their cumulative probability reaches 90%, excluding the rest. The number of retained tokens changes at every step with the distribution and temperature. Top-p therefore acts as a dynamic candidate filter.',
     },
     intermediate: {
-      tr: 'Nucleus sampling (Holtzman et al., 2020) olasılık kütle fonksiyonunun (PMF) kuyruğunu keser. p=0.9 demek ki: olasılıkları büyükten küçüğe sırala, birikimli toplam p’ye ulaşana kadar al. Avantajı: dağılım keskin olduğunda (örn. "The" ardından "cat" neredeyse kesin) sadece 1-2 token seçer; dağılım düz olduğunda (kelime seçimi belirsiz) daha geniş bir kümeye izin verir. Bu yüzden Top-p tek başına, sabit Top-k’dan daha sağlıklıdır. Çoğu API (OpenAI, Anthropic) Top-p=1.0 varsayılanıyla gelir ve temperature ile birlikte kullanılmasını önerir.',
-      en: 'Nucleus sampling (Holtzman et al., 2020) truncates the tail of the probability mass function (PMF). p=0.9 means: sort probabilities high to low, keep taking them until cumulative sum reaches p. The advantage: when the distribution is sharp (e.g. "The" is almost surely followed by "cat"), only 1-2 tokens are chosen; when the distribution is flat (word choice is uncertain), a wider set is allowed. That is why Top-p alone is healthier than a fixed Top-k. Most APIs (OpenAI, Anthropic) ship with Top-p=1.0 as default and recommend using it alongside temperature.',
+      "tr": "Nucleus sampling, olasılığı yüksek tokenları kümülatif toplam p değerine ulaşana kadar tutar ve kalan dağılımı yeniden normalize eder. Aday sayısı sabit değildir. Top-k ile farkı sabit aday sayısı yerine olasılık kütlesi kullanmasıdır; hangisinin uygun olduğu model ve göreve bağlıdır. Varsayılanlar API sürümüne göre kontrol edilmelidir.",
+      "en": "Nucleus sampling retains the highest-probability tokens until cumulative mass reaches p, then renormalizes the retained distribution. Candidate count is not fixed. Unlike top-k, it uses probability mass instead of a fixed count; suitability depends on model and task. Check defaults for the API release."
     },
     advanced: {
       tr: 'Top-p ile temperature aynı olasılık dağılımını farklı biçimde etkiler; ikisini birlikte değiştirmek sonuç nedenini yorumlamayı zorlaştırabilir. Motorların min-p, top-k, top-p ve ceza sırası aynı olmayabilir. Yapılandırılmış çıktı güvenilirliği yalnızca örnekleme ayarına bırakılmamalı; sağlayıcının strict/grammar desteği ve uygulama tarafı şema doğrulaması birlikte kullanılmalıdır.',
@@ -175,6 +182,9 @@ export const concepts: Concept[] = [
     relatedConcepts: ['temperature', 'prompt', 'tokenization', 'system-prompt'],
     relatedSolutions: ['vllm', 'ollama', 'open-webui', 'litellm-proxy'],
     category: 'core',
+    sources: [
+      "https://arxiv.org/abs/1904.09751"
+    ],
   },
   {
     slug: 'system-prompt',
@@ -280,12 +290,12 @@ export const concepts: Concept[] = [
     slug: 'paged-attention',
     name: { tr: 'PagedAttention', en: 'PagedAttention' },
     short: {
-      tr: 'vLLM’in buluşu: KV cache’i sabit boyutlu "sayfalar" halinde tutarak bellek parçalanmasını ve kopyalamayı ortadan kaldıran teknik.',
-      en: 'vLLM’s invention: keeping KV cache in fixed-size "pages" to eliminate memory fragmentation and copying.',
+      "tr": "KV önbelleğini sabit boyutlu bloklarda yöneterek parçalanmayı ve gereksiz ayırmayı azaltan yaklaşım.",
+      "en": "An approach that manages KV cache in fixed-size blocks to reduce fragmentation and unnecessary allocation."
     },
     beginner: {
-      tr: 'Bir kütüphanede her kitap için ayrı bir raf ayırmak yerine, tüm kitapları aynı boyutta sayfalara bölüp raflara dağıtmak gibidir. Boş sayfalar başka kitaplar tarafından doldurulabilir. PagedAttention (vLLM, 2023) bu fikri GPU belleğine taşır: her isteğin KV cache’i büyük tek bir blok yerine küçük 16-tokenlık "page"ler halinde tutulur. Bu, aynı GPU’da çok daha fazla eşzamanlı isteğe izin verir.',
-      en: 'Instead of giving each book its own shelf in a library, you split all books into same-size pages and spread them across shelves. Empty pages can be filled by other books. PagedAttention (vLLM, 2023) brings this idea to GPU memory: each request’s KV cache is kept in small 16-token "pages" instead of one large block. This allows many more concurrent requests on the same GPU.',
+      "tr": "Her istek için baştan dev bir raf ayırmak yerine, ihtiyaç oldukça küçük raf bölümleri ayırmayı düşünün. PagedAttention KV önbelleğini bu şekilde bloklara böler. Blok boyutu motor, arka uç ve yapılandırmaya bağlıdır; paging token başına KV verisini sıkıştırmaz.",
+      "en": "Instead of reserving one huge shelf per request in advance, allocate small sections as needed. PagedAttention divides KV storage into blocks in this way. Block size depends on the engine, backend and configuration; paging does not compress per-token KV data."
     },
     intermediate: {
       tr: 'Büyük, bitişik KV alanlarını en yüksek dizi uzunluğuna göre önceden ayırmak parçalanma ve kullanılmayan kapasite yaratabilir. PagedAttention, işletim sistemlerindeki sanal bellek ve sayfa tablosu modelinden esinlenir: her isteğin blok tablosu vardır, fiziksel bloklar GPU belleğinde bitişik olmak zorunda değildir. Böylece israf azalır ve uyumlu uygulamalarda ortak önek blokları paylaşılabilir.',
@@ -416,13 +426,16 @@ export const concepts: Concept[] = [
       en: 'LoRA factors the weight update as W\' = W + ΔW with ΔW = A·B using two low-rank matrices while base weights stay frozen. Rank, target modules, optimizer state, and sequence length determine trainable-parameter and memory cost. QLoRA trains adapters over a quantized base; DoRA separates weight direction and magnitude; AdaLoRA allocates rank budget dynamically. Gains must be measured on the target model and hardware.',
     },
     advanced: {
-      tr: 'LoRA üretimde iki yönde olgunlaştı: (1) Birleştirme (merging) — eğitimden sonra LoRA adaptörü ana ağırlıklara geri eklenir (linear merge); bu yapılmazsa her inference\'ta ek matris çarpımı yapılır. vLLM ve llama.cpp merge edilmiş saf modeli tercih eder. (2) Çoklu adaptör yönetimi — tek bir temel model üzerine 50+ farklı LoRA servisi, gerektiğinde "hot-swap". Bu, bir model servisinde farklı müşterilere farklı "kişilik" sunmayı mümkün kılar. Pratik: rank seçimi trade-off yaratır — düşük rank (r=4) az bellek ama düşük kapasite; yüksek rank (r=128) tam FT\'ye yakın kalite ama eğitim maliyeti artar. Adapter fusion (IA³, prefix-tuning) gibi alternatif yöntemler başka alanlarda daha etkili olabilir.',
-      en: 'LoRA has matured in two directions in production: (1) Merging — after training, the LoRA adapter is added back to the main weights (linear merge); if not done, every inference pays for an extra matrix multiplication. vLLM and llama.cpp prefer the merged plain model. (2) Multi-adapter management — 50+ different LoRA services on a single base model, "hot-swapped" on demand. This enables serving different "personalities" to different customers in one model service. Practical: rank choice creates a trade-off — low rank (r=4) is light on memory but low capacity; high rank (r=128) approaches full FT quality but raises training cost. Alternatives like adapter fusion (IA³, prefix-tuning) can be more effective in other domains.',
+      "tr": "LoRA adaptörleri desteklenen biçimlerde ana ağırlıklara birleştirilebilir veya ayrı yüklenebilir. Ayrı adaptörler ek hesap ve bellek kullanır; çoklu adaptör sunumu aynı temel modelin farklı görevlerde paylaşılmasını sağlar. vLLM adaptör sunumunu destekler. Rank, hedef modüller, nicemleme ve birleştirme doğruluğu sürüm ve görev üzerinde ölçülmelidir; yüksek rank tam ince ayar kalitesini garanti etmez.",
+      "en": "LoRA adapters can be merged into base weights in supported formats or loaded separately. Separate adapters add computation and memory; multi-adapter serving shares a base model across tasks. vLLM supports adapter serving. Evaluate rank, target modules, quantization and merge correctness for the release and task; higher rank does not guarantee full-fine-tuning quality."
     },
     visual: 'pipeline',
     relatedConcepts: ['fine-tuning', 'quantization', 'distillation', 'pruning'],
     relatedSolutions: ['mlx-lm', 'vllm', 'lmdeploy', 'ollama'],
     category: 'optimization',
+    sources: [
+      "https://docs.vllm.ai/en/latest/features/lora/"
+    ],
   },
   {
     slug: 'fine-tuning',
@@ -456,21 +469,24 @@ export const concepts: Concept[] = [
       en: 'A method that trains the model to produce more helpful and safe outputs through a reward model trained on human preferences.',
     },
     beginner: {
-      tr: 'Bir çocuk bisiklete binerken her düşüşte "acı", her başarılı sürüşte "tebrik" alır — zamanla daha iyi öğrenir. RLHF, modelin benzer şekilde insan değerlendirmelerinden ders çıkarmasıdır. İnsanlar iki cevabı karşılaştırır ("hangisi daha iyi?") ve bu tercihler bir "ödül modeli"ne dönüşür. Model, ödül modelinden yüksek puan alacak şekilde ince ayar yapılır. ChatGPT\'nin "yardımsever ve zararsız" olmasının temel nedeni budur.',
-      en: 'When a child learns to ride a bike, every fall is "pain", every successful ride is "congratulations" — over time they learn better. RLHF is the model learning similarly from human evaluations. Humans compare two answers ("which is better?") and these preferences become a "reward model". The model is then fine-tuned to score high on the reward model. This is the main reason ChatGPT is "helpful and harmless".',
+      "tr": "İnsanlar model yanıtlarını karşılaştırarak tercih verisi oluşturabilir. Klasik RLHF bu veriden bir ödül modeli öğrenir ve dil modelini bu ödüle göre günceller. Amaç daha yararlı davranıştır; güvenlik veya doğruluk garantisi değildir.",
+      "en": "People can compare model answers to create preference data. Classic RLHF learns a reward model from that data and updates the language model against the reward. The aim is more useful behavior; safety and correctness are not guaranteed."
     },
     intermediate: {
       tr: 'Klasik RLHF akışında önce denetimli ince ayar, sonra insan tercihleriyle ödül modeli ve ardından PPO benzeri bir politika güncellemesi bulunabilir. DPO gibi doğrudan tercih yöntemleri açık bir ödül modeli olmadan çiftli tercih verisini optimize eder; GRPO gibi yöntemler farklı geri bildirim ve örnekleme düzenleri kullanır. Hangi yöntemin seçileceği veri, doğrulanabilir ödül, hesap bütçesi ve kararlılık gereksinimine bağlıdır.',
       en: 'A classic RLHF pipeline can use supervised fine-tuning, a reward model trained on human preferences, and then a PPO-style policy update. Direct preference methods such as DPO optimize paired preferences without an explicit reward model, while approaches such as GRPO use different feedback and sampling designs. The choice depends on data, verifiable rewards, compute budget, and stability requirements.',
     },
     advanced: {
-      tr: 'RLHF üretim sistemleri için pahalı ve risklidir. Üç temel sorun: (1) "reward hacking" — model ödül modelini "hackleyerek" yüksek puan alır ama gerçekten iyi cevap üretmez; çözüm: "constitutional AI" (Anthropic) gibi ek kısıtlar; (2) "sycophancy" — model insanlara "evet efendim" moduna girer, çünkü olumlu cevaplar daha yüksek puan alır; (3) "mode collapse" — PPO güncellemeleri çok agresif olursa model çeşitliliğini kaybeder. Çözüm yolları: (a) KTO (Kahneman-Tversky) — reference-free, daha kararlı; (b) Process reward — sadece son cevabı değil, muhakeme zincirini puanla; (c) Online RLHF — sürekli güncellenen insan tercih verisi. Atlas açısından: RLHF/DPO aşaması eğitim pipeline\'ında bir adımdır; inference motoru (vLLM, SGLang) yalnızca son modeli çalıştırır, tercih mekanizması görmez.',
-      en: 'RLHF is expensive and risky for production systems. Three core problems: (1) "reward hacking" — the model "hacks" the reward model to score high without producing truly good answers; solution: extra constraints like "constitutional AI" (Anthropic); (2) "sycophancy" — the model enters a "yes sir" mode, because agreeable answers score higher; (3) "mode collapse" — if PPO updates are too aggressive the model loses diversity. Solutions: (a) KTO (Kahneman-Tversky) — reference-free, more stable; (b) Process reward — score not just the final answer but the reasoning chain; (c) Online RLHF — continuously updated human preference data. In the Atlas, RLHF/DPO is one step in the training pipeline; the inference engine (vLLM, SGLang) just runs the final model and does not see the preference mechanism.',
+      "tr": "Ödül optimizasyonu, ödül istismarı, kullanıcıyı gereksiz onaylama ve çıktı çeşitliliğinin azalması gibi sorunlara yol açabilir. Bağımsız değerlendirme ve kısıtlar gereklidir. DPO, tercih çiftlerinden ayrı bir ödül modeli eğitmeden öğrenen bir alternatiftir; klasik PPO tabanlı RLHF ile aynı işlem hattı değildir. Çıkarım motoru eğitilmiş ağırlıkları yürütür.",
+      "en": "Reward optimization can produce reward hacking, sycophancy and reduced output diversity. Independent evaluation and constraints remain necessary. DPO is an alternative that learns from preference pairs without training a separate reward model; it is not the same pipeline as classic PPO-based RLHF. The inference engine executes the resulting weights."
     },
     visual: 'pipeline',
     relatedConcepts: ['fine-tuning', 'prompt', 'system-prompt', 'lora'],
     relatedSolutions: ['vllm', 'lmdeploy', 'sglang', 'open-webui'],
     category: 'optimization',
+    sources: [
+      "https://arxiv.org/abs/2305.18290"
+    ],
   },
   {
     slug: 'pruning',
@@ -506,12 +522,12 @@ export const concepts: Concept[] = [
       en: 'A C/C++ extension and runtime for parallel computing on NVIDIA GPUs.',
     },
     beginner: {
-      tr: 'Bir CPU\'yu tek bir güçlü işçi gibi düşün: bir seferde birkaç karmaşık iş yapar. Bir GPU\'yu binlerce küçük işçinin olduğu bir fabrika gibi düşün: binlerce basit işi aynı anda yapar. CUDA, NVIDIA\'nın GPU fabrikasını programlamak için verdiği "iş yönergesi" kitabıdır. LLM eğitimi ve çıkarımı bu fabrikada devasa matris çarpımları yapar; CUDA olmadan bu işlemler mümkün olmazdı.',
-      en: 'Think of a CPU as a single strong worker: a few complex jobs at a time. A GPU is a factory with thousands of small workers: thousands of simple jobs in parallel. CUDA is NVIDIA\'s "work instruction" book for programming that GPU factory. LLM training and inference do massive matrix multiplications in this factory; without CUDA those operations wouldn\'t be possible.',
+      "tr": "GPU çok sayıda paralel hesap birimiyle matris işlemlerini yürütür. CUDA, NVIDIA GPU’larını programlamak için kullanılan platform ve araç zinciridir. LLM hesaplamaları CPU, Metal, ROCm veya başka desteklenen yollarla da yapılabilir; CUDA evrensel bir LLM gereksinimi değildir.",
+      "en": "GPUs use many parallel processing units for matrix operations. CUDA is a platform and toolchain for programming NVIDIA GPUs. LLM computation can also run through CPUs, Metal, ROCm and other supported paths; CUDA is not a universal LLM requirement."
     },
     intermediate: {
-      tr: 'CUDA, NVIDIA\'nın 2006\'dan beri geliştirdiği paralel hesaplama mimarisidir. Üç temel kavram: (1) Thread hierarchy — grid > block > thread, binlerce thread bir kernel içinde koşar; (2) Memory hierarchy — global, shared, constant, texture bellekler; shared memory en hızlı ama sınırlı; (3) Streams — asenkron iş kuyruğu, CPU-GPU örtüşmesini sağlar. LLM çekirdekleri: gemm (matris çarpımı), attention (FlashAttention), quantization (INT4/INT8 çekirdekleri) hep CUDA ile yazılır. vLLM, TensorRT-LLM, SGLang, llama.cpp\'nin CUDA backend\'i hep bu çekirdekleri kullanır.',
-      en: 'CUDA is the parallel-computing architecture NVIDIA has been developing since 2006. Three core concepts: (1) Thread hierarchy — grid > block > thread, thousands of threads run in one kernel; (2) Memory hierarchy — global, shared, constant, texture memory; shared is fastest but limited; (3) Streams — async work queue, enables CPU-GPU overlap. LLM kernels: gemm (matrix multiplication), attention (FlashAttention), quantization (INT4/INT8 kernels) are all written in CUDA. vLLM, TensorRT-LLM, SGLang, llama.cpp\'s CUDA backend all use these kernels.',
+      "tr": "CUDA çekirdekleri grid, block ve thread hiyerarşisiyle düzenlenir. Register, shared memory ve global memory farklı kapasite ve erişim maliyetlerine sahiptir. Streams, desteklenen işlerin eşzamanlı yürütülmesini sağlar. Matris çarpımı, attention ve nicemleme işlemleri kütüphaneler veya özel çekirdeklerle uygulanabilir; performans donanım ve veri tipine bağlıdır.",
+      "en": "CUDA kernels use a grid, block and thread hierarchy. Registers, shared memory and global memory have different capacity and access costs. Streams allow supported work to overlap. Matrix multiplication, attention and quantization can use libraries or custom kernels; performance depends on hardware and data type."
     },
     advanced: {
       tr: 'Modern CUDA yığını sürücü, toolkit, kütüphane ve uygulama çekirdeklerinden oluşur. Sürücü ile CUDA çalışma zamanı uyumu, GPU’nun compute capability değeri ve kullanılan hassasiyet hangi çekirdeklerin çalışacağını belirler. Tensor Core’lar desteklenen veri türlerinde matris işlemlerini hızlandırır; NCCL ve NVLink gibi bileşenler çoklu GPU iletişimini destekler, MIG ise desteklenen GPU’ları yalıtılmış dilimlere ayırabilir. Atlas’ta CUDA desteği, ilgili yürütme yolu için NVIDIA GPU gerektiğini belirtir.',
@@ -652,8 +668,8 @@ export const concepts: Concept[] = [
       en: 'The model producing a structured JSON output to call an external function/tool instead of giving its own answer.',
     },
     beginner: {
-      tr: 'Bir garson müşterinin siparişini alıp mutfağa iletir, kendisi yemek pişirmez. Function calling, modelin "garson" rolü: kullanıcı "İstanbul hava durumu" derse, model kendisi hava durumunu bilmez, ama "hava_durumu" fonksiyonunu çağırır, o fonksiyon sonucu getirir, model bu sonucu kullanıcıya "yarın İstanbul\'da 18°C, parçalı bulutlu" şeklinde aktarır. Model veriyi kendisi üretmez, bir aracı çağırır.',
-      en: 'A waiter takes the customer\'s order and passes it to the kitchen; they don\'t cook. Function calling is the model\'s "waiter" role: if the user asks "weather in Istanbul", the model doesn\'t know the weather itself, but it calls the "get_weather" function, that function brings the result, and the model passes it to the user as "tomorrow in Istanbul 18°C, partly cloudy". The model doesn\'t generate data, it calls a tool.',
+      "tr": "Model bir araç adı ve argümanları önerir; aracı çalıştıran uygulamadır. Örneğin hava durumu için konum içeren bir çağrı üretilebilir. Uygulama adı, argümanları ve yetkiyi doğrular, aracı çalıştırır ve sonucu modele döndürür. Model yanlış argüman üretebilir; araç çağrısı doğruluk garantisi değildir.",
+      "en": "The model proposes a tool name and arguments; the application executes the tool. For weather, a call might include a location. The application validates the name, arguments and permissions, runs the tool and returns its result to the model. The model can produce incorrect arguments; tool calling is not a correctness guarantee."
     },
     intermediate: {
       tr: 'Function calling akışı: (1) Geliştirici bir "tool schema" listesi tanımlar (JSON Schema / OpenAPI benzeri) — fonksiyon adı, parametreleri, açıklaması; (2) Schema, system prompt\'a veya API\'nin "tools" parametresine eklenir; (3) Model cevap yerine tool_call(JSON) üretir; (4) Uygulama bu JSON\'u parse eder, ilgili fonksiyonu çalıştırır; (5) Fonksiyon sonucu modele geri verilir, model bu sefer düz metin cevap üretir. Üç yaygın format: (a) OpenAI tool_calls formatı (en yaygın), (b) Anthropic tool_use (benzer ama farklı JSON şeması), (c) Google function_calling (farklı yapı). Üretim notları: (a) tool şeması çok büyükse token maliyeti artar — 50 tool = binlerce token; (b) tool selection accuracy düşükse "forced tool choice" parametresi ile kısıtla; (c) JSON validasyon için Pydantic veya Zod kullan.',
@@ -704,8 +720,8 @@ export const concepts: Concept[] = [
       en: 'When you look for the "adventure novels" shelf in a library, you don\'t open every book and read its plot; they are classified by topic, you are pointed to the right shelf. A vector database stores embeddings (numeric representations of text/image/audio) and quickly answers queries like "find the 10 vectors most similar to this one". RAG, semantic search, and recommender systems are all built on top of it.',
     },
     intermediate: {
-      tr: 'Vektör DB\'lerin iki temel yapı taşı: (1) Index — yüksek boyutlu vektörleri hızlı aramak için ANN (Approximate Nearest Neighbor) algoritması (HNSW, IVF, ScaNN); (2) Metadata — vektörün yanında düz metin/etiket (kaynak doküman, tarih, kategori). Önemli vektör DB\'ler: pgvector (PostgreSQL eklentisi), Qdrant (Rust), Milvus (C++), Weaviate (Go), Chroma (Python), Pinecone (yönetilen). Trade-off\'lar: (a) HNSW en doğru ama bellek yoğun; (b) IVF bellek dostu ama doğruluk düşer; (c) filtreleme — metadata ile birlikte arama (pre-filter vs post-filter) başarımı etkiler. Üretimde: 1 milyon vektör için pgvector bile yeterli, 100M+ ölçeğinde Qdrant veya Milvus tercih edilir.',
-      en: 'Two core building blocks of vector DBs: (1) Index — ANN (Approximate Nearest Neighbor) algorithm for fast high-dimensional search (HNSW, IVF, ScaNN); (2) Metadata — plain text/tags alongside the vector (source document, date, category). Important vector DBs: pgvector (PostgreSQL extension), Qdrant (Rust), Milvus (C++), Weaviate (Go), Chroma (Python), Pinecone (managed). Trade-offs: (a) HNSW most accurate but memory-hungry; (b) IVF memory-friendly but lower accuracy; (c) filtering — combined search with metadata (pre-filter vs post-filter) affects performance. In production: pgvector is enough for 1 million vectors, at 100M+ scale Qdrant or Milvus is preferred.',
+      "tr": "Vektör araması tam arama veya HNSW ve IVF gibi yaklaşık indeksler kullanabilir. HNSW ve IVF farklı bellek, kurulum, sorgu ve recall dengeleri sunar; evrensel bir doğruluk sıralaması veya O(log N) garantisi yoktur. pgvector, Qdrant ve Milvus gibi araçları vektör boyutu, filtreler, güncellemeler, donanım ve gecikme hedefiyle karşılaştırın; yalnızca kayıt sayısı seçim için yeterli değildir.",
+      "en": "Vector search can use exact search or approximate indexes such as HNSW and IVF. These trade memory, build cost, query cost and recall differently; there is no universal accuracy ranking or O(log N) guarantee. Compare tools such as pgvector, Qdrant and Milvus using dimensions, filters, updates, hardware and latency targets; record count alone cannot select a database."
     },
     advanced: {
       tr: 'Vektör veritabanı seçimi; veri hacmi, güncelleme sıklığı, gecikme hedefi, filtre yoğunluğu ve işletme modeline göre yapılmalıdır. Hibrit arama sparse ve dense sinyalleri birleştirebilir; nicemlenmiş ya da disk tabanlı indeksler bellek kullanımını düşürürken geri çağırım ve gecikme dengesi yaratır. Embedding boyutu veya yeniden sıralama için evrensel bir doğru yoktur: hedef veri kümesinde retrieval ölçümleriyle değerlendirme yapılmalı, belge silme ve güncelleme davranışı da sınanmalıdır.',
@@ -715,6 +731,9 @@ export const concepts: Concept[] = [
     relatedConcepts: ['embedding', 'rag', 'function-calling'],
     relatedSolutions: ['open-webui', 'anythingllm', 'openvino-genai', 'onnx-runtime-genai'],
     category: 'app',
+    sources: [
+      "https://github.com/pgvector/pgvector"
+    ],
   },
   {
     slug: 'openai-compatible-api',
@@ -732,8 +751,8 @@ export const concepts: Concept[] = [
       en: 'The OpenAI API shape is a common compatibility surface supported by many local and server solutions. Endpoints such as /v1/chat/completions, /v1/embeddings, and /v1/models are widespread, but their presence does not imply identical behavior. Switching providers may require changes beyond base_url, including authentication, model names, features, errors, and streaming contracts.',
     },
     advanced: {
-      tr: 'OpenAI-compatible API\'nin sınırları da var. Üç önemli nokta: (1) "feature drift" — OpenAI yeni özellik eklediğinde (tool_calls, structured outputs, vision, audio) açık kaynak motorlar gecikmeli takip eder; (2) "subtle differences" — temperature, top_p, logprobs gibi parametreler motorlar arasında farklı yorumlanabilir; (3) "streaming variations" — SSE delta\'larının format\'ı çoğunlukla aynıdır ama metadata eklemeleri farklıdır. Üretim stratejileri: (a) "API gateway" katmanı (LiteLLM, Kong AI Gateway) sağlayıcı farklılıklarını normalize eder, üst katman tek tip görür; (b) "function calling" OpenAI uyumlu motorlarda genellikle "tools" parametresiyle çalışır ama JSON şeması uyumu test edilmeli; (c) "vision" desteği OpenAI uyumlu çoğu motor için ayrı bir endpoint (örn. /v1/chat/completions\'a image_url geçirilir). Atlas açısından: OpenAI-compatible sunan tüm çözümler "lock-in yok" avantajını taşır; bu onları özellikle kurumsal senaryolarda değerli kılar.',
-      en: 'The OpenAI-compatible API has its limits. Three important points: (1) "feature drift" — when OpenAI adds a new feature (tool_calls, structured outputs, vision, audio) open-source engines follow with a delay; (2) "subtle differences" — parameters like temperature, top_p, logprobs can be interpreted differently across engines; (3) "streaming variations" — SSE delta format is mostly the same but metadata additions differ. Production strategies: (a) an "API gateway" layer (LiteLLM, Kong AI Gateway) normalizes provider differences so the upper layer sees a uniform surface; (b) "function calling" in OpenAI-compatible engines usually works with the "tools" parameter but JSON schema conformance should be tested; (c) "vision" support in most OpenAI-compatible engines is a separate endpoint (e.g. pass image_url to /v1/chat/completions). In the Atlas, all solutions that expose OpenAI-compatible APIs carry the "no lock-in" advantage; this makes them especially valuable in enterprise scenarios.',
+      "tr": "Uyumluluk uç nokta ve özellik bazında doğrulanır: sohbet, embeddings, görsel girdi, araç çağrıları ve yapılandırılmış çıktılar aynı kapsamda olmayabilir. Görseller desteklenen sohbet uç noktasında içerik parçaları olarak gönderilebilir; ayrı bir uç nokta zorunlu değildir. Ağ geçidi farklılıkları azaltabilir fakat kimlik doğrulama, hata ve akış davranışını veya tüm sağlayıcı bağımlılıklarını ortadan kaldırmaz.",
+      "en": "Validate compatibility per endpoint and feature: chat, embeddings, image input, tool calls and structured outputs may have different coverage. Images can be content parts on a supported chat endpoint; a separate endpoint is not inherently required. A gateway can reduce differences but does not eliminate authentication, error and streaming differences or all provider dependencies."
     },
     visual: 'pipeline',
     relatedConcepts: ['function-calling', 'agent', 'system-prompt', 'rag'],

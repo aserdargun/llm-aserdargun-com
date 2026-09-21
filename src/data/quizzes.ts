@@ -44,8 +44,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'Context window (bağlam penceresi), modelin hem girdi hem çıktı için tek seferde görebildiği toplam token sayısıdır; aşılırsa model bağlamın başını unutur.',
-      en: 'The context window is the total number of tokens a model can see in a single call (input + output); exceeding it makes the model "forget" the beginning.',
+      "tr": "Bağlam penceresi tek çağrının token bütçesidir. Sınır aşılırsa istek reddedilebilir veya uygulama geçmişi kesebilir; otomatik unutma garanti edilen bir davranış değildir.",
+      "en": "The context window is the token budget for one call. Overflow may reject the request or trigger application-side truncation; automatic forgetting is not a guaranteed behavior."
     },
     tags: ['context-window', 'concept', 'memory'],
   },
@@ -64,8 +64,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'Q (Query) "ne arıyorum?", K (Key) "neler sunuyorum?", V (Value) "bulunursa ne katkı sağlarım?" sorularını temsil eder; dikkat çıktısı softmax(Q·Kᵀ / √d_k) · V formülüyle hesaplanır.',
-      en: 'Q (Query) means "what am I looking for?", K (Key) "what do I offer?", V (Value) "what do I contribute if I\'m found?"; the attention score is softmax(Q·Kᵀ / √d_k) · V.',
+      "tr": "Q sorgu, K anahtar, V değerdir. softmax(QKᵀ/√d_k) ağırlıkları üretir; V ile çarpımı attention çıktısıdır.",
+      "en": "Q, K and V mean query, key and value. softmax(QKᵀ/√d_k) produces the weights; multiplying by V produces the attention output."
     },
     tags: ['attention', 'concept', 'transformer'],
   },
@@ -144,8 +144,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'Top-p, olasılıkları büyükten küçüğe sıralar ve birikimli toplam p\'ye ulaşana kadar olan tokenlardan örnekler. p=0.9 genellikle 5-15 aday bırakır; sabit Top-k\'dan daha sağlıklıdır.',
-      en: 'Top-p sorts probabilities high-to-low and samples from tokens until the cumulative sum reaches p. p=0.9 usually leaves 5-15 candidates; it is healthier than a fixed Top-k.',
+      "tr": "Olasılıklar büyükten küçüğe sıralanır; toplam p değerine ulaşana kadar adaylar tutulur ve yeniden normalize edilir. Sabit bir aday sayısı veya top-k karşısında evrensel üstünlük yoktur.",
+      "en": "Probabilities are sorted descending; candidates are retained until cumulative mass reaches p and then renormalized. There is no fixed candidate count or universal advantage over top-k."
     },
     tags: ['top-p', 'concept', 'sampling'],
   },
@@ -157,15 +157,27 @@ export const quizzes: QuizQuestion[] = [
       en: 'What is the system prompt used for?',
     },
     options: [
-      { tr: 'Modelin rolünü, kurallarını ve çıktı formatını kalıcı olarak tanımlamak', en: 'To define the model\'s persistent role, rules, and output format' },
-      { tr: 'Kullanıcının her mesajını ayrı ayrı sarmalamak', en: 'To wrap each user message separately' },
-      { tr: 'Modeli hızlandırmak', en: 'To speed up the model' },
-      { tr: 'GPU bellek kullanımını azaltmak', en: 'To reduce GPU memory usage' },
+      {
+        "tr": "Modelin rolünü, davranış çerçevesini ve istenen çıktı biçimini tanımlamak",
+        "en": "To describe the model role, behavior and requested output format"
+      },
+      {
+        "tr": "Kullanıcının her mesajını ayrı ayrı sarmalamak",
+        "en": "To wrap each user message separately"
+      },
+      {
+        "tr": "Modeli hızlandırmak",
+        "en": "To speed up the model"
+      },
+      {
+        "tr": "GPU bellek kullanımını azaltmak",
+        "en": "To reduce GPU memory usage"
+      }
     ],
     correct: 0,
     explain: {
-      tr: 'System prompt, modelin persona\'sını, kısıtlamalarını ve araç çağrı izinlerini tanımlar. OpenAI modelleri system mesajına daha yüksek ağırlık verir; talimatı oraya koymak user mesajına koymaktan daha etkilidir.',
-      en: 'The system prompt defines the model\'s persona, constraints, and tool-calling permissions. OpenAI models weight system messages more heavily, so instructions there are more effective than in the user message.',
+      "tr": "Sistem iletisi talimat sağlar; gizlilik, JSON doğruluğu veya araç izni uygulamaz. Rol öncelikleri API ve sohbet şablonuna bağlıdır; yetkilendirme uygulamada uygulanır.",
+      "en": "A system message supplies instructions; it does not enforce secrecy, JSON correctness or tool permissions. Role priorities depend on the API and chat template; authorization is enforced by the application."
     },
     tags: ['system-prompt', 'concept', 'roles'],
   },
@@ -184,8 +196,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'KV cache, katmanların geçmiş K/V tensörlerini saklayarak her decode adımında geçmiş dikkati yeniden hesaplamayı önler. Uzun bağlam ve yüksek eşzamanlılıkta önemli bir GPU belleği tüketicisidir.',
-      en: 'KV cache stores past K/V tensors for each layer, avoiding recomputation of prior attention at every decode step. It becomes a major GPU-memory consumer with long contexts and high concurrency.',
+      "tr": "KV önbelleği önceki tokenların K/V tensörlerini saklar. Yeni sorgu yine geçmiş K/V üzerinde attention hesaplar; tüm attention işlemi ortadan kalkmaz.",
+      "en": "KV cache stores prior tokens’ K/V tensors. Each new query still computes attention over past K/V; caching does not eliminate attention computation."
     },
     tags: ['kv-cache', 'concept', 'optimization'],
   },
@@ -253,19 +265,31 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:concept:speculative-decoding:1',
     kind: 'mcq',
     prompt: {
-      tr: 'Speculative decoding\'in matematiksel garantisi nedir?',
-      en: 'What is the mathematical guarantee of speculative decoding?',
+      "tr": "Doğru kabul/red örneklemesi kullanan spekülatif çözme neyi koruyabilir?",
+      "en": "What can speculative decoding with correct accept/reject sampling preserve?"
     },
     options: [
-      { tr: 'Aynı dağılımdan örnekleme yapılmış gibi sonuç verir; kalite korunur', en: 'Output looks like sampling from the same distribution; quality is preserved' },
-      { tr: 'Model otomatik olarak küçülür', en: 'The model automatically shrinks' },
-      { tr: 'Bellek yarıya düşer', en: 'Memory is halved' },
-      { tr: 'Eğitim ihtiyacı tamamen kalkar', en: 'No training is needed' },
+      {
+        "tr": "Hedef modelin örnekleme dağılımını",
+        "en": "The target model sampling distribution"
+      },
+      {
+        "tr": "Model otomatik olarak küçülür",
+        "en": "The model automatically shrinks"
+      },
+      {
+        "tr": "Bellek yarıya düşer",
+        "en": "Memory is halved"
+      },
+      {
+        "tr": "Eğitim ihtiyacı tamamen kalkar",
+        "en": "No training is needed"
+      }
     ],
     correct: 0,
     explain: {
-      tr: 'Speculative decoding, hedef modelin dağılımından örnekleme yapılmış gibi sonuç verir; yani sonuç kalitesi korunur, sadece hız kazanılır. Kabul edilen tokenlar hedef modelin "kabul ettiği" örneklerdir.',
-      en: 'Speculative decoding produces output that looks like sampling from the target model\'s distribution; output quality is preserved, only speed improves. Accepted tokens are the ones the target model "accepts" as samples.',
+      "tr": "Dağılımı koruma doğru örnekleme algoritmasına bağlıdır. Hız artışı taslak maliyeti ve kabul oranına bağlıdır; bazı işlerde yavaşlama olabilir.",
+      "en": "Distribution preservation depends on the correct sampling algorithm. Speedup depends on drafting cost and acceptance rate; some workloads can slow down."
     },
     tags: ['speculative-decoding', 'concept', 'quality'],
   },
@@ -273,14 +297,26 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:concept:prefill-decode:1',
     kind: 'mcq',
     prompt: {
-      tr: 'Disaggregated serving (örn. NVIDIA Dynamo) neden gereklidir?',
-      en: 'Why is disaggregated serving (e.g. NVIDIA Dynamo) necessary?',
+      "tr": "Prefill/decode ayrıştırması hangi durumda değerlendirilebilir?",
+      "en": "When might prefill/decode disaggregation be worth evaluating?"
     },
     options: [
-      { tr: 'Prefill ve decode aynı GPU\'da farklı yük profilleri yaratır ve birbirini yavaşlatır', en: 'Prefill and decode have different load profiles and slow each other down on the same GPU' },
-      { tr: 'Model boyutunu azaltmak için', en: 'To reduce model size' },
-      { tr: 'GPU markasını değiştirmek için', en: 'To switch GPU brands' },
-      { tr: 'Model indirmeyi hızlandırmak için', en: 'To speed up model download' },
+      {
+        "tr": "Farklı yük profilleri gecikmede etkileşiyor ve bağımsız ölçekleme gerekiyorsa",
+        "en": "When different load profiles interfere with latency and need independent scaling"
+      },
+      {
+        "tr": "Model boyutunu azaltmak için",
+        "en": "To reduce model size"
+      },
+      {
+        "tr": "GPU markasını değiştirmek için",
+        "en": "To switch GPU brands"
+      },
+      {
+        "tr": "Model indirmeyi hızlandırmak için",
+        "en": "To speed up model download"
+      }
     ],
     correct: 0,
     explain: {
@@ -324,8 +360,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'Distillation, büyük öğretmen modelin "soft label" (olasılık dağılımı) ve ara katman bilgisini küçük öğrenci modele aktarır. Öğrenci, öğretmenin bilgi kalitesinin çoğunu çok daha az parametreyle taşır.',
-      en: 'Distillation transfers a large teacher\'s "soft labels" (probability distribution) and hidden-state information to a smaller student. The student retains most of the teacher\'s quality at a fraction of the size.',
+      "tr": "Öğrenci, öğretmen çıktıları, dağılımları veya temsillerinden öğrenebilir. Ne kadar kalite korunduğu ve ne kadar küçülme sağlandığı görev üzerinde ölçülür.",
+      "en": "A student can learn from teacher outputs, distributions or representations. Retained quality and size reduction must be measured on the task."
     },
     tags: ['distillation', 'concept', 'optimization'],
   },
@@ -353,19 +389,31 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:concept:rlhf:1',
     kind: 'mcq',
     prompt: {
-      tr: 'RLHF (İnsan Geri Bildirimiyle Pekiştirmeli Öğrenme) hangi adımlardan oluşur?',
-      en: 'Which steps does RLHF (RL from Human Feedback) consist of?',
+      "tr": "Klasik PPO tabanlı RLHF akışını hangi sıra örnekler?",
+      "en": "Which sequence illustrates classic PPO-based RLHF?"
     },
     options: [
-      { tr: 'SFT → Reward Model → PPO/DPO', en: 'SFT → Reward Model → PPO/DPO' },
-      { tr: 'Tokenize → Embed → Decode', en: 'Tokenize → Embed → Decode' },
-      { tr: 'Prefill → Decode → Stream', en: 'Prefill → Decode → Stream' },
-      { tr: 'Eğitim → Doğrulama → Test', en: 'Train → Validate → Test' },
+      {
+        "tr": "SFT → tercih verisinden ödül modeli → PPO ile politika güncellemesi",
+        "en": "SFT → reward model from preferences → PPO policy update"
+      },
+      {
+        "tr": "Tokenize → Embed → Decode",
+        "en": "Tokenize → Embed → Decode"
+      },
+      {
+        "tr": "Prefill → Decode → Stream",
+        "en": "Prefill → Decode → Stream"
+      },
+      {
+        "tr": "Eğitim → Doğrulama → Test",
+        "en": "Train → Validate → Test"
+      }
     ],
     correct: 0,
     explain: {
-      tr: 'RLHF; önce SFT (insan yazılı iyi cevaplarla supervised fine-tuning), sonra insan tercihlerinden ödül modeli eğitimi, sonra pekiştirmeli güncelleme (PPO veya DPO) adımlarından oluşur.',
-      en: 'RLHF has three steps: SFT (supervised fine-tuning on human-written good answers), reward model trained on human preference pairs, and a PPO or DPO reinforcement update.',
+      "tr": "Klasik akış ayrı bir ödül modeli kullanabilir. DPO ayrı ödül modeli eğitmeden tercih çiftlerinden öğrenir; PPO’nun yerine aynı ödül modeli aşamasına eklenmiş bir adım değildir.",
+      "en": "The classic pipeline can use a separate reward model. DPO learns from preference pairs without training a separate reward model; it is not simply a PPO replacement appended to that reward-model stage."
     },
     tags: ['rlhf', 'concept', 'training'],
   },
@@ -478,8 +526,8 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:solution:tensorrt-llm:1',
     kind: 'mcq',
     prompt: {
-      tr: 'NVIDIA GPU\'larda düşük gecikme ve yüksek verim için derleyici/çalışma zamanı olarak çalışan, nicemleme ve çoklu GPU destekleyen çözüm hangisidir?',
-      en: 'Which solution acts as a compiler/runtime for low-latency, high-throughput inference on NVIDIA GPUs with quantization and multi-GPU support?',
+      "tr": "NVIDIA GPU’larında nicemleme ve çoklu GPU çıkarımı sunan, güncel mimarisi PyTorch tabanlı kütüphane hangisidir?",
+      "en": "Which library provides quantized and multi-GPU inference on NVIDIA GPUs with a current PyTorch-based architecture?"
     },
     options: [
       { tr: 'TensorRT-LLM', en: 'TensorRT-LLM' },
@@ -489,8 +537,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'TensorRT-LLM, model tanımlarını NVIDIA TensorRT çekirdeklerine yaklaştırarak üretim çıkarımı için optimize eder; nicemleme ve çoklu GPU seçenekleri sunar.',
-      en: 'TensorRT-LLM brings model definitions close to NVIDIA TensorRT kernels for production-grade inference, with quantization and multi-GPU options.',
+      "tr": "TensorRT-LLM’in güncel belgeleri PyTorch yürütmesini kullanır; eski TensorRT engine oluşturma arka ucu kaldırılmıştır. Kullanılan sürümün geçiş ve model destek belgeleri kontrol edilmelidir.",
+      "en": "Current TensorRT-LLM documentation uses PyTorch execution and removes the legacy TensorRT engine-build backend. Check migration and model-support documentation for the release in use."
     },
     tags: ['tensorrt-llm', 'solution', 'nvidia'],
   },
@@ -558,8 +606,8 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:solution:exllamav3:1',
     kind: 'mcq',
     prompt: {
-      tr: 'Tüketici sınıfı NVIDIA GPU\'larda EXL2/EXL3 düşük bitli formatlarla nicemlenmiş çıkarıma odaklanan motor hangisidir?',
-      en: 'Which engine focuses on low-bit (EXL2/EXL3) quantized inference on consumer NVIDIA GPUs?',
+      "tr": "Tüketici NVIDIA GPU’larında EXL3 biçimli düşük bitli çıkarıma hangi motor odaklanır?",
+      "en": "Which engine focuses on low-bit EXL3 inference on consumer NVIDIA GPUs?"
     },
     options: [
       { tr: 'ExLlamaV3', en: 'ExLlamaV3' },
@@ -609,8 +657,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'ONNX Runtime GenAI, ONNX standardını kullanan çok platformlu uygulamalar için tek bir modeli CPU/GPU/NPU\'da çalıştırır; execution provider runtime\'da seçilir.',
-      en: 'ONNX Runtime GenAI runs a single ONNX model on CPU/GPU/NPU for cross-platform apps; the execution provider is chosen at runtime.',
+      "tr": "ONNX Runtime GenAI üretim döngüsünü yürütme sağlayıcılarıyla birleştirir. Tek model dosyasının her CPU/GPU/NPU yolunda değişmeden çalışacağı varsayılmaz; dönüştürme ve sağlayıcı uyumu doğrulanır.",
+      "en": "ONNX Runtime GenAI combines generation with execution providers. Do not assume one model file runs unchanged on every CPU/GPU/NPU path; validate conversion and provider compatibility."
     },
     tags: ['onnx-runtime-genai', 'solution', 'cross-platform'],
   },
@@ -854,8 +902,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'vLLM continuous batching + PagedAttention ile yüksek eşzamanlılıkta öne çıkar; SGLang da RadixAttention ile güçlü bir alternatiftir. Diğerleri bu ölçekte uygun değildir.',
-      en: 'vLLM stands out at high concurrency via continuous batching + PagedAttention; SGLang is a strong alternative with RadixAttention. The others are not fit for that scale.',
+      "tr": "vLLM ve SGLang bu servis rolüne adaydır. 1000 eşzamanlı istek bir hedef varsayımıdır; donanım, model, bağlam, kuyruk ve SLO ile kapasite testi gerekir.",
+      "en": "vLLM and SGLang are candidates for this serving role. 1000 concurrent requests is a target assumption; capacity requires testing hardware, model, context, queues and SLOs."
     },
     tags: ['decision', 'production', 'scaling'],
   },
@@ -874,8 +922,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'llama.cpp CPU dahil birçok donanımı destekler; GGUF formatı ve nicemleme için optimize edilmiştir. Diğerleri CPU-only senaryosu için uygun değildir.',
-      en: 'llama.cpp supports CPU and many other backends; it is optimized for GGUF and quantized models. The others are not suitable for CPU-only scenarios.',
+      "tr": "llama.cpp CPU üzerinde GGUF için doğrudan bir yoldur. vLLM’in de CPU desteği vardır; uygunluk model biçimi, CPU mimarisi ve iş yüküne göre değerlendirilir.",
+      "en": "llama.cpp offers a direct CPU path for GGUF. vLLM also supports CPUs; suitability depends on model format, CPU architecture and workload."
     },
     tags: ['decision', 'cpu', 'llama-cpp'],
   },
@@ -923,19 +971,31 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:decision:6',
     kind: 'mcq',
     prompt: {
-      tr: '70B modeli 8K bağlamda çalıştıracak, GPU belleğiniz 24 GB. Hangi yaklaşım en uygun?',
-      en: 'You want to run a 70B model at 8K context on a 24 GB GPU. Which approach is best?',
+      "tr": "70 milyar parametreli modelin tüm ağırlıklarını INT4 ile tek 24 GB GPU’da tutmak istiyorsun. Hangi değerlendirme doğrudur?",
+      "en": "You want all weights of a 70-billion-parameter model in INT4 on one 24 GB GPU. Which assessment is correct?"
     },
     options: [
-      { tr: 'FP16 tam model', en: 'Full FP16 model' },
-      { tr: 'INT4 nicemleme veya AWQ', en: 'INT4 quantization or AWQ' },
-      { tr: 'FP32 tam model', en: 'Full FP32 model' },
-      { tr: 'Saf pruning', en: 'Pure pruning' },
+      {
+        "tr": "FP16 tam model",
+        "en": "Full FP16 model"
+      },
+      {
+        "tr": "Ham ağırlıklar bile yaklaşık 35 GB (32,6 GiB) eder; daha küçük model, daha çok bellek veya offload gerekir",
+        "en": "Even raw weights need about 35 GB (32.6 GiB); use a smaller model, more memory or offload"
+      },
+      {
+        "tr": "FP32 tam model",
+        "en": "Full FP32 model"
+      },
+      {
+        "tr": "Saf pruning",
+        "en": "Pure pruning"
+      }
     ],
     correct: 1,
     explain: {
-      tr: '70B FP16 ağırlıklar yaklaşık 140 GB, INT4 ham ağırlıklar yaklaşık 35 GB yer ister. Çalışma alanı ve KV önbelleği ek bellek gerektirir; 24 GB için offload veya daha agresif sıkıştırma gerekebilir ve kalite ayrıca ölçülmelidir.',
-      en: 'Raw 70B FP16 weights need about 140 GB and INT4 weights about 35 GB. Workspace and KV cache add memory overhead; fitting 24 GB may require offload or stronger compression, and quality must be measured separately.',
+      "tr": "Örnek hesap: 70×10^9 parametre × 4/8 bayt = 35×10^9 bayt. Bu yalnızca ham ağırlıktır; ölçekler, KV önbelleği ve çalışma alanı eklenir. INT4 tek başına 24 GB’a sığdırmaz.",
+      "en": "Illustrative calculation: 70×10^9 parameters × 4/8 bytes = 35×10^9 bytes. This covers raw weights only; scales, KV cache and workspace add overhead. INT4 alone cannot fit them in 24 GB."
     },
     tags: ['decision', 'quantization', 'gpu'],
   },
@@ -1003,8 +1063,8 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:decision:10',
     kind: 'mcq',
     prompt: {
-      tr: 'Birden çok açık kaynak modeli, OpenAI API\'siyle çalışan kendi yazılımınızla entegre etmek istiyorsunuz. Hangi yaklaşım lock-in\'i önler?',
-      en: 'You want to integrate several open models with your own software that already uses the OpenAI API. Which approach avoids lock-in?',
+      "tr": "Mevcut OpenAI istemcisiyle farklı model sunucularına geçişi hangi yaklaşım kolaylaştırır?",
+      "en": "Which approach eases migration between model servers using an existing OpenAI client?"
     },
     options: [
       { tr: 'Her motor için ayrı SDK yazmak', en: 'Write a separate SDK for each engine' },
@@ -1014,8 +1074,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'OpenAI uyumlu API sunan motorlar (vLLM, SGLang, Ollama, LM Studio) tek OpenAI Python SDK\'sıyla çalışır. base_url değiştirmek yeterlidir; lock-in olmaz.',
-      en: 'OpenAI-compatible engines (vLLM, SGLang, Ollama, LM Studio) work with the same OpenAI Python SDK. Just change base_url; no lock-in.',
+      "tr": "Ortak uç noktalar geçişi kolaylaştırabilir. base_url yanında model adı, kimlik doğrulama, araçlar, görsel girdi, yapılandırılmış çıktı, akış ve hata sözleşmeleri test edilmelidir; bağımlılıkların tümü ortadan kalkmaz.",
+      "en": "Shared endpoints can ease migration. Beyond base_url, test model names, authentication, tools, image inputs, structured output, streaming and errors; not all dependencies disappear."
     },
     tags: ['decision', 'api', 'portability'],
   },
@@ -1034,8 +1094,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: '"Lost in the middle" etkisi gerçektir. RAG ile dış bilgiyi modele enjekte etmek, önemli bilgiyi baş/son\'a yerleştirmek, daha etkili bir stratejidir.',
-      en: 'The "lost in the middle" effect is real. Using RAG to inject external knowledge and placing the most important info at the start/end is more effective.',
+      "tr": "Uzun bağlamda konuma bağlı erişim kaybı bazı değerlendirmelerde gözlenmiştir. Erişim, chunking ve yerleşim stratejilerini kendi görev kümenizde karşılaştırın; sabit top-k veya yerleşim garantisi yoktur.",
+      "en": "Position-dependent retrieval loss has been observed in long-context evaluations. Compare retrieval, chunking and placement strategies on your task set; no fixed top-k or placement guarantees success."
     },
     tags: ['decision', 'rag', 'context-window'],
   },
@@ -1043,8 +1103,8 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:decision:12',
     kind: 'mcq',
     prompt: {
-      tr: 'Bir Q&A sistemi için vektör veritabanı seçeceksiniz. 5 milyon doküman parçanız var, PostgreSQL zaten kullanıyorsunuz. En pratik seçim nedir?',
-      en: 'You are picking a vector DB for a Q&A system. You have 5M document chunks and already use PostgreSQL. What is the most practical choice?',
+      "tr": "5 milyon belge parçası ve mevcut PostgreSQL altyapısıyla vektör aramasını denemek için hangi seçenek işletim yükünü azaltabilir?",
+      "en": "With 5 million document chunks and existing PostgreSQL infrastructure, which option may reduce operational overhead for a vector-search pilot?"
     },
     options: [
       { tr: 'Pinecone (cloud)', en: 'Pinecone (cloud)' },
@@ -1054,8 +1114,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: '5 milyon vektör için pgvector yeterlidir; PostgreSQL\'i zaten kullanıyorsanız operasyonel yük minimuma iner. Daha büyük ölçeklerde Milvus veya Qdrant tercih edilir.',
-      en: 'pgvector is enough for 5M vectors; if you already use PostgreSQL, operational overhead stays minimal. Larger scales call for Milvus or Qdrant.',
+      "tr": "pgvector mevcut PostgreSQL altyapısını kullanır. Beş milyon kayıt kapasite garantisi değildir; boyut, indeks, recall, filtreler, güncelleme hızı ve donanım üzerinde ölçüm gerekir.",
+      "en": "pgvector reuses existing PostgreSQL infrastructure. Five million records is not a capacity guarantee; benchmark dimensions, index, recall, filters, update rate and hardware."
     },
     tags: ['decision', 'vector-db', 'rag'],
   },
@@ -1067,15 +1127,27 @@ export const quizzes: QuizQuestion[] = [
       en: 'In an LLM agent, you face "the model enters an infinite loop when a tool doesn\'t return". What is the best solution?',
     },
     options: [
-      { tr: 'Daha büyük model kullanmak', en: 'Use a larger model' },
-      { tr: 'Max iteration limit + reasoning trace loglama + circuit breaker', en: 'Max iteration limit + reasoning trace logging + circuit breaker' },
-      { tr: 'Tool\'ları kaldırmak', en: 'Remove the tools' },
-      { tr: 'Temperature\'ı artırmak', en: 'Increase temperature' },
+      {
+        "tr": "Daha büyük model kullanmak",
+        "en": "Use a larger model"
+      },
+      {
+        "tr": "Araç zaman aşımı + iterasyon sınırı + çağrı/sonuç kaydı + devre kesici",
+        "en": "Tool timeout + iteration limit + call/result logging + circuit breaker"
+      },
+      {
+        "tr": "Tool'ları kaldırmak",
+        "en": "Remove the tools"
+      },
+      {
+        "tr": "Temperature'ı artırmak",
+        "en": "Increase temperature"
+      }
     ],
     correct: 1,
     explain: {
-      tr: 'Agent tasarımında max iteration limit şarttır; reasoning trace loglama hata tespiti ve debug için kritiktir. Sonsuz döngüyü önlemek için "time-out" ve "circuit breaker" ekleyin.',
-      en: 'A max iteration limit is mandatory in agent design; reasoning trace logging is critical for debugging. Add time-out and circuit breaker to prevent infinite loops.',
+      "tr": "Takılan aracı zaman aşımıyla sonlandırın; döngüyü iterasyon, süre ve maliyet sınırıyla durdurun. Araç çağrısı, sonuç ve hataları izleyin; özel akıl yürütme metnini kaydetmek gerekli değildir.",
+      "en": "Time out stalled tools and bound the loop by iterations, time and cost. Trace tool calls, results and errors; logging private reasoning text is not required."
     },
     tags: ['decision', 'agent', 'reliability'],
   },
@@ -1214,8 +1286,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'Ollama, Apple Silicon için tek satırda kurulur, modelleri hazır gelir ve terminalden anında sohbet başlatır. vLLM ve TensorRT-LLM NVIDIA GPU ister; OpenVINO ise Intel donanımına odaklıdır.',
-      en: 'Ollama installs in one line on Apple Silicon, ships ready-to-run models, and starts a chat from the terminal. vLLM and TensorRT-LLM need an NVIDIA GPU; OpenVINO is focused on Intel hardware.',
+      "tr": "Ollama yerel CLI deneyimi sağlar. Bu Mac senaryosunda Metal veya MLX yolları uygundur; vLLM’in NVIDIA dışı donanım desteği olması Apple Silicon desteği anlamına gelmez.",
+      "en": "Ollama provides a local CLI workflow. Metal or MLX paths fit this Mac scenario; vLLM support for non-NVIDIA hardware does not imply Apple Silicon support."
     },
     tags: ['decision', 'apple-silicon', 'starter'],
   },
@@ -1234,8 +1306,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'Üretim için sunum motoru (vLLM/SGLang) tek başına kota, çoklu sağlayıcı, maliyet takibi veya auth sağlamaz. Bu işleri yapan bir ağ geçidi katmanı (LiteLLM Proxy, Kong AI Gateway) şarttır.',
-      en: 'In production, a serving engine (vLLM/SGLang) alone does not provide quotas, multi-provider routing, cost tracking, or auth. A gateway layer (LiteLLM Proxy, Kong AI Gateway) is required for those concerns.',
+      "tr": "Sunum motoru, ağ geçidi ve kimlik katmanlarının sorumluluklarını ayırın. Bazı motorlarda temel API anahtarı denetimi bulunur; kiracı bütçesi, kota ve sağlayıcılar arası hata devri ayrıca tasarlanır. 1000 kullanıcı ölçülmüş kapasite değildir.",
+      "en": "Separate serving, gateway and identity responsibilities. Some engines include basic API-key checks; tenant budgets, quotas and cross-provider failover need additional design. 1000 users is not measured capacity."
     },
     tags: ['decision', 'production', 'gateway'],
   },
@@ -1254,8 +1326,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'Edge cihazlar için PyTorch ekibi tarafından geliştirilen ExecuTorch (veya llama.cpp Android portu) uygundur; 1-3B nicellenmiş (INT4) model 2-4 GB RAM\'de çalışır. vLLM/SGLang sunucu sınıfıdır.',
-      en: 'ExecuTorch (built by the PyTorch team) or a llama.cpp Android port fits edge devices; a 1-3B INT4 quantized model runs in 2-4 GB RAM. vLLM/SGLang are server-class.',
+      "tr": "ExecuTorch cihaz üzeri çıkarıma uygundur. 1–3B INT4 model yalnızca adaydır; ağırlık, KV, çalışma alanı, uygulama ve işletim sistemi belleği birlikte ölçülmeden 4 GB’a sığdığı söylenemez.",
+      "en": "ExecuTorch targets on-device inference. A 1–3B INT4 model is only a candidate; weights, KV, workspace, application and OS memory must be measured before claiming it fits in 4 GB."
     },
     tags: ['decision', 'edge', 'mobile'],
   },
@@ -1274,8 +1346,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'RAG, modelin cevap vermeden önce güncel/ilgili belgeleri getirip prompt\'a eklemesini sağlar. Bu sayede model bilgi kesiminden sonra olaylar hakkında güvenilir yanıt verebilir; fine-tuning ise pahalı ve güncelliği zor.',
-      en: 'RAG retrieves up-to-date or relevant documents and adds them to the prompt before generation. This lets the model answer reliably about post-cutoff events; fine-tuning is expensive and hard to keep fresh.',
+      "tr": "RAG güncel veya ilgili belgeleri isteme ekler. Kaynakların güncelliği, erişim kalitesi ve yanıtın kaynaklarla desteklenmesi ayrı ayrı değerlendirilir; doğru yanıt garantisi değildir.",
+      "en": "RAG adds current or relevant documents to the prompt. Source freshness, retrieval quality and answer grounding require separate evaluation; correctness is not guaranteed."
     },
     tags: ['decision', 'rag', 'freshness'],
   },
@@ -1354,8 +1426,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'TTFT büyük ölçüde prefill aşamasına bağlıdır. Nicellenmiş model prefill\'i hızlandırır; prompt cache aynı sistem prompt\'u tekrar hesaplamaz; uzun bağlam ise prefill\'i yavaşlatır.',
-      en: 'TTFT is dominated by the prefill phase. A quantized model accelerates prefill; a prompt cache avoids recomputing the same system prompt; a longer context slows prefill down.',
+      "tr": "TTFT; kuyruk, ağ, model yükleme ve prefill sürelerinden etkilenir. Uyumlu prefix cache tekrarlanan işi azaltabilir; nicemleme her prefill işini hızlandırmaz. 100 ms bu senaryonun hedefidir, ürün garantisi değildir.",
+      "en": "TTFT includes queueing, network, model loading and prefill effects. Compatible prefix caching can reduce repeated work; quantization does not accelerate every prefill workload. 100 ms is this scenario’s target, not a product guarantee."
     },
     tags: ['decision', 'latency', 'prefill'],
   },
@@ -1394,8 +1466,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'OpenAI uyumlu uç noktalar sunan motorlar (vLLM, SGLang, LocalAI, Ollama, LiteLLM Proxy) sayesinde istemci tarafında değişiklik yapmadan base URL değiştirip farklı sağlayıcıya geçebilirsiniz.',
-      en: 'Engines that expose OpenAI-compatible endpoints (vLLM, SGLang, LocalAI, Ollama, LiteLLM Proxy) let you switch providers by changing the base URL without modifying client code.',
+      "tr": "OpenAI uyumlu uç noktalar temel istemci kodunu yeniden kullanmayı kolaylaştırır. Model adı, kimlik doğrulama, araçlar, görseller ve akış davranışı yeni sağlayıcıda ayrıca test edilmelidir.",
+      "en": "OpenAI-compatible endpoints ease reuse of basic client code. Model names, authentication, tools, images and streaming behavior still need testing on the new provider."
     },
     tags: ['decision', 'migration', 'openai-compatible'],
   },
@@ -1434,8 +1506,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explain: {
-      tr: 'LM Studio ve Ollama, birden fazla modeli aynı anda yükleyip yan yana çalıştırmayı ve aynı prompt ile karşılaştırmayı kolaylaştırır. vLLM tek bir modeli yüksek verimle sunar, karşılaştırma için tasarlanmamıştır.',
-      en: 'LM Studio and Ollama make it easy to load multiple models side by side and compare them on the same prompt. vLLM serves a single model at high throughput and is not designed for A/B comparison.',
+      "tr": "Yerel model yöneticileri farklı modelleri sırayla denemeyi kolaylaştırır. Aynı anda yüklemek toplam bellek bütçesine bağlıdır; sunucu tarafında karşılaştırma ayrı model süreçleri ve ortak bir değerlendirme istemcisiyle de yapılabilir.",
+      "en": "Local model managers ease sequential trials of different models. Simultaneous loading depends on total memory; server-side comparison can also use separate model processes and a shared evaluation client."
     },
     tags: ['decision', 'comparison', 'desktop'],
   },
@@ -1454,8 +1526,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'KV cache belleği context ile doğrusal büyür. Önce context window\'u küçültmek veya PagedAttention (vLLM) kullanmak belleği ciddi oranda azaltır; yeni GPU almak son çaredir.',
-      en: 'KV cache memory grows linearly with context. Reducing the context window or using a PagedAttention engine like vLLM significantly cuts memory; buying a bigger GPU is the last resort.',
+      "tr": "Bağlam ve eşzamanlılık sınırlarını azaltmak KV gereksinimini düşürebilir. Paging ayırma israfını azaltır; token başına KV boyutunu küçültmez. Önce ağırlık, KV ve çalışma alanı paylarını ölçün.",
+      "en": "Lower context and concurrency limits can reduce KV demand. Paging reduces allocation waste, not per-token KV size. Measure weights, KV and workspace usage first."
     },
     tags: ['decision', 'kv-cache', 'memory'],
   },
@@ -1463,8 +1535,8 @@ export const quizzes: QuizQuestion[] = [
     id: 'quiz:decision-extended:14',
     kind: 'mcq',
     prompt: {
-      tr: 'Aynı prompt için farklı yanıtlar geliyor; tekrarlanabilirlik (reproducibility) istiyorsunuz. Hangi ayar doğrudan etkili değildir?',
-      en: 'The same prompt returns different answers and you want reproducibility. Which setting does NOT directly affect it?',
+      "tr": "Hangi parametrenin temel görevi üretilecek çıktı uzunluğunu sınırlamaktır?",
+      "en": "Which parameter primarily limits generated output length?"
     },
     options: [
       { tr: 'Sıcaklık (temperature) = 0', en: 'Temperature = 0' },
@@ -1474,8 +1546,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explain: {
-      tr: 'Max tokens, cevabın uzunluğunu sınırlar; rastgeleliği etkilemez. Tekrarlanabilirlik için temperature=0, top-p=1, sabit seed ve belirli motorlarda atomik operasyon sırası önemlidir.',
-      en: 'Max tokens limits answer length, not randomness. For reproducibility, set temperature=0, top-p=1, fix the seed, and watch atomic operation order in some engines.',
+      "tr": "Max tokens çıktı uzunluğunu sınırlar ve değiştiğinde tam yanıtı değiştirebilir. Tekrarlanabilirlik için örnekleme, model, tokenizer, istem, motor ve donanım birlikte sabitlenip test edilmelidir.",
+      "en": "Max tokens limits output length and can change the complete answer when altered. Reproducibility requires pinning and testing sampling, model, tokenizer, prompt, engine and hardware together."
     },
     tags: ['decision', 'sampling', 'reproducibility'],
   },
@@ -1534,8 +1606,8 @@ export const quizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explain: {
-      tr: 'Vector DB indeksleme (HNSW, IVF) milyonlarca parçada bile O(log N) arama sağlar. Flat/brute-force arama O(N) olduğundan büyük veri setlerinde pratikte kullanılamaz.',
-      en: 'Vector DB indexing (HNSW, IVF) gives O(log N) search even on millions of chunks. Flat/brute-force is O(N) and is impractical at scale.',
+      "tr": "ANN indeksleri tam aramaya göre hız/recall dengesi sağlayabilir. HNSW ve IVF için evrensel O(log N) garantisi yoktur; indeks ayarları, filtreler, boyut ve sorgu dağılımıyla ölçüm yapın.",
+      "en": "ANN indexes can trade recall for speed versus exact search. HNSW and IVF have no universal O(log N) guarantee; benchmark index settings, filters, dimensions and query distribution."
     },
     tags: ['decision', 'rag', 'vector-db'],
   },
@@ -1547,15 +1619,27 @@ export const quizzes: QuizQuestion[] = [
       en: 'You want to fine-tune but have no local GPU; you only have rented API access. What is the best strategy?',
     },
     options: [
-      { tr: 'API ile fine-tuning sunan bir sağlayıcıyı kullanmak (OpenAI fine-tune, Hugging Face AutoTrain, Together, Fireworks)', en: 'Use a provider that offers fine-tuning via API (OpenAI fine-tune, Hugging Face AutoTrain, Together, Fireworks)' },
-      { tr: 'Beklemek', en: 'Wait' },
-      { tr: 'Sadece prompt engineering', en: 'Prompt engineering only' },
-      { tr: 'Sadece daha büyük model seçmek', en: 'Only pick a larger model' },
+      {
+        "tr": "Hedef modeli ve veri politikasını destekleyen yönetilen ince ayar hizmetini değerlendirmek",
+        "en": "Evaluate a managed fine-tuning service supporting the target model and data policy"
+      },
+      {
+        "tr": "Beklemek",
+        "en": "Wait"
+      },
+      {
+        "tr": "Sadece prompt engineering",
+        "en": "Prompt engineering only"
+      },
+      {
+        "tr": "Sadece daha büyük model seçmek",
+        "en": "Only pick a larger model"
+      }
     ],
     correct: 0,
     explain: {
-      tr: 'Birçok sağlayıcı managed fine-tuning sunar; veri yükle, fine-tune başlat, adapter indir veya API üzerinden çağır. GPU ihtiyacını sağlayıcı karşılar; bu küçük veri için LoRA/QLoRA ile dakikalar-saatler sürer.',
-      en: 'Many providers offer managed fine-tuning: upload data, start the job, download the adapter, or call it via API. The provider handles the GPU; with LoRA/QLoRA on small data this takes minutes to hours.',
+      "tr": "Yönetilen hizmet hesaplamayı sağlayabilir. Model desteği, veri politikası, çıktı/adapter dışa aktarımı, kuyruk, maliyet ve süre sağlayıcıya bağlıdır; bir API aboneliği eğitim hakkı veya indirilebilir ağırlık garantisi değildir.",
+      "en": "A managed service can provide compute. Model support, data policy, output/adapter export, queues, cost and time depend on the provider; an API subscription does not guarantee training access or downloadable weights."
     },
     tags: ['decision', 'fine-tuning', 'managed'],
   },
@@ -1567,15 +1651,27 @@ export const quizzes: QuizQuestion[] = [
       en: 'Does quantization cause quality loss? What is the correct answer?',
     },
     options: [
-      { tr: 'Her zaman ciddi kalite kaybı olur', en: 'It always causes severe quality loss' },
-      { tr: 'İyi uygulanmış INT4 (AWQ/GPTQ) ve QAT yöntemleri kaliteyi büyük ölçüde korur; sadece agresif + dikkatsiz niceleme düşürür', en: 'Well-applied INT4 (AWQ/GPTQ) and QAT methods largely preserve quality; only aggressive + careless quantization drops quality' },
-      { tr: 'Kalite artar', en: 'Quality goes up' },
-      { tr: 'Sadece fine-tune edilmemiş modellerde etkili olur', en: 'It only affects non-fine-tuned models' },
+      {
+        "tr": "Her zaman ciddi kalite kaybı olur",
+        "en": "It always causes severe quality loss"
+      },
+      {
+        "tr": "Kalite etkisi modele, bit sayısına, yönteme ve göreve bağlıdır; temel modelle ölçülmelidir",
+        "en": "Quality impact depends on model, bit width, method and task; measure against the baseline"
+      },
+      {
+        "tr": "Kalite artar",
+        "en": "Quality goes up"
+      },
+      {
+        "tr": "Sadece fine-tune edilmemiş modellerde etkili olur",
+        "en": "It only affects non-fine-tuned models"
+      }
     ],
     correct: 1,
     explain: {
-      tr: 'AWQ/GPTQ gibi iyi kalibre edilmiş yöntemler çoğu benchmarkta ihmal edilebilir fark yaratır. QAT (Quantization-Aware Training) ile kalite korunabilir. Sorun, düşük bit + dikkatsiz kalibrasyondan doğar.',
-      en: 'Well-calibrated methods like AWQ/GPTQ show negligible differences on most benchmarks. QAT (Quantization-Aware Training) preserves quality. Trouble comes from low bits plus careless calibration.',
+      "tr": "AWQ, GPTQ ve QAT kalite kaybını azaltabilir fakat sıfır kayıp garantisi vermez. Hedef dil ve görevlerde bellek, hız ve kaliteyi birlikte değerlendirin.",
+      "en": "AWQ, GPTQ and QAT can reduce degradation but do not guarantee zero loss. Evaluate memory, speed and quality together on target languages and tasks."
     },
     tags: ['decision', 'quantization', 'quality'],
   },
@@ -1669,8 +1765,8 @@ export const quizzes: QuizQuestion[] = [
     },
     correct: false,
     explain: {
-      tr: 'Nicelleme çoğu durumda kaliteyi ihmal edilebilir seviyede etkiler, ama sıfır değildir. Özellikle agresif düşük-bit (INT3 ve altı) veya dikkatsiz kalibrasyon kaliteyi bozabilir; perplexity ve benchmarklarla ölçmek gerekir.',
-      en: 'Quantization usually has a negligible impact on quality, but it is not zero. Aggressive low-bit (INT3 and below) or careless calibration can hurt quality; measure with perplexity and benchmarks.',
+      "tr": "Nicemleme çıktı kalitesini değiştirebilir. Etki model, bit sayısı, kalibrasyon ve göreve bağlıdır; düşük bit veya iyi kalibrasyon tek başına sonucu belirlemez.",
+      "en": "Quantization can change output quality. Impact depends on model, bit width, calibration and task; bit width or good calibration alone cannot determine the result."
     },
     tags: ['myth', 'quantization', 'quality'],
   },
@@ -1711,8 +1807,8 @@ export const quizzes: QuizQuestion[] = [
     },
     correct: false,
     explain: {
-      tr: 'Model bilgi kesim tarihine kadar olan veriyle eğitilmiştir; ama RAG, function calling ve tool use ile dış kaynaklardan güncel bilgi çekebilir. Yani "güncel bilgi" modele dışarıdan getirilir, modelin kendi ağırlıklarında değildir.',
-      en: 'A model is trained on data up to its cutoff; but RAG, function calling, and tool use let it pull fresh information from external sources. In other words, "up to date" comes from outside, not from the weights themselves.',
+      "tr": "Güncel bilgi internet gerektirmek zorunda değildir. Güncellenmiş yerel belgeler, şirket içi veritabanları ve çevrimdışı RAG kaynakları da modele güncel bağlam sağlayabilir.",
+      "en": "Fresh information does not necessarily require internet access. Updated local documents, internal databases and offline RAG sources can also provide current context."
     },
     tags: ['myth', 'rag', 'freshness'],
   },

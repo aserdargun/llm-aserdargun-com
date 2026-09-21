@@ -39,8 +39,8 @@ export const fieldTips: Record<string, { tr: string; en: string }> = {
 /** Metodoloji sayfasındaki performans metrikleri için benzetmeli açıklamalar. */
 export const metricTips: Record<string, { tr: string; en: string }> = {
   'TTFT': { tr: 'İlk kelimeyi duyana kadar geçen süre.', en: 'How long until you hear the first word.' },
-  'TPOT / ITL': { tr: 'Kelimeler arasındaki bekleme; akışın ne kadar akıcı olduğu.', en: 'The pause between words; how smoothly it flows.' },
-  'Output tokens/s': { tr: 'Saniyede kaç kelime ürettiği.', en: 'How many words it produces per second.' },
+  'TPOT / ITL': { tr: 'TPOT token başına ortalama süreyi, ITL ardışık tokenlar arasındaki gecikmeyi ölçer.', en: 'TPOT measures average time per token; ITL measures gaps between successive tokens.' },
+  'Output tokens/s': { tr: 'Saniyede üretilen token sayısı; token kelimeyle aynı birim değildir.', en: 'Generated tokens per second; tokens are not the same unit as words.' },
   'Requests/s': { tr: 'Saniyede kaç soruya cevap verdiği.', en: 'How many questions it answers per second.' },
   'End-to-end latency': { tr: 'Soruyu sorduğun andan cevabı tam aldığın ana kadar geçen süre.', en: 'From asking to receiving the full answer.' },
   'SLO-constrained goodput': { tr: 'Hız hedefini tutturan yararlı iş miktarı.', en: 'Useful work that meets a speed target.' },

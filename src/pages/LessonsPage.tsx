@@ -39,7 +39,7 @@ export function LessonsPage() {
           {lessons.map((l) => (
             <li key={l.slug}>
               <Link to={`/${locale}/learn/lessons/${l.slug}`}>
-                <span className="mono">{l.level}</span>
+                <span className="mono">{pick(locale, l.level === 'starter' ? 'Başlangıç' : 'Orta', l.level === 'starter' ? 'Starter' : 'Intermediate')}</span>
                 <strong>{l.title[locale]}</strong>
                 <small>{l.summary[locale]}</small>
                 <span className="lesson-list__meta">
@@ -70,9 +70,10 @@ function LessonRunner({ slug }: { slug: string }) {
         <ArrowLeft size={17} /> {pick(locale, 'Derslere dön', 'Back to lessons')}
       </Link>
       <header className="lesson-page__header">
-        <span className="mono">{lesson.level} · {lesson.durationMin} {learnCommon.minutes[locale]}</span>
+        <span className="mono">{pick(locale, lesson.level === 'starter' ? 'Başlangıç' : 'Orta', lesson.level === 'starter' ? 'Starter' : 'Intermediate')} · {lesson.durationMin} {learnCommon.minutes[locale]}</span>
         <h1>{lesson.title[locale]}</h1>
         <p>{lesson.summary[locale]}</p>
+        <p>{pick(locale, 'Komutlar öğretici şablonlardır. Yer tutucuları değiştirin ve sürüm/donanım desteğini kontrol edin; bu atlas modelleri çalıştırmaz.', 'Commands are educational templates. Replace placeholders and check release/hardware support; this atlas does not run models.')} <Link to={`/${locale}/methodology`}>{pick(locale, 'Kaynaklar ve doğrulama kapsamı', 'Sources and verification scope')}</Link></p>
       </header>
       <div className="lesson-stepper">
         <span className="mono">{learnLessons.step[locale]} {step + 1} {learnLessons.of[locale]} {lesson.steps.length}</span>

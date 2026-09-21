@@ -67,7 +67,7 @@ export function AppShell() {
       </header>
       <main ref={main} tabIndex={-1} id="main-content"><RouteErrorBoundary key={location.pathname.replace(/^\/(en|tr)/, '')} locale={locale}><Suspense fallback={<div className="shell page-shell" role="status">{pick(locale, 'Sayfa yükleniyor…', 'Loading page…')}</div>}><Outlet />{location.pathname.includes('/learn') && <LearningStorageNotice />}</Suspense></RouteErrorBoundary></main>
       <footer className="site-footer">
-        <div className="shell footer-inner"><div><strong>LLM / ATLAS</strong><p>{pick(locale, 'LLM çalışma zamanı ve sunum alan rehberi.', 'A field guide to LLM runtime and serving.')}</p></div><div className="footer-meta"><span>31 {pick(locale, 'çözüm', 'solutions')}</span><span>7 {pick(locale, 'katman', 'layers')}</span><span>{pick(locale, 'Veri denetimi', 'Dataset reviewed')}: {ATLAS_DATASET_REVIEWED_AT}</span></div></div>
+        <div className="shell footer-inner"><div><strong>LLM / ATLAS</strong><p><a href="https://aserdargun.com/">aserdargun.com</a></p><p>{pick(locale, 'LLM çalışma zamanı ve sunum alan rehberi.', 'A field guide to LLM runtime and serving.')}</p></div><div className="footer-meta"><span>31 {pick(locale, 'çözüm', 'solutions')}</span><span>7 {pick(locale, 'katman', 'layers')}</span><span>{pick(locale, 'Kaynak erişim denetimi', 'Source endpoint review')}: {ATLAS_DATASET_REVIEWED_AT}</span></div></div>
       </footer>
     </div>
   )

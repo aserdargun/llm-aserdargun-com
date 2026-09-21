@@ -49,8 +49,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the context window?',
     },
     back: {
-      tr: 'Modelin tek bir çağrıda işleyebildiği toplam token sayısıdır; hem girdi hem de çıktı bu sınıra dahildir. Aşılırsa model konuşmanın başını "unutur".',
-      en: 'It is the total number of tokens a model can process in a single call; both input and output count toward it. If exceeded, the model "forgets" the beginning of the conversation.',
+      "tr": "Tek çağrının token bütçesidir; girdi ve ayrılan çıktı bunu paylaşır. Sınır aşımı API hatasına veya uygulamanın geçmişi kesmesine yol açabilir; otomatik unutma veya özetleme garantisi yoktur.",
+      "en": "It is the token budget for one call, shared by input and reserved output. Exceeding it can cause an API error or application-side truncation; automatic forgetting or summarization is not guaranteed."
     },
     tags: ['context-window', 'memory', 'basics'],
   },
@@ -63,8 +63,8 @@ export const flashcards: Flashcard[] = [
       en: 'Why should we be cautious about large context window claims?',
     },
     back: {
-      tr: 'Çünkü "etkili" bağlam çoğu zaman nominal bağlamdan küçüktür; modeller "lost in the middle" etkisiyle ortadaki bilgiyi daha az hatırlar. Ayrıca KV cache belleği bağlamla doğrusal büyür, VRAM hızla dolar.',
-      en: 'Because the "effective" context is usually smaller than the nominal one; the "lost in the middle" effect makes models recall middle information less. Also KV cache memory grows linearly with context, so VRAM fills up fast.',
+      "tr": "Uzun bağlamın tamamında aynı erişim kalitesi garanti edilmez. Kaliteyi görev ve konum üzerinde; KV belleğini bağlam, eşzamanlılık ve model mimarisiyle birlikte ölçün.",
+      "en": "Retrieval quality is not guaranteed to be uniform across a long context. Evaluate quality by task and position, and KV memory against context, concurrency and model architecture."
     },
     hint: {
       tr: 'Sayfa ile sayfanın ortası arasındaki hatırlama farkını düşün.',
@@ -83,8 +83,8 @@ export const flashcards: Flashcard[] = [
       en: 'What do Q, K, V mean in the self-attention mechanism?',
     },
     back: {
-      tr: 'Q (Query) "ne arıyorum?", K (Key) "neler sunuyorum?", V (Value) "bulunursa ne katkı sağlarım?" sorularını temsil eder. Dikkat çıktısı softmax(Q·Kᵀ / √d_k) · V formülüyle hesaplanır.',
-      en: 'Q (Query) means "what am I looking for?", K (Key) "what do I offer?", V (Value) "what do I contribute if I’m found?". The attention score is computed with softmax(Q·Kᵀ / √d_k) · V.',
+      "tr": "Q sorgu, K anahtar, V değer vektörleridir. softmax(QKᵀ/√d_k) attention ağırlıklarını; bunun V ile çarpımı attention çıktısını verir.",
+      "en": "Q, K and V are query, key and value vectors. softmax(QKᵀ/√d_k) gives attention weights; multiplying these by V gives the attention output."
     },
     tags: ['attention', 'transformer', 'math'],
   },
@@ -127,8 +127,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the difference between few-shot prompting and chain-of-thought?',
     },
     back: {
-      tr: 'Few-shot, modele 2-5 örnek vererek kalıbı öğretir. Chain-of-thought ise "adım adım düşün" diyerek muhakemeyi zorlar. İkisi birlikte (Few-shot CoT) daha güçlüdür.',
-      en: 'Few-shot teaches the pattern by giving the model 2-5 examples. Chain-of-thought forces reasoning by saying "think step by step". Combining them (Few-shot CoT) is even stronger.',
+      "tr": "Few-shot istem örneklerle bir örüntü gösterir. Adım adım açıklama istemek bazı modellerde yardımcı olabilir; doğru akıl yürütmeyi zorunlu kılmaz. Örnek sayısı ve yaklaşım görev üzerinde değerlendirilmelidir.",
+      "en": "Few-shot prompting demonstrates a pattern with examples. Asking for a stepwise explanation may help some models but cannot force correct reasoning. Evaluate example count and prompting strategy on the task."
     },
     tags: ['prompt', 'reasoning', 'techniques'],
   },
@@ -237,8 +237,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the difference between a system prompt and a user prompt?',
     },
     back: {
-      tr: 'System prompt modelin kalıcı rolünü ve kurallarını tanımlar (operatör tarafından, kullanıcıya görünmez); user prompt ise her mesajda değişen kullanıcı girdisidir. OpenAI modelleri system mesajına daha yüksek ağırlık verir.',
-      en: 'The system prompt defines the model’s persistent role and rules (set by the operator, invisible to the user); the user prompt is the user’s input that changes every message. OpenAI models weight system messages more heavily.',
+      "tr": "Sistem iletisi rol ve davranış çerçevesini, kullanıcı iletisi talebi ifade eder. Öncelikler API ve sohbet şablonuna bağlıdır. Sistem metni gizlilik veya yetkilendirme sınırı değildir; uygulama izinleri ayrıca uygular.",
+      "en": "A system message frames the role and behavior; a user message expresses a request. Priorities depend on the API and chat template. System text is not a secrecy or authorization boundary; the application enforces permissions separately."
     },
     tags: ['system-prompt', 'prompt', 'roles'],
   },
@@ -281,8 +281,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is usually the biggest consumer of GPU memory?',
     },
     back: {
-      tr: 'Uzun bağlamla çalışan çok sayıda eşzamanlı istek için ayrılan KV cache. Model ağırlıkları sabitken, KV cache context ile doğrusal büyür — 128K bağlamda tek bir istek bile gigabyte’larca yer kaplayabilir.',
-      en: 'The KV cache allocated for many concurrent requests with long context. Model weights are fixed, but KV cache grows linearly with context — even a single request at 128K context can occupy gigabytes.',
+      "tr": "Sabit ağırlıklar, KV önbelleği ve geçici tensörler belleği paylaşır. Uzun bağlam ve yüksek eşzamanlılık KV payını büyütür; en büyük bileşen model ve iş yüküne göre değişir.",
+      "en": "Fixed weights, KV cache and temporary tensors share memory. Long contexts and high concurrency increase the KV share; the largest component depends on model and workload."
     },
     hint: {
       tr: 'Model ağırlıkları sabit ama context her istekle büyür — hangisi daha çok şişer?',
@@ -331,8 +331,8 @@ export const flashcards: Flashcard[] = [
       en: 'What are the two most critical user experience metrics in production?',
     },
     back: {
-      tr: 'TTFT (Time To First Token — ilk token gelene kadar geçen süre) ve TPOT (Time Per Output Token — sonraki tokenlar arası süre). TTFT için tipik hedef p95 < 500 ms, TPOT için 30-80 ms.',
-      en: 'TTFT (Time To First Token — time until the first token arrives) and TPOT (Time Per Output Token — time between subsequent tokens). Typical targets are p95 TTFT < 500 ms and TPOT 30-80 ms.',
+      "tr": "TTFT ilk tokena kadar geçen süreyi; ITL ardışık tokenlar arasındaki gecikmeyi ölçer. TPOT genellikle ilk tokendan sonraki token başına ortalama süredir. Hedefler ürün ve iş yüküne göre belirlenir; evrensel bir milisaniye eşiği yoktur.",
+      "en": "TTFT measures time to the first token; ITL measures gaps between successive tokens. TPOT is typically the average time per token after the first. Targets depend on product and workload; there is no universal millisecond threshold."
     },
     tags: ['streaming', 'latency', 'sla'],
   },
@@ -391,8 +391,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the mathematical guarantee of speculative decoding?',
     },
     back: {
-      tr: 'Sonuç dağılımı hedef modelin dağılımıyla aynı kalır — yani kalite korunur, sadece hız kazanılır. Kabul edilen tokenlar hedef modelin "kabul ettiği" örneklerdir.',
-      en: 'The output distribution stays the same as the target model’s — quality is preserved, only speed improves. Accepted tokens are the ones the target model "accepts" as samples.',
+      "tr": "Doğru kabul/red örneklemesi hedef modelin dağılımını koruyabilir. Hız artışı garanti değildir; taslak maliyeti, kabul oranı, donanım ve iş yükü belirleyicidir.",
+      "en": "Correct accept/reject sampling can preserve the target model distribution. Speedup is not guaranteed; draft cost, acceptance rate, hardware and workload determine the result."
     },
     tags: ['speculative-decoding', 'quality', 'speed'],
   },
@@ -421,8 +421,8 @@ export const flashcards: Flashcard[] = [
       en: 'Why do prefill and decode create different GPU loads?',
     },
     back: {
-      tr: 'Prefill tüm prompt’u paralel işler, compute-bound çalışır ve yüksek FLOPS kullanır. Decode tek tek token üretir, memory-bandwidth-bound çalışır çünkü KV cache’ten okuma baskındır.',
-      en: 'Prefill processes the whole prompt in parallel, runs compute-bound and uses high FLOPS. Decode generates one token at a time, runs memory-bandwidth-bound because KV cache reads dominate.',
+      "tr": "Prefill birçok tokenı paralel işler; decode geçmiş KV ve ağırlıkları kullanarak sıradaki tokenı üretir. Prefill çoğu işte hesaplama, decode çoğu düşük batch işinde bellek bant genişliğiyle sınırlıdır; bunlar mutlak kurallar değildir.",
+      "en": "Prefill processes many tokens in parallel; decode uses prior KV state and weights to produce the next token. Prefill is often compute-bound and low-batch decode often bandwidth-bound; these are tendencies, not universal rules."
     },
     tags: ['prefill-decode', 'gpu', 'workload'],
   },
@@ -465,8 +465,8 @@ export const flashcards: Flashcard[] = [
       en: 'What is the core difference between PTQ and QAT?',
     },
     back: {
-      tr: 'PTQ (Post-Training Quantization) eğitim sonrası uygulanır, hızlıdır ama kalite biraz düşer. QAT (Quantization-Aware Training) eğitim sırasında nicemlemeyi simüle eder; kalite daha iyi ama eğitim maliyeti yüksektir.',
-      en: 'PTQ (Post-Training Quantization) is applied after training, fast but with some quality loss. QAT (Quantization-Aware Training) simulates quantization during training; quality is better but training cost is high.',
+      "tr": "PTQ eğitimden sonra nicemler; QAT eğitim sırasında düşük hassasiyet etkisini hesaba katar. Kalite, maliyet ve hız farkı model, yöntem ve değerlendirme görevine bağlıdır.",
+      "en": "PTQ quantizes after training; QAT accounts for low-precision effects during training. Quality, cost and speed differences depend on the model, method and evaluation task."
     },
     tags: ['quantization', 'ptq', 'qat'],
   },
@@ -482,8 +482,8 @@ export const flashcards: Flashcard[] = [
       en: 'What role does TensorRT-LLM play in the architecture?',
     },
     back: {
-      tr: 'Model tanımlarını NVIDIA TensorRT çekirdeklerine yaklaştıran, nicemleme ve çoklu GPU seçenekleri sunan derleyici ve çalışma zamanı. vLLM/SGLang gibi motorlardan farklı olarak düşük seviye optimizasyon yapar.',
-      en: 'A compiler and runtime that brings model definitions close to NVIDIA TensorRT kernels, with quantization and multi-GPU options. Unlike vLLM/SGLang it does low-level optimization.',
+      "tr": "NVIDIA GPU’lar için PyTorch tabanlı LLM çıkarım ve sunum kütüphanesidir. Güncel belgelerde eski TensorRT engine arka ucu kaldırılmıştır; model, çekirdek ve API desteği kullanılan sürümle eşleştirilmelidir.",
+      "en": "A PyTorch-based LLM inference and serving library for NVIDIA GPUs. Current documentation removes the legacy TensorRT engine backend; match model, kernel and API support to the release in use."
     },
     tags: ['tensorrt-llm', 'inference', 'nvidia'],
   },
@@ -644,8 +644,8 @@ export const flashcards: Flashcard[] = [
       en: 'Which use case does ExLlamaV3 focus on?',
     },
     back: {
-      tr: 'Tüketici sınıfı NVIDIA GPU\'larda düşük bitli (EXL2/EXL3) nicemlenmiş LLM çıkarımı için optimize edilen ve etkin biçimde geliştirilen bir motordur.',
-      en: 'An actively developed engine optimized for low-bit (EXL2/EXL3) quantized LLM inference on consumer NVIDIA GPUs.',
+      "tr": "Tüketici sınıfı NVIDIA GPU’larında EXL3 nicemlenmiş modellerin çıkarımına odaklanır. EXL2 desteği ExLlamaV2 ile karıştırılmamalıdır.",
+      "en": "Focuses on EXL3 quantized-model inference on consumer NVIDIA GPUs. Do not conflate it with ExLlamaV2 support for EXL2."
     },
     tags: ['exllamav3', 'quantization', 'consumer-gpu'],
   },
