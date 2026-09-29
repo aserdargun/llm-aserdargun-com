@@ -21,7 +21,7 @@ const SolutionPage = lazy(() => import('@/pages/SolutionPage').then((module) => 
 export function App() {
   return <ThemeProvider>
     <Routes>
-      <Route path="/" element={<Navigate to="/tr" replace />} />
+      <Route path="/" element={<Navigate to="/en" replace />} />
       <Route path="/:locale" element={<AppShell />}>
         <Route index element={<HomePage />} />
         <Route path="learn" element={<LearnHomePage />} />
