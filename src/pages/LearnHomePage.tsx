@@ -7,6 +7,7 @@ import { StreakBadge } from '@/components/StreakBadge'
 import { concepts } from '@/data/concepts'
 import { flashcards } from '@/data/flashcards'
 import { lessons } from '@/data/lessons'
+import { learningStages, totalPathLessons, totalPathMinutes } from '@/features/learning/path'
 import { useProgress } from '@/features/learning/progress'
 import { buildQueue, summarize } from '@/features/learning/selectors'
 import { learnCards, learnCommon, learnHome } from '@/i18n/learn-copy'
@@ -58,6 +59,44 @@ export function LearnHomePage() {
           <span className="learn-card__count">{lessons.length} {pick(locale, 'ders', 'lessons')}</span>
           <span className="learn-card__cta">{learnHome.ctaLessons[locale]} <ArrowRight size={16} /></span>
         </Link>
+      </section>
+
+      <section className="learn-path" aria-labelledby="path-title">
+        <div className="section-heading">
+          <Timer size={20} aria-hidden="true" />
+          <span className="mono">{learnHome.path.eyebrow[locale]}</span>
+          <h2 id="path-title">{learnHome.path.title[locale]}</h2>
+          <p>{learnHome.path.intro[locale]}</p>
+        </div>
+        <ol className="learn-path__stages">
+          {learningStages.map((stage, index) => (
+            <li key={stage.id} className="learn-path__stage">
+              <span className="learn-path__index">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{stage.title[locale]}</h3>
+                <p className="learn-path__meta">
+                  {stage.lessons.length} {learnHome.path.lessons[locale]} · {stage.concepts.length}{' '}
+                  {learnHome.path.concepts[locale]} · {stage.cards} {learnHome.path.cards[locale]} ·{' '}
+                  {stage.quiz ? learnHome.path.quiz[locale] : learnHome.path.quizOff[locale]} ·{' '}
+                  {stage.minutes} {pick(locale, 'dk', 'min')}
+                </p>
+                <ul className="learn-path__lessons">
+                  {stage.lessons.map((lesson) => (
+                    <li key={lesson.slug}>
+                      <Link to={`/${locale}/learn/lessons/${lesson.slug}`}>
+                        {lesson.title[locale]} <ArrowRight size={14} />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="learn-path__total">
+          {totalPathLessons} {learnHome.path.lessons[locale]} · {totalPathMinutes} {pick(locale, 'dk', 'min')}{' '}
+          {learnHome.path.total[locale]}
+        </p>
       </section>
 
       <PortfolioLearning />

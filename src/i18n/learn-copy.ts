@@ -18,6 +18,21 @@ export const learnHome = {
   ctaCards: t('Bugünkü tekrar', 'Today’s review'),
   ctaQuiz: t('Hızlı test', 'Quick quiz'),
   ctaLessons: t('Mini-ders', 'Mini-lesson'),
+  path: {
+    eyebrow: t('ÖNERİLEN SIRA', 'SUGGESTED ORDER'),
+    title: t('Öğrenme yolu', 'Learning path'),
+    intro: t(
+      'Bu sıra elle yazılmaz; mevcut ders ve kavram kayıtlarından türetilir. Yeni bir ders eklendiğinde yol kendiliğinden genişler.',
+      'This order is derived, not hand-written: it is generated from the existing lesson and concept records. A new lesson widens the path automatically.',
+    ),
+    lessons: t('ders', 'lessons'),
+    concepts: t('kavram', 'concepts'),
+    cards: t('kart tekrarı', 'card review'),
+    quiz: t('kısa test', 'quick quiz'),
+    quizOff: t('test yok', 'no quiz yet'),
+    total: t('toplam', 'total'),
+    openStage: t('Bu aşamayı aç', 'Open this stage'),
+  },
   stats: {
     streak: t('Günlük seri', 'Day streak'),
     longest: t('En uzun seri', 'Longest streak'),
