@@ -24,7 +24,7 @@ export interface LearningStage {
   minutes: number
 }
 
-const levelRank: Record<Lesson['level'], number> = { starter: 0, intermediate: 1, advanced: 2 }
+const levelRank: Record<Lesson['level'], number> = { starter: 0, intermediate: 1 }
 
 /** Her kavramın iki okuma seviyesinde de yaklaşık okuma süresi. */
 const CONCEPT_MINUTES: Record<ConceptLevel, number> = { beginner: 3, intermediate: 5 }
