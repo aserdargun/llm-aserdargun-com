@@ -3691,6 +3691,9 @@
         "embedding",
         "paged-attention"
       ],
+      "sources": [
+        "https://arxiv.org/abs/1706.03762"
+      ],
       "relatedSolutions": [
         "vllm",
         "tensorrt-llm",
@@ -3727,6 +3730,10 @@
         "tokenization",
         "context-window",
         "temperature"
+      ],
+      "sources": [
+        "https://docs.anthropic.com/en/docs/build-with-claude/tool-use",
+        "https://platform.openai.com/docs/guides/text-generation"
       ],
       "relatedSolutions": [
         "open-webui",
@@ -3965,6 +3972,10 @@
         "prefill-decode",
         "streaming"
       ],
+      "sources": [
+        "https://huggingface.co/docs/transformers/main/en/perf_infer_gpu_one",
+        "https://github.com/NVIDIA/TensorRT-LLM"
+      ],
       "relatedSolutions": [
         "vllm",
         "sglang",
@@ -4001,6 +4012,10 @@
         "prefill-decode",
         "tokenization",
         "context-window"
+      ],
+      "sources": [
+        "https://platform.openai.com/docs/guides/text-generation",
+        "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
       ],
       "relatedSolutions": [
         "vllm",
@@ -4039,6 +4054,9 @@
         "attention",
         "prefill-decode"
       ],
+      "sources": [
+        "https://arxiv.org/abs/2309.06180"
+      ],
       "relatedSolutions": [
         "vllm",
         "sglang",
@@ -4075,6 +4093,9 @@
         "batching",
         "paged-attention",
         "attention"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2210.17323"
       ],
       "relatedSolutions": [
         "vllm",
@@ -4113,6 +4134,9 @@
         "paged-attention",
         "streaming"
       ],
+      "sources": [
+        "https://huggingface.co/docs/transformers/main/cache_explanation"
+      ],
       "relatedSolutions": [
         "nvidia-dynamo",
         "vllm",
@@ -4150,6 +4174,11 @@
         "paged-attention",
         "tokenization"
       ],
+      "sources": [
+        "https://huggingface.co/docs/transformers/main/quantization/overview",
+        "https://huggingface.co/docs/transformers/main/en/quantization/bitsandbytes",
+        "https://huggingface.co/docs/transformers/main/en/quantization/awq"
+      ],
       "relatedSolutions": [
         "llama-cpp",
         "tensorrt-llm",
@@ -4186,6 +4215,9 @@
         "fine-tuning",
         "lora",
         "pruning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1503.00091"
       ],
       "relatedSolutions": [
         "tensorrt-llm",
@@ -4264,6 +4296,10 @@
         "prompt",
         "rlhf"
       ],
+      "sources": [
+        "https://huggingface.co/docs/peft/index",
+        "https://arxiv.org/abs/2106.09685"
+      ],
       "relatedSolutions": [
         "mlx-lm",
         "vllm",
@@ -4341,6 +4377,9 @@
         "attention",
         "fine-tuning"
       ],
+      "sources": [
+        "https://arxiv.org/abs/2304.11277"
+      ],
       "relatedSolutions": [
         "tensorrt-llm",
         "llama-cpp",
@@ -4377,6 +4416,9 @@
         "attention",
         "quantization",
         "npu"
+      ],
+      "sources": [
+        "https://developer.nvidia.com/cuda"
       ],
       "relatedSolutions": [
         "vllm",
@@ -4415,6 +4457,9 @@
         "onnx",
         "webgpu"
       ],
+      "sources": [
+        "https://developer.nvidia.com/cuda"
+      ],
       "relatedSolutions": [
         "openvino-genai",
         "onnx-runtime-genai",
@@ -4451,6 +4496,9 @@
         "npu",
         "quantization",
         "onnx"
+      ],
+      "sources": [
+        "https://developer.apple.com/metal/"
       ],
       "relatedSolutions": [
         "mlx-lm",
@@ -4489,6 +4537,9 @@
         "onnx",
         "apple-silicon"
       ],
+      "sources": [
+        "https://www.w3.org/TR/webgpu/"
+      ],
       "relatedSolutions": [
         "webllm",
         "mlc-llm",
@@ -4525,6 +4576,9 @@
         "npu",
         "quantization",
         "apple-silicon"
+      ],
+      "sources": [
+        "https://onnx.ai/onnx/"
       ],
       "relatedSolutions": [
         "onnx-runtime-genai",
@@ -4563,6 +4617,9 @@
         "prompt",
         "context-window"
       ],
+      "sources": [
+        "https://arxiv.org/abs/2005.11401"
+      ],
       "relatedSolutions": [
         "open-webui",
         "anythingllm",
@@ -4600,6 +4657,10 @@
         "agent",
         "rag"
       ],
+      "sources": [
+        "https://docs.anthropic.com/en/docs/build-with-claude/tool-use",
+        "https://platform.openai.com/docs/guides/text-generation"
+      ],
       "relatedSolutions": [
         "vllm",
         "sglang",
@@ -4636,6 +4697,10 @@
         "rag",
         "prompt",
         "system-prompt"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2305.18323",
+        "https://arxiv.org/abs/1805.00053"
       ],
       "relatedSolutions": [
         "sglang",
@@ -4712,6 +4777,10 @@
         "agent",
         "system-prompt",
         "rag"
+      ],
+      "sources": [
+        "https://platform.openai.com/docs/guides/text-generation",
+        "https://docs.vllm.ai/en/latest/usage/reproducibility/"
       ],
       "relatedSolutions": [
         "vllm",
