@@ -2,12 +2,18 @@ import type { LocalizedList, LocalizedText, Solution } from '@/types/atlas'
 
 const text = (tr: string, en: string): LocalizedText => ({ tr, en })
 const list = (tr: string[], en: string[]): LocalizedList => ({ tr, en })
-type Draft = Omit<Solution, 'id' | 'lastVerified' | 'sources'> & { source: { title: string; publisher: string; url: string }; verifiedAt: string }
-const make = ({ source, verifiedAt, ...draft }: Draft): Solution => ({
+type SourceDraft = { title: string; publisher: string; url: string; supportsClaims?: string[] }
+type Draft = Omit<Solution, 'id' | 'lastVerified' | 'sources'> & { source: SourceDraft; extraSources?: SourceDraft[]; verifiedAt: string }
+const make = ({ source, extraSources = [], verifiedAt, ...draft }: Draft): Solution => ({
   ...draft,
   id: draft.slug,
   lastVerified: verifiedAt,
-  sources: [{ ...source, sourceType: source.url.includes('github.com') ? 'official-repository' : 'official-docs', supportsClaims: ['overview', 'capabilities', 'compatibility'], verifiedAt }],
+  sources: [source, ...extraSources].map((entry) => ({
+    ...entry,
+    sourceType: entry.url.includes('github.com') ? 'official-repository' as const : 'official-docs' as const,
+    supportsClaims: entry.supportsClaims ?? ['overview', 'capabilities', 'compatibility'],
+    verifiedAt,
+  })),
 })
 
 export const solutions: Solution[] = [
@@ -18,19 +24,21 @@ export const solutions: Solution[] = [
       "en": "A PyTorch-based optimization library for LLM inference and serving on NVIDIA GPUs."
     },
     description: {
-      "tr": "Güncel belgeler PyTorch yürütmesini ve doğrudan model yüklemeyi temel alır; eski TensorRT engine oluşturma arka ucu kaldırılmıştır. Nicemleme, KV yönetimi ve çoklu GPU yolları sürüme göre doğrulanmalıdır.",
-      "en": "Current documentation centers PyTorch execution and direct model loading; the legacy TensorRT engine-build backend has been removed. Validate quantization, KV management and multi-GPU paths for the release in use."
+      "tr": "Güncel belgeler PyTorch yürütmesini ve doğrudan model yüklemeyi temel alır; eski TensorRT engine oluşturma arka ucu kaldırılmıştır. Nicemleme, KV yönetimi ve çoklu GPU yolları sürüme göre doğrulanmalıdır. 29 Eylül 2026’da yayımlanan v1.3.0rc29 bir sürüm adayıdır, kararlı sürüm değildir; AutoDeploy entegrasyonunu ve CMake’deki eski `cpp_only` derleme seçeneğini kırıcı olarak kaldırdı, API tarafında ise Responses API’de açık null alanlar artık belirtilmemiş sayılıyor ve özel URL getirmeleri açıkça isteğe bağlı hâle getirildi.",
+      "en": "Current documentation centers PyTorch execution and direct model loading; the legacy TensorRT engine-build backend has been removed. Validate quantization, KV management and multi-GPU paths for the release in use. The v1.3.0rc29 published September 29, 2026 is a release candidate, not a stable release: it removes the AutoDeploy integration and the obsolete `cpp_only` CMake build option as breaking changes, and on the API side explicit null optional fields in the Responses API are now treated as unset while private URL fetches require explicit opt-in."
     },
     notFor: text('Tek başına son kullanıcı arayüzü veya sağlayıcılar arası ağ geçidi değildir.', 'It is not, by itself, an end-user interface or cross-provider gateway.'),
     strengths: list(['NVIDIA donanımı için derin optimizasyon', 'Nicemleme ve çoklu GPU seçenekleri'], ['Deep optimization for NVIDIA hardware', 'Quantization and multi-GPU options']),
     limitations: {
       "tr": [
         "CUDA/NVIDIA ekosistemine bağlılık",
-        "Eski engine-build tariflerinden geçiş ve sürüm uyumu gerekir"
+        "Eski engine-build tariflerinden geçiş ve sürüm uyumu gerekir",
+        "v1.3.0rc29 bir sürüm adayıdır; kırıcı kaldırmalar kararlı sürüm öncesinde yeniden değerlendirilmelidir"
       ],
       "en": [
         "Coupled to the CUDA/NVIDIA ecosystem",
-        "Migration from legacy engine-build recipes and release compatibility require review"
+        "Migration from legacy engine-build recipes and release compatibility require review",
+        "v1.3.0rc29 is a release candidate; its breaking removals should be re-checked before a stable release"
       ]
     },
     idealFor: list(['NVIDIA GPU üzerinde uzman ekiplerin üretim çıkarımı'], ['Production inference on NVIDIA GPUs with specialist teams']),
@@ -50,7 +58,10 @@ export const solutions: Solution[] = [
       "publisher": "NVIDIA",
       "url": "https://nvidia.github.io/TensorRT-LLM/legacy/tensorrt-backend-removal.html"
     },
-    verifiedAt: "2026-09-21",
+    extraSources: [
+      { title: 'TensorRT-LLM v1.3.0rc29 release notes', publisher: 'NVIDIA', url: 'https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29', supportsClaims: ['release-notes', 'breaking-changes', 'api-changes'] },
+    ],
+    verifiedAt: "2026-10-02",
   }),
   make({
     slug: 'llama-cpp', name: 'llama.cpp', primaryCategory: 'INF', capabilityTags: ['local-inference', 'quantization', 'portable'],
@@ -142,30 +153,33 @@ export const solutions: Solution[] = [
   make({
     slug: 'vllm', name: 'vLLM', primaryCategory: 'SRV', capabilityTags: ['continuous-batching', 'openai-api', 'distributed-serving'],
     summary: text('Sürekli batching ve verimli KV önbelleğiyle yüksek eşzamanlı LLM sunumu için açık kaynaklı sunucu; v0.29.0’da Model Runner V2 tüm modeller için varsayılandır.', 'An open-source server for high-concurrency LLM serving with continuous batching and efficient KV-cache management; in v0.29.0, Model Runner V2 is the default for all models.'),
-    description: text('OpenAI uyumlu API, geniş model desteği ve tek GPU’dan dağıtık çalışmaya uzanan üretim servis yolları sağlar. v0.29.0 ile Model Runner V2 tüm modeller için varsayılan oldu; MRV1 yalnızca MRV2’nin henüz desteklemediği birkaç ROCm modeli ve özellik yolu için MRV2’den geri düşer. Yeni kuyruk kabul sınırları `--max-num-queued-reqs` ve `--max-num-queued-tokens` ile admission control ayarlanır. Eski `python -m vllm.entrypoints.openai.api_server` çağrısı, `vllm serve` lehine kullanım dışı bırakıldı (henüz kaldırılmadı).', 'Provides an OpenAI-compatible API, broad model support, and production paths from one GPU to distributed execution. In v0.29.0, Model Runner V2 became the default for all models; MRV1 is only retained for a few ROCm models and features MRV2 does not yet support, and vLLM falls back to MRV1 when those paths are configured. The new `--max-num-queued-reqs` and `--max-num-queued-tokens` CLI flags set admission-control limits. The legacy `python -m vllm.entrypoints.openai.api_server` invocation is deprecated in favor of `vllm serve` (not yet removed).'),
+    description: text('OpenAI uyumlu API, geniş model desteği ve tek GPU’dan dağıtık çalışmaya uzanan üretim servis yolları sağlar. v0.29.0 ile Model Runner V2 tüm modeller için varsayılan oldu; MRV1 yalnızca MRV2’nin henüz desteklemediği birkaç ROCm modeli ve özellik yolu için MRV2’den geri düşer. Yeni kuyruk kabul sınırları `--max-num-queued-reqs` ve `--max-num-queued-tokens` ile admission control ayarlanır. Eski `python -m vllm.entrypoints.openai.api_server` çağrısı, `vllm serve` lehine kullanım dışı bırakıldı (henüz kaldırılmadı). 22 Eylül 2026’da çıkan v0.30.0 bunun üzerine çıktı: ölçek-dışı uç noktalar düz `vllm serve` üzerinde `--enable-scale-out` ile isteğe bağlı hâle geldi ve `VLLM_ENABLE_SCALE_OUT_ENDPOINTS` yerini aldı; 0.29’da kullanımdan kaldırılanlar kaldırıldı; `python -m vllm.entrypoints.grpc_server` `vllm serve --grpc` lehine kullanımdan kaldırıldı; nicemlemede NVFP4 ve hedefli çevrimiçi nicemleme (`quantization_config.targets`) geldi. v0.30.0 ayrıca kırıcı değişiklik olarak GPTQ etkinleştirme sırasını (`g_idx`) kaldırdı.', 'Provides an OpenAI-compatible API, broad model support, and production paths from one GPU to distributed execution. In v0.29.0, Model Runner V2 became the default for all models; MRV1 is only retained for a few ROCm models and features MRV2 does not yet support, and vLLM falls back to MRV1 when those paths are configured. The new `--max-num-queued-reqs` and `--max-num-queued-tokens` CLI flags set admission-control limits. The legacy `python -m vllm.entrypoints.openai.api_server` invocation is deprecated in favor of `vllm serve` (not yet removed). v0.30.0, released September 22, 2026, builds on this: scale-out endpoints became opt-in on plain `vllm serve` via `--enable-scale-out`, replacing `VLLM_ENABLE_SCALE_OUT_ENDPOINTS`; items deprecated in 0.29 were removed; `python -m vllm.entrypoints.grpc_server` is deprecated in favor of `vllm serve --grpc`; and quantization added NVFP4 plus targeted online quantization (`quantization_config.targets`). v0.30.0 also removes GPTQ activation ordering (`g_idx`) as a breaking change.'),
     notFor: text('Grafik masaüstü istemcisi veya sağlayıcılar arası ağ geçidi değildir.', 'It is not a graphical desktop client or cross-provider gateway.'),
-    strengths: list(['Yüksek eşzamanlı sunum için güçlü varsayılan', 'Geniş model ve donanım ekosistemi', 'v0.29.0’da MRV2 varsayılanı ve yeni admission control bayrakları'], ['Strong default for concurrent serving', 'Broad model and hardware ecosystem', 'MRV2 default and new admission-control flags as of v0.29.0']),
-    limitations: list(['En iyi ayarlar iş yükü ve donanıma göre ölçülmelidir', 'MRV1 yalnızca MRV2’nin henüz desteklemediği ROCm modelleri ve özellik yolları için geçerlidir', 'Birinci taraf artifact’lar CUDA, ROCm, CPU ve XPU için yayımlanır; evrensel “her donanım desteklenir” iddiası değildir'], ['Best settings must be measured per workload and hardware', 'MRV1 only applies to ROCm models and feature paths MRV2 does not yet support', 'First-party artifacts ship for CUDA, ROCm, CPU, and XPU; not a universal "all-hardware supported" claim']),
+    strengths: list(['Yüksek eşzamanlı sunum için güçlü varsayılan', 'Geniş model ve donanım ekosistemi', 'v0.29.0’da MRV2 varsayılanı ve yeni admission control bayrakları', 'v0.30.0’da ölçek-dışı uç noktalar için açık `--enable-scale-out` bayrağı ve NVFP4 nicemleme'], ['Strong default for concurrent serving', 'Broad model and hardware ecosystem', 'MRV2 default and new admission-control flags as of v0.29.0', 'Explicit `--enable-scale-out` flag for scale-out endpoints and NVFP4 quantization in v0.30.0']),
+    limitations: list(['En iyi ayarlar iş yükü ve donanıma göre ölçülmelidir', 'MRV1 yalnızca MRV2’nin henüz desteklemediği ROCm modelleri ve özellik yolları için geçerlidir', 'Birinci taraf artifact’lar CUDA, ROCm, CPU ve XPU için yayımlanır; evrensel “her donanım desteklenir” iddiası değildir', 'v0.30.0 kırıcı değişiklikler getirir; `g_idx` kaldırma ve kaldırılan ortam değişkenleri yükseltme öncesi kontrol edilmelidir'], ['Best settings must be measured per workload and hardware', 'MRV1 only applies to ROCm models and feature paths MRV2 does not yet support', 'First-party artifacts ship for CUDA, ROCm, CPU, and XPU; not a universal "all-hardware supported" claim', 'v0.30.0 introduces breaking changes; the `g_idx` removal and deleted environment variables should be checked before upgrading']),
     idealFor: list(['Açık kaynak modellerle üretim API hizmeti'], ['Production API services for open models']),
     executionBackends: ['PyTorch', 'CUDA', 'ROCm'], hardware: ['NVIDIA GPU', 'AMD GPU', 'CPU', 'Intel GPU'], modelFormats: ['Hugging Face', 'GGUF', 'AWQ', 'GPTQ'], apiProtocols: ['OpenAI-compatible', 'HTTP'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'mature', alternatives: ['sglang', 'tensorrt-llm', 'lmdeploy'],
     source: { title: 'vLLM v0.29.0 Release Notes', publisher: 'vLLM Project', url: 'https://github.com/vllm-project/vllm/releases/tag/v0.29.0' },
-    verifiedAt: '2026-09-18',
+    extraSources: [
+      { title: 'vLLM v0.30.0 Release Notes', publisher: 'vLLM Project', url: 'https://github.com/vllm-project/vllm/releases/tag/v0.30.0', supportsClaims: ['release-notes', 'breaking-changes', 'quantization', 'serving-flags'] },
+    ],
+    verifiedAt: '2026-10-02',
   }),
   make({
     slug: 'sglang', name: 'SGLang', primaryCategory: 'SRV', capabilityTags: ['structured-generation', 'radix-cache', 'distributed-serving'],
-    summary: text('Yapılandırılmış üretim, önbellekleme ve dağıtık sunumu birleştiren hızlı LLM servis çerçevesi.', 'A fast LLM serving framework combining structured generation, caching, and distributed serving.'),
-    description: text('RadixAttention, model sunucusu ve programlama arayüzünü tek ekosistemde birleştirir; karmaşık üretim akışlarını hedefler.', 'Combines RadixAttention, a model server, and a programming interface for complex generation workloads.'),
+    summary: text('Yapılandırılmış üretim, önbellekleme ve dağıtık sunumu birleştiren hızlı LLM servis çerçevesi; v0.5.21 öne çıkanlarını yayımladı.', 'A fast LLM serving framework combining structured generation, caching, and distributed serving; v0.5.21 published its highlights.'),
+    description: text('RadixAttention, model sunucusu ve programlama arayüzünü tek ekosistemde birleştirir; karmaşık üretim akışlarını hedefler. 2 Ekim 2026’da çıkan v0.5.21, 779 PR ile öne çıkanlarını yayımladı: ön ek önbelleği varsayılan olarak Rust çekirdeğine taşındı, PD örnekleri yeniden başlatmaya gerek kalmadan prefill ve decode arasında geçebiliyor ve karar/skorlama için `/v1/decisions` ile tek istekte tüm adayları puanlayan `/v1/score` uç noktaları geldi. Bu sürümün hız ve ön ek gecikmesi rakamları sürüm notlarında kendi ölçümü olarak verilir.', 'Combines RadixAttention, a model server, and a programming interface for complex generation workloads. v0.5.21, released October 2, 2026, published highlights from 779 PRs: the prefix cache now runs on a Rust core by default, PD instances can switch between prefill and decode without a restart, and new `/v1/decisions` and `/v1/score` endpoints turn a model into a low-latency classifier and score all candidates in one request. Throughput and first-token figures in that release are its own measurements.'),
     notFor: text('Son kullanıcı masaüstü uygulaması değildir.', 'It is not an end-user desktop application.'),
-    strengths: list(['Yapılandırılmış ve çok aşamalı üretim yetenekleri', 'Önbellek odaklı sunum'], ['Structured and multi-stage generation capabilities', 'Cache-oriented serving']),
-    limitations: list(['Hızlı gelişen yüzey alanı operasyonel takip ister'], ['A fast-moving surface requires operational tracking']),
+    strengths: list(['Yapılandırılmış ve çok aşamalı üretim yetenekleri', 'Önbellek odaklı sunum', 'v0.5.21’de Rust çekirdekli varsayılan ön ek önbelleği ve karar/puanlama uç noktaları'], ['Structured and multi-stage generation capabilities', 'Cache-oriented serving', 'Default Rust-core prefix cache and decision/scoring endpoints in v0.5.21']),
+    limitations: list(['Hızlı gelişen yüzey alanı operasyonel takip ister', 'Sürüm notlarındaki hız ve ön ek gecikmesi rakamları sürüme özgü ölçümlerdir; iş yükünüzde ölçülmelidir'], ['A fast-moving surface requires operational tracking', 'Throughput and first-token figures in the release notes are version-specific measurements and should be measured on your own workload']),
     idealFor: list(['Yapılandırılmış çıktı ve karmaşık ajan/üretim akışları'], ['Structured output and complex agent/generation workflows']),
     executionBackends: ['PyTorch', 'CUDA', 'ROCm'], hardware: ['NVIDIA GPU', 'AMD GPU'], modelFormats: ['Hugging Face', 'AWQ', 'FP8'], apiProtocols: ['OpenAI-compatible', 'HTTP', 'Python API'], deploymentScopes: ['Server', 'Kubernetes', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['vllm', 'lmdeploy', 'tensorrt-llm'],
     source: {
-      "title": "SGLang Documentation",
+      "title": "SGLang v0.5.21 Release Notes",
       "publisher": "SGLang Project",
-      "url": "https://docs.sglang.io/"
+      "url": "https://github.com/sgl-project/sglang/releases/tag/v0.5.21"
     },
-    verifiedAt: "2026-08-12",
+    verifiedAt: "2026-10-02",
   }),
   make({
     slug: 'nvidia-triton', name: 'NVIDIA Triton Inference Server', primaryCategory: 'SRV', capabilityTags: ['multi-framework', 'dynamic-batching', 'observability'],

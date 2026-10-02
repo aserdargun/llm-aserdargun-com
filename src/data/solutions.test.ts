@@ -3,6 +3,7 @@ import { categories } from './categories'
 import { datasetRelease } from './dataset-release'
 import { lessons } from './lessons'
 import { solutions } from './solutions'
+import { sourceAudit } from './source-audit'
 
 describe('curated atlas dataset', () => {
   it('contains the seven approved categories in order', () => {
@@ -50,8 +51,10 @@ describe('curated atlas dataset', () => {
   it('records material vLLM v0.29.0 notes in both languages against the pinned release source', () => {
     const vllm = solutions.find((solution) => solution.slug === 'vllm')
     expect(vllm).toBeDefined()
-    expect(vllm!.lastVerified).toBe('2026-09-18')
+    expect(vllm!.lastVerified).toBe('2026-10-02')
     expect(vllm!.sources[0]?.url).toBe('https://github.com/vllm-project/vllm/releases/tag/v0.29.0')
+    expect(vllm!.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/vllm-project/vllm/releases/tag/v0.30.0']))
+    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-02')).toBe(true)
 
     // Turkish material coverage
     const trConcat = `${vllm!.summary.tr} ${vllm!.description.tr} ${vllm!.limitations.tr.join(' ')}`
@@ -115,7 +118,7 @@ describe('curated atlas dataset', () => {
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
     expect(datasetRelease.release).toBe('2026-09-21-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-09-21')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-02')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -126,5 +129,53 @@ describe('curated atlas dataset', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
     expect(bySlug('exllamav3').lastVerified).toBe('2026-09-21')
     expect(bySlug('hugging-face-tgi').lastVerified).toBe('2026-09-04')
+  })
+
+  it('records the 2026-10-02 post-audit serving refresh against primary release sources', () => {
+    const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
+
+    // vLLM v0.30.0 (2026-09-22): scale-out opt-in flag, removal of items deprecated in 0.29, NVFP4
+    const vllm = bySlug('vllm')
+    const vllmEn = `${vllm.description.en} ${vllm.limitations.en.join(' ')}`
+    expect(vllmEn).toContain('v0.30.0')
+    expect(vllmEn).toContain('--enable-scale-out')
+    expect(vllmEn).toContain('VLLM_ENABLE_SCALE_OUT_ENDPOINTS')
+    expect(vllmEn).toContain('vllm serve --grpc')
+    expect(vllmEn).toContain('NVFP4')
+    expect(vllmEn).toContain('g_idx')
+    const vllmTr = `${vllm.description.tr} ${vllm.limitations.tr.join(' ')}`
+    expect(vllmTr).toContain('v0.30.0')
+    expect(vllmTr).toContain('--enable-scale-out')
+    expect(vllmTr).toContain('g_idx')
+
+    // SGLang v0.5.21 (2026-10-02): Rust-core default prefix cache, decisions/score endpoints
+    const sglang = bySlug('sglang')
+    expect(sglang.lastVerified).toBe('2026-10-02')
+    expect(sglang.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/sgl-project/sglang/releases/tag/v0.5.21']))
+    expect(sglang.description.en).toContain('v0.5.21')
+    expect(sglang.description.en).toContain('Rust core')
+    expect(sglang.description.en).toContain('/v1/decisions')
+    expect(sglang.description.en).toContain('/v1/score')
+    expect(sglang.description.tr).toContain('v0.5.21')
+    expect(sglang.description.tr).toContain('Rust çekirdeğine')
+    // Release-note performance figures must be framed as the project's own measurements
+    expect(sglang.limitations.en.join(' ')).toContain('version-specific measurements')
+
+    // TensorRT-LLM v1.3.0rc29 is a release candidate: breaking removals recorded, not hidden
+    const tensorrt = bySlug('tensorrt-llm')
+    expect(tensorrt.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29']))
+    expect(tensorrt.description.en).toContain('release candidate')
+    expect(tensorrt.description.en).toContain('AutoDeploy')
+    expect(tensorrt.description.tr).toContain('sürüm adayıdır')
+    expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
+
+    // The refresh must not masquerade as a new full endpoint review
+    expect(sourceAudit.checkedAt).toBe('2026-09-21')
+    for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release', 'tensorrt-llm-v1.3.0rc29-release']) {
+      const entry = datasetRelease.evidence.find((e) => e.topic === topic)
+      expect(entry).toBeDefined()
+      expect(entry!.checkedAt).toBe('2026-10-02')
+      expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
+    }
   })
 })

@@ -42,7 +42,7 @@ export const sourceAudit = {
     },
     {
       "solution": "sglang",
-      "url": "https://docs.sglang.io/"
+      "url": "https://github.com/sgl-project/sglang/releases/tag/v0.5.21"
     },
     {
       "solution": "nvidia-triton",

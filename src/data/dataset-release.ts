@@ -9,7 +9,7 @@ export const datasetRelease = {
     },
     "solutions": {
       "schemaVersion": 2,
-      "revision": "2026-09-21"
+      "revision": "2026-10-02"
     },
     "concepts": {
       "schemaVersion": 3,
@@ -284,7 +284,31 @@ export const datasetRelease = {
       ],
       "url": "https://aserdargun.com/",
       "checkedAt": "2026-09-21"
+    },
+    {
+      "topic": "vllm-v0.30.0-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/vllm-project/vllm/releases/tag/v0.30.0",
+      "checkedAt": "2026-10-02"
+    },
+    {
+      "topic": "sglang-v0.5.21-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/sgl-project/sglang/releases/tag/v0.5.21",
+      "checkedAt": "2026-10-02"
+    },
+    {
+      "topic": "tensorrt-llm-v1.3.0rc29-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29",
+      "checkedAt": "2026-10-02"
     }
   ],
-  "note": "All 31 primary-source endpoints reviewed; source-audit records endpoint scope. Targeted solution and bilingual learning corrections, explicit observer-only metadata, portfolio learning links and full static dataset export. Individual solution dates remain authoritative; no inference benchmarks or external release are claimed."
+  "note": "All 31 primary-source endpoints reviewed on 2026-09-21; source-audit records endpoint scope. A targeted post-audit refresh on 2026-10-02 re-fetched and recorded three serving-layer primary sources: vLLM v0.30.0, SGLang v0.5.21 and TensorRT-LLM v1.3.0rc29. This refresh is not a new full endpoint review, so sourceAudit.checkedAt and the full-audit release label are unchanged. Individual solution dates remain authoritative; no inference benchmarks or external release are claimed."
 } as const
