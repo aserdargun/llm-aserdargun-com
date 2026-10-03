@@ -179,19 +179,24 @@ describe('curated atlas dataset', () => {
     }
   })
 
-  it('records the three releases published after 2026-09-22 in both languages against their own release notes', () => {
+  it('records the releases published after 2026-09-22 in both languages against their own release notes', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    // ExLlamaV3 v1.5.3 (2026-09-27), with v1.5.2/v1.5.1 also after 2026-09-21
+    // ExLlamaV3 v1.5.4 (2026-10-03) supersedes the v1.5.3 the first pass recorded
     const exllama = bySlug('exllamav3')
-    expect(exllama.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3']))
-    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor paralel', 'EXL3']) {
+    expect(exllama.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.4',
+        'https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3',
+      ]),
+    )
+    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor paralel', 'EXL3', 'Transformers 5', 'token gömme nicemlemesi', 'MiMo-V2.6']) {
       expect(exllama.description.tr).toContain(claim)
     }
-    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor-parallel', 'EXL3 remains the weight format']) {
+    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor-parallel', 'EXL3 remains the weight format', 'Transformers 5', 'backpropagation through wrapped EXL3 layers', 'token-embedding quantization', 'MiMo-V2.6']) {
       expect(exllama.description.en).toContain(claim)
     }
-    // The EXL3 weight format itself is unchanged
+    // The EXL3 weight format itself is unchanged across v1.5.4
     expect(exllama.modelFormats).toEqual(['EXL3'])
 
     // RamaLama v0.25.0 (2026-09-25): serve binds to loopback by default
@@ -216,7 +221,7 @@ describe('curated atlas dataset', () => {
     expect(kserve.description.tr).toContain('CRD')
 
     // Each new release is pinned as evidence on the current audit date
-    for (const topic of ['exllamav3-v1.5.3-release', 'ramalama-v0.25.0-release', 'kserve-v0.21.0-release']) {
+    for (const topic of ['exllamav3-v1.5.4-release', 'exllamav3-v1.5.3-release', 'ramalama-v0.25.0-release', 'kserve-v0.21.0-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
       expect(entry!.checkedAt).toBe('2026-10-03')
