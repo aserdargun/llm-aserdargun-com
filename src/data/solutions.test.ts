@@ -38,7 +38,7 @@ describe('curated atlas dataset', () => {
   it('tracks current lifecycle and compatibility for fast-moving records', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-21', modelFormats: ['EXL3'] })
+    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-03', modelFormats: ['EXL3'] })
     expect(bySlug('onnx-runtime-genai')).toMatchObject({ projectStatus: 'preview', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner').executionBackends).toEqual(expect.arrayContaining(['llama.cpp', 'vLLM', 'Diffusers']))
@@ -51,10 +51,10 @@ describe('curated atlas dataset', () => {
   it('records material vLLM v0.29.0 notes in both languages against the pinned release source', () => {
     const vllm = solutions.find((solution) => solution.slug === 'vllm')
     expect(vllm).toBeDefined()
-    expect(vllm!.lastVerified).toBe('2026-10-02')
+    expect(vllm!.lastVerified).toBe('2026-10-03')
     expect(vllm!.sources[0]?.url).toBe('https://github.com/vllm-project/vllm/releases/tag/v0.29.0')
     expect(vllm!.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/vllm-project/vllm/releases/tag/v0.30.0']))
-    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-02')).toBe(true)
+    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-03')).toBe(true)
 
     // Turkish material coverage
     const trConcat = `${vllm!.summary.tr} ${vllm!.description.tr} ${vllm!.limitations.tr.join(' ')}`
@@ -117,8 +117,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-09-21-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-02')
+    expect(datasetRelease.release).toBe('2026-10-03-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-03')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -127,11 +127,11 @@ describe('curated atlas dataset', () => {
     expect(vllmEvidence!.collections).toEqual(expect.arrayContaining(['solutions', 'lessons']))
     // Each solution retains its own recorded verification date
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
-    expect(bySlug('exllamav3').lastVerified).toBe('2026-09-21')
+    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-03')
     expect(bySlug('hugging-face-tgi').lastVerified).toBe('2026-09-04')
   })
 
-  it('records the 2026-10-02 post-audit serving refresh against primary release sources', () => {
+  it('records the 2026-10-03 post-audit serving refresh against primary release sources', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
     // vLLM v0.30.0 (2026-09-22): scale-out opt-in flag, removal of items deprecated in 0.29, NVFP4
@@ -150,7 +150,7 @@ describe('curated atlas dataset', () => {
 
     // SGLang v0.5.21 (2026-10-02): Rust-core default prefix cache, decisions/score endpoints
     const sglang = bySlug('sglang')
-    expect(sglang.lastVerified).toBe('2026-10-02')
+    expect(sglang.lastVerified).toBe('2026-10-03')
     expect(sglang.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/sgl-project/sglang/releases/tag/v0.5.21']))
     expect(sglang.description.en).toContain('v0.5.21')
     expect(sglang.description.en).toContain('Rust core')
@@ -169,13 +169,62 @@ describe('curated atlas dataset', () => {
     expect(tensorrt.description.tr).toContain('sürüm adayıdır')
     expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
 
-    // The refresh must not masquerade as a new full endpoint review
-    expect(sourceAudit.checkedAt).toBe('2026-09-21')
+    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-03
+    expect(sourceAudit.checkedAt).toBe('2026-10-03')
     for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release', 'tensorrt-llm-v1.3.0rc29-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
-      expect(entry!.checkedAt).toBe('2026-10-02')
+      expect(entry!.checkedAt).toBe('2026-10-03')
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
+  })
+
+  it('records the three releases published after 2026-09-22 in both languages against their own release notes', () => {
+    const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
+
+    // ExLlamaV3 v1.5.3 (2026-09-27), with v1.5.2/v1.5.1 also after 2026-09-21
+    const exllama = bySlug('exllamav3')
+    expect(exllama.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3']))
+    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor paralel', 'EXL3']) {
+      expect(exllama.description.tr).toContain(claim)
+    }
+    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor-parallel', 'EXL3 remains the weight format']) {
+      expect(exllama.description.en).toContain(claim)
+    }
+    // The EXL3 weight format itself is unchanged
+    expect(exllama.modelFormats).toEqual(['EXL3'])
+
+    // RamaLama v0.25.0 (2026-09-25): serve binds to loopback by default
+    const ramalama = bySlug('ramalama')
+    expect(ramalama.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/containers/ramalama/releases/tag/v0.25.0']))
+    expect(ramalama.description.en).toContain('v0.25.0')
+    expect(ramalama.description.en).toContain('loopback by default')
+    expect(ramalama.description.en).toContain('without removing it')
+    expect(ramalama.description.tr).toContain('v0.25.0')
+    expect(ramalama.description.tr).toContain('loopback')
+    expect(ramalama.description.tr).toContain('kaldırmadan')
+    // Deprecation must not be recorded as a removal
+    expect(ramalama.limitations.en.join(' ')).toContain('not yet removed')
+    expect(ramalama.limitations.tr.join(' ')).toContain('henüz kaldırılmadı')
+
+    // KServe v0.21.0 (2026-09-25): CRD management restructured, LLMISVC group fix
+    const kserve = bySlug('kserve')
+    expect(kserve.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/kserve/kserve/releases/tag/v0.21.0']))
+    expect(kserve.description.en).toContain('v0.21.0')
+    expect(kserve.description.en).toContain('CRD management')
+    expect(kserve.description.tr).toContain('v0.21.0')
+    expect(kserve.description.tr).toContain('CRD')
+
+    // Each new release is pinned as evidence on the current audit date
+    for (const topic of ['exllamav3-v1.5.3-release', 'ramalama-v0.25.0-release', 'kserve-v0.21.0-release']) {
+      const entry = datasetRelease.evidence.find((e) => e.topic === topic)
+      expect(entry).toBeDefined()
+      expect(entry!.checkedAt).toBe('2026-10-03')
+      expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
+    }
+
+    // The unreadable Dynamo v1.5.0 notes must not be recorded as verified
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-09-04')
+    expect(datasetRelease.note).toContain('could not be read')
   })
 })

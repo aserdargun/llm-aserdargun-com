@@ -1,7 +1,7 @@
 {
   "datasetRelease": {
     "schemaVersion": 2,
-    "release": "2026-09-21-content-audit",
+    "release": "2026-10-03-content-audit",
     "collections": {
       "categories": {
         "schemaVersion": 2,
@@ -9,7 +9,7 @@
       },
       "solutions": {
         "schemaVersion": 2,
-        "revision": "2026-10-02"
+        "revision": "2026-10-03"
       },
       "concepts": {
         "schemaVersion": 3,
@@ -29,7 +29,7 @@
       },
       "sourceAudit": {
         "schemaVersion": 1,
-        "revision": "2026-09-21"
+        "revision": "2026-10-03"
       },
       "portfolio": {
         "schemaVersion": 1,
@@ -299,7 +299,7 @@
           "solutions"
         ],
         "url": "https://github.com/vllm-project/vllm/releases/tag/v0.30.0",
-        "checkedAt": "2026-10-02"
+        "checkedAt": "2026-10-03"
       },
       {
         "topic": "sglang-v0.5.21-release",
@@ -307,7 +307,7 @@
           "solutions"
         ],
         "url": "https://github.com/sgl-project/sglang/releases/tag/v0.5.21",
-        "checkedAt": "2026-10-02"
+        "checkedAt": "2026-10-03"
       },
       {
         "topic": "tensorrt-llm-v1.3.0rc29-release",
@@ -315,14 +315,38 @@
           "solutions"
         ],
         "url": "https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29",
-        "checkedAt": "2026-10-02"
+        "checkedAt": "2026-10-03"
+      },
+      {
+        "topic": "exllamav3-v1.5.3-release",
+        "collections": [
+          "solutions"
+        ],
+        "url": "https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3",
+        "checkedAt": "2026-10-03"
+      },
+      {
+        "topic": "ramalama-v0.25.0-release",
+        "collections": [
+          "solutions"
+        ],
+        "url": "https://github.com/containers/ramalama/releases/tag/v0.25.0",
+        "checkedAt": "2026-10-03"
+      },
+      {
+        "topic": "kserve-v0.21.0-release",
+        "collections": [
+          "solutions"
+        ],
+        "url": "https://github.com/kserve/kserve/releases/tag/v0.21.0",
+        "checkedAt": "2026-10-03"
       }
     ],
-    "note": "All 31 primary-source endpoints reviewed on 2026-09-21; source-audit records endpoint scope. A targeted post-audit refresh on 2026-10-02 re-fetched and recorded three serving-layer primary sources: vLLM v0.30.0, SGLang v0.5.21 and TensorRT-LLM v1.3.0rc29. This refresh is not a new full endpoint review, so sourceAudit.checkedAt and the full-audit release label are unchanged. Individual solution dates remain authoritative; no inference benchmarks or external release are claimed."
+    "note": "All 31 primary-source endpoints (31 source-audit entries, 36 solution sources) were re-fetched and resolved on 2026-10-03; every endpoint returned a live document. Upstream release feeds were re-checked for the serving-layer projects and three published releases after the previous 2026-10-02 check: ExLlamaV3 v1.5.3 (2026-09-27, with v1.5.2 and v1.5.1 also after 2026-09-21), RamaLama v0.25.0 (2026-09-25) and KServe v0.21.0 (2026-09-25). vLLM (v0.30.0), SGLang (v0.5.21) and TensorRT-LLM (v1.3.0rc29, still a release candidate) have no newer release, and their recorded claims were re-read against those same release notes and hold unchanged. Lifecycle and license claims were re-checked against each upstream repository; none changed and no project was newly archived. Individual solution dates remain authoritative; no inference benchmarks or external release are claimed. The NVIDIA Dynamo v1.5.0 release notes could not be read (upstream API rate limit) and are recorded as unconfirmed, so that record was left untouched."
   },
   "sourceAudit": {
     "schemaVersion": 1,
-    "checkedAt": "2026-09-21",
+    "checkedAt": "2026-10-03",
     "scope": "Primary-source endpoint and overview review; not an exhaustive hardware, license or model-compatibility certification. Individual solution verification dates remain authoritative.",
     "entries": [
       {
@@ -761,7 +785,7 @@
         "lmdeploy"
       ],
       "id": "tensorrt-llm",
-      "lastVerified": "2026-10-02",
+      "lastVerified": "2026-10-03",
       "sources": [
         {
           "title": "TensorRT LLM — TensorRT backend removal and migration",
@@ -773,7 +797,7 @@
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-10-02"
+          "verifiedAt": "2026-10-03"
         },
         {
           "title": "TensorRT-LLM v1.3.0rc29 release notes",
@@ -785,7 +809,7 @@
             "api-changes"
           ],
           "sourceType": "official-repository",
-          "verifiedAt": "2026-10-02"
+          "verifiedAt": "2026-10-03"
         }
       ]
     },
@@ -1182,8 +1206,8 @@
         "en": "An actively developed engine focused on low-bit LLM inference on consumer NVIDIA GPUs."
       },
       "description": {
-        "tr": "Düşük bitli ağırlık formatları ve CUDA çekirdekleriyle tek kullanıcı/yerel GPU senaryolarında verim arar.",
-        "en": "Targets efficient single-user and local-GPU workloads through low-bit weight formats and CUDA kernels."
+        "tr": "Düşük bitli ağırlık formatları ve CUDA çekirdekleriyle tek kullanıcı/yerel GPU senaryolarında verim arar. 20–27 Eylül 2026 arasında çıkan v1.5.1–v1.5.3 sürümleri bir biçim değişikliği değil, mimari ve VRAM çalışmasıdır: KimiLinearForCausalLM, MiMoV2ForCausalLM ve DFlash2 eklenir, Qwen3.8-Flash-Next, GLM5.3 ve DeepSeekV3/V4 için tensor paralel desteği gelir, kesirli-trellis nicemleme kipi ile TP modellerinde dinamik taslak boyutlandırma eklenir ve geçici VRAM tahsisleri dizginlenir. Ağırlık biçimi olarak EXL3 korunur.",
+        "en": "Targets efficient single-user and local-GPU workloads through low-bit weight formats and CUDA kernels. The v1.5.1–v1.5.3 releases published between September 20 and September 27, 2026 are architecture and VRAM work rather than a format change: they add KimiLinearForCausalLM, MiMoV2ForCausalLM and DFlash2, add tensor-parallel support for Qwen3.8-Flash-Next, GLM5.3 and DeepSeekV3/V4, add a fractional-trellis quantization mode and dynamic speculative draft sizing with TP models, and rein in transient VRAM allocations. EXL3 remains the weight format."
       },
       "notFor": {
         "tr": "Genel amaçlı çok sağlayıcılı sunucu platformu değildir.",
@@ -1191,10 +1215,12 @@
       },
       "strengths": {
         "tr": [
-          "Tüketici GPU’sunda düşük bitli çıkarım odağı"
+          "Tüketici GPU’sunda düşük bitli çıkarım odağı",
+          "v1.5.x sürümlerinde yeni model mimarileri ve tensor paralel destek genişlemesi"
         ],
         "en": [
-          "Low-bit inference focus on consumer GPUs"
+          "Low-bit inference focus on consumer GPUs",
+          "New model architectures and broader tensor-parallel coverage across the v1.5.x releases"
         ]
       },
       "limitations": {
@@ -1238,7 +1264,7 @@
         "tensorrt-llm"
       ],
       "id": "exllamav3",
-      "lastVerified": "2026-09-21",
+      "lastVerified": "2026-10-03",
       "sources": [
         {
           "title": "ExLlamaV3",
@@ -1250,7 +1276,19 @@
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-09-21"
+          "verifiedAt": "2026-10-03"
+        },
+        {
+          "title": "ExLlamaV3 v1.5.3 release notes",
+          "publisher": "turboderp-org",
+          "url": "https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3",
+          "supportsClaims": [
+            "release-notes",
+            "model-architectures",
+            "tensor-parallel"
+          ],
+          "sourceType": "official-repository",
+          "verifiedAt": "2026-10-03"
         }
       ]
     },
@@ -1540,7 +1578,7 @@
         "lmdeploy"
       ],
       "id": "vllm",
-      "lastVerified": "2026-10-02",
+      "lastVerified": "2026-10-03",
       "sources": [
         {
           "title": "vLLM v0.29.0 Release Notes",
@@ -1552,7 +1590,7 @@
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-10-02"
+          "verifiedAt": "2026-10-03"
         },
         {
           "title": "vLLM v0.30.0 Release Notes",
@@ -1565,7 +1603,7 @@
             "serving-flags"
           ],
           "sourceType": "official-repository",
-          "verifiedAt": "2026-10-02"
+          "verifiedAt": "2026-10-03"
         }
       ]
     },
@@ -1652,7 +1690,7 @@
         "tensorrt-llm"
       ],
       "id": "sglang",
-      "lastVerified": "2026-10-02",
+      "lastVerified": "2026-10-03",
       "sources": [
         {
           "title": "SGLang v0.5.21 Release Notes",
@@ -1664,7 +1702,7 @@
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-10-02"
+          "verifiedAt": "2026-10-03"
         }
       ]
     },
@@ -2348,8 +2386,8 @@
         "en": "An open-source developer tool that pulls and runs AI models in hardware-aware rootless containers."
       },
       "description": {
-        "tr": "Podman veya Docker ile uygun hızlandırılmış görüntüyü seçer; model kayıtlarını container benzeri komutlarla yönetir.",
-        "en": "Uses Podman or Docker to select an accelerated image and manages model registries with container-like commands."
+        "tr": "Podman veya Docker ile uygun hızlandırılmış görüntüyü seçer; model kayıtlarını container benzeri komutlarla yönetir. 25 Eylül 2026’da yayımlanan v0.25.0, `ramalama serve` komutunu varsayılan olarak loopback’e bağlar, barındırılan API taşımasını kaldırmadan kullanım dışı bırakır, toolbox içinde container’larla çalışmaya tam desteği ekler ve paketlenen llama.cpp sürümünü v0.4.1’e yükseltir.",
+        "en": "Uses Podman or Docker to select an accelerated image and manages model registries with container-like commands. v0.25.0, published September 25, 2026, makes `ramalama serve` bind to loopback by default, deprecates the hosted API transport without removing it, adds full support for running inside toolbox with containers, and bumps the bundled llama.cpp to v0.4.1."
       },
       "notFor": {
         "tr": "Tam kurumsal küme kontrol düzlemi değildir.",
@@ -2368,11 +2406,13 @@
       "limitations": {
         "tr": [
           "Container çalışma zamanı bağımlılığı",
-          "Daha genç araç ve ekosistem"
+          "Daha genç araç ve ekosistem",
+          "Barındırılan API taşıması v0.25.0’da kullanım dışı bırakıldı ancak henüz kaldırılmadı"
         ],
         "en": [
           "Container-runtime dependency",
-          "Younger tool and ecosystem"
+          "Younger tool and ecosystem",
+          "The hosted API transport is deprecated as of v0.25.0 but not yet removed"
         ]
       },
       "idealFor": {
@@ -2418,7 +2458,7 @@
         "docker-model-runner"
       ],
       "id": "ramalama",
-      "lastVerified": "2026-08-12",
+      "lastVerified": "2026-10-03",
       "sources": [
         {
           "title": "RamaLama",
@@ -2430,7 +2470,19 @@
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-08-12"
+          "verifiedAt": "2026-10-03"
+        },
+        {
+          "title": "RamaLama v0.25.0 release notes",
+          "publisher": "containers",
+          "url": "https://github.com/containers/ramalama/releases/tag/v0.25.0",
+          "supportsClaims": [
+            "release-notes",
+            "serving-defaults",
+            "deprecations"
+          ],
+          "sourceType": "official-repository",
+          "verifiedAt": "2026-10-03"
         }
       ]
     },
@@ -3187,8 +3239,8 @@
         "en": "A standardized model-serving platform for predictive and generative models on Kubernetes."
       },
       "description": {
-        "tr": "LLMInferenceService ile motor, yönlendirici ve dağıtım ayrıntılarını Kubernetes kaynakları ve otomatik ölçeklemeyle yönetir.",
-        "en": "Uses LLMInferenceService to manage engines, routers, and deployment details through Kubernetes resources and autoscaling."
+        "tr": "LLMInferenceService ile motor, yönlendirici ve dağıtım ayrıntılarını Kubernetes kaynakları ve otomatik ölçeklemeyle yönetir. 25 Eylül 2026’da yayımlanan v0.21.0, CRD yönetimini bağımsız kurulabilir biçimde yeniden düzenler ve LLMISVC grup yolunda durmuş üye işlemesini düzeltir.",
+        "en": "Uses LLMInferenceService to manage engines, routers, and deployment details through Kubernetes resources and autoscaling. v0.21.0, published September 25, 2026, restructures CRD management so it can be installed independently and fixes stopped-member handling in the LLMISVC group path."
       },
       "notFor": {
         "tr": "Kubernetes olmadan hafif yerel çalışma zamanı değildir.",
@@ -3254,7 +3306,7 @@
         "bentoml"
       ],
       "id": "kserve",
-      "lastVerified": "2026-08-12",
+      "lastVerified": "2026-10-03",
       "sources": [
         {
           "title": "KServe LLMInferenceService Overview",
@@ -3266,7 +3318,18 @@
             "capabilities",
             "compatibility"
           ],
-          "verifiedAt": "2026-08-12"
+          "verifiedAt": "2026-10-03"
+        },
+        {
+          "title": "KServe v0.21.0 release notes",
+          "publisher": "KServe",
+          "url": "https://github.com/kserve/kserve/releases/tag/v0.21.0",
+          "supportsClaims": [
+            "release-notes",
+            "crd-management"
+          ],
+          "sourceType": "official-repository",
+          "verifiedAt": "2026-10-03"
         }
       ]
     },

@@ -61,7 +61,7 @@ export const solutions: Solution[] = [
     extraSources: [
       { title: 'TensorRT-LLM v1.3.0rc29 release notes', publisher: 'NVIDIA', url: 'https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29', supportsClaims: ['release-notes', 'breaking-changes', 'api-changes'] },
     ],
-    verifiedAt: "2026-10-02",
+    verifiedAt: "2026-10-03",
   }),
   make({
     slug: 'llama-cpp', name: 'llama.cpp', primaryCategory: 'INF', capabilityTags: ['local-inference', 'quantization', 'portable'],
@@ -114,16 +114,19 @@ export const solutions: Solution[] = [
   make({
     slug: 'exllamav3', name: 'ExLlamaV3', primaryCategory: 'INF', capabilityTags: ['quantized-inference', 'consumer-gpu', 'cuda'],
     summary: text('Tüketici sınıfı NVIDIA GPU’larda düşük bitli LLM çıkarımına odaklanan etkin biçimde geliştirilen motor.', 'An actively developed engine focused on low-bit LLM inference on consumer NVIDIA GPUs.'),
-    description: text('Düşük bitli ağırlık formatları ve CUDA çekirdekleriyle tek kullanıcı/yerel GPU senaryolarında verim arar.', 'Targets efficient single-user and local-GPU workloads through low-bit weight formats and CUDA kernels.'),
+    description: text('Düşük bitli ağırlık formatları ve CUDA çekirdekleriyle tek kullanıcı/yerel GPU senaryolarında verim arar. 20–27 Eylül 2026 arasında çıkan v1.5.1–v1.5.3 sürümleri bir biçim değişikliği değil, mimari ve VRAM çalışmasıdır: KimiLinearForCausalLM, MiMoV2ForCausalLM ve DFlash2 eklenir, Qwen3.8-Flash-Next, GLM5.3 ve DeepSeekV3/V4 için tensor paralel desteği gelir, kesirli-trellis nicemleme kipi ile TP modellerinde dinamik taslak boyutlandırma eklenir ve geçici VRAM tahsisleri dizginlenir. Ağırlık biçimi olarak EXL3 korunur.', 'Targets efficient single-user and local-GPU workloads through low-bit weight formats and CUDA kernels. The v1.5.1–v1.5.3 releases published between September 20 and September 27, 2026 are architecture and VRAM work rather than a format change: they add KimiLinearForCausalLM, MiMoV2ForCausalLM and DFlash2, add tensor-parallel support for Qwen3.8-Flash-Next, GLM5.3 and DeepSeekV3/V4, add a fractional-trellis quantization mode and dynamic speculative draft sizing with TP models, and rein in transient VRAM allocations. EXL3 remains the weight format.'),
     notFor: text('Genel amaçlı çok sağlayıcılı sunucu platformu değildir.', 'It is not a general-purpose multi-provider serving platform.'),
-    strengths: list(['Tüketici GPU’sunda düşük bitli çıkarım odağı'], ['Low-bit inference focus on consumer GPUs']),
+    strengths: list(['Tüketici GPU’sunda düşük bitli çıkarım odağı', 'v1.5.x sürümlerinde yeni model mimarileri ve tensor paralel destek genişlemesi'], ['Low-bit inference focus on consumer GPUs', 'New model architectures and broader tensor-parallel coverage across the v1.5.x releases']),
     limitations: list(['Daha dar donanım ve model formatı kapsamı', 'Hızlı değişen sürüm ve uyumluluk matrisi'], ['Narrower hardware and format scope', 'Fast-moving release and compatibility matrix']),
     idealFor: list(['NVIDIA masaüstü GPU’sunda nicemlenmiş modeller'], ['Quantized models on NVIDIA desktop GPUs']),
     executionBackends: ['CUDA'], hardware: ['NVIDIA GPU'], modelFormats: [
       "EXL3"
     ], apiProtocols: ['Python API'], deploymentScopes: ['Local', 'Desktop'], license: 'MIT', projectStatus: 'active', alternatives: ['llama-cpp', 'tensorrt-llm'],
     source: { title: 'ExLlamaV3', publisher: 'turboderp-org', url: 'https://github.com/turboderp-org/exllamav3' },
-    verifiedAt: "2026-09-21",
+    extraSources: [
+      { title: 'ExLlamaV3 v1.5.3 release notes', publisher: 'turboderp-org', url: 'https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3', supportsClaims: ['release-notes', 'model-architectures', 'tensor-parallel'] },
+    ],
+    verifiedAt: "2026-10-03",
   }),
   make({
     slug: 'openvino-genai', name: 'OpenVINO GenAI', primaryCategory: 'INF', capabilityTags: ['intel', 'npu', 'edge'],
@@ -163,7 +166,7 @@ export const solutions: Solution[] = [
     extraSources: [
       { title: 'vLLM v0.30.0 Release Notes', publisher: 'vLLM Project', url: 'https://github.com/vllm-project/vllm/releases/tag/v0.30.0', supportsClaims: ['release-notes', 'breaking-changes', 'quantization', 'serving-flags'] },
     ],
-    verifiedAt: '2026-10-02',
+    verifiedAt: '2026-10-03',
   }),
   make({
     slug: 'sglang', name: 'SGLang', primaryCategory: 'SRV', capabilityTags: ['structured-generation', 'radix-cache', 'distributed-serving'],
@@ -179,7 +182,7 @@ export const solutions: Solution[] = [
       "publisher": "SGLang Project",
       "url": "https://github.com/sgl-project/sglang/releases/tag/v0.5.21"
     },
-    verifiedAt: "2026-10-02",
+    verifiedAt: "2026-10-03",
   }),
   make({
     slug: 'nvidia-triton', name: 'NVIDIA Triton Inference Server', primaryCategory: 'SRV', capabilityTags: ['multi-framework', 'dynamic-batching', 'observability'],
@@ -269,14 +272,17 @@ export const solutions: Solution[] = [
   make({
     slug: 'ramalama', name: 'RamaLama', primaryCategory: 'RUN', capabilityTags: ['containers', 'rootless', 'multi-registry'],
     summary: text('AI modellerini donanıma uygun rootless container’larda çekip çalıştıran açık kaynaklı geliştirici aracı.', 'An open-source developer tool that pulls and runs AI models in hardware-aware rootless containers.'),
-    description: text('Podman veya Docker ile uygun hızlandırılmış görüntüyü seçer; model kayıtlarını container benzeri komutlarla yönetir.', 'Uses Podman or Docker to select an accelerated image and manages model registries with container-like commands.'),
+    description: text('Podman veya Docker ile uygun hızlandırılmış görüntüyü seçer; model kayıtlarını container benzeri komutlarla yönetir. 25 Eylül 2026’da yayımlanan v0.25.0, `ramalama serve` komutunu varsayılan olarak loopback’e bağlar, barındırılan API taşımasını kaldırmadan kullanım dışı bırakır, toolbox içinde container’larla çalışmaya tam desteği ekler ve paketlenen llama.cpp sürümünü v0.4.1’e yükseltir.', 'Uses Podman or Docker to select an accelerated image and manages model registries with container-like commands. v0.25.0, published September 25, 2026, makes `ramalama serve` bind to loopback by default, deprecates the hosted API transport without removing it, adds full support for running inside toolbox with containers, and bumps the bundled llama.cpp to v0.4.1.'),
     notFor: text('Tam kurumsal küme kontrol düzlemi değildir.', 'It is not a full enterprise cluster control plane.'),
     strengths: list(['Rootless container izolasyonu', 'Birden çok model kaydı ve donanım yolu'], ['Rootless container isolation', 'Multiple model registries and hardware paths']),
-    limitations: list(['Container çalışma zamanı bağımlılığı', 'Daha genç araç ve ekosistem'], ['Container-runtime dependency', 'Younger tool and ecosystem']),
+    limitations: list(['Container çalışma zamanı bağımlılığı', 'Daha genç araç ve ekosistem', 'Barındırılan API taşıması v0.25.0’da kullanım dışı bırakıldı ancak henüz kaldırılmadı'], ['Container-runtime dependency', 'Younger tool and ecosystem', 'The hosted API transport is deprecated as of v0.25.0 but not yet removed']),
     idealFor: list(['Container güvenliği ve taşınabilirliği isteyen yerel ekipler'], ['Local teams wanting container isolation and portability']),
     executionBackends: ['llama.cpp', 'vLLM', 'MLX', 'Podman', 'Docker'], hardware: ['CPU', 'NVIDIA GPU', 'AMD GPU', 'Apple Silicon', 'Intel GPU'], modelFormats: ['GGUF', 'Hugging Face', 'OCI artifact'], apiProtocols: ['REST', 'CLI'], deploymentScopes: ['Local', 'Container', 'Server'], license: 'MIT', projectStatus: 'active', alternatives: ['ollama', 'docker-model-runner'],
     source: { title: 'RamaLama', publisher: 'containers', url: 'https://github.com/containers/ramalama' },
-    verifiedAt: "2026-08-12",
+    extraSources: [
+      { title: 'RamaLama v0.25.0 release notes', publisher: 'containers', url: 'https://github.com/containers/ramalama/releases/tag/v0.25.0', supportsClaims: ['release-notes', 'serving-defaults', 'deprecations'] },
+    ],
+    verifiedAt: "2026-10-03",
   }),
 
   make({
@@ -383,14 +389,17 @@ export const solutions: Solution[] = [
   make({
     slug: 'kserve', name: 'KServe', primaryCategory: 'DST', capabilityTags: ['kubernetes', 'autoscaling', 'model-serving'],
     summary: text('Kubernetes üzerinde tahmine dayalı ve üretken modeller için standartlaştırılmış model sunum platformu.', 'A standardized model-serving platform for predictive and generative models on Kubernetes.'),
-    description: text('LLMInferenceService ile motor, yönlendirici ve dağıtım ayrıntılarını Kubernetes kaynakları ve otomatik ölçeklemeyle yönetir.', 'Uses LLMInferenceService to manage engines, routers, and deployment details through Kubernetes resources and autoscaling.'),
+    description: text('LLMInferenceService ile motor, yönlendirici ve dağıtım ayrıntılarını Kubernetes kaynakları ve otomatik ölçeklemeyle yönetir. 25 Eylül 2026’da yayımlanan v0.21.0, CRD yönetimini bağımsız kurulabilir biçimde yeniden düzenler ve LLMISVC grup yolunda durmuş üye işlemesini düzeltir.', 'Uses LLMInferenceService to manage engines, routers, and deployment details through Kubernetes resources and autoscaling. v0.21.0, published September 25, 2026, restructures CRD management so it can be installed independently and fixes stopped-member handling in the LLMISVC group path.'),
     notFor: text('Kubernetes olmadan hafif yerel çalışma zamanı değildir.', 'It is not a lightweight local runtime without Kubernetes.'),
     strengths: list(['Kubernetes CRD ve platform standardizasyonu', 'Model sunumu, ağ ve ölçekleme entegrasyonu'], ['Kubernetes CRDs and platform standardization', 'Serving, networking, and autoscaling integration']),
     limitations: list(['Kubernetes platform işletme yükü', 'LLM özelliklerinin olgunluğu sürüme bağlı'], ['Kubernetes platform overhead', 'LLM feature maturity depends on version']),
     idealFor: list(['Kubernetes üzerinde ortak model servis platformu'], ['A shared model-serving platform on Kubernetes']),
     executionBackends: ['vLLM', 'Hugging Face', 'Triton'], hardware: ['NVIDIA GPU', 'AMD GPU', 'CPU'], modelFormats: ['Hugging Face', 'Backend-dependent'], apiProtocols: ['OpenAI-compatible', 'HTTP', 'gRPC'], deploymentScopes: ['Kubernetes', 'Cluster', 'Cloud'], license: 'Apache-2.0', projectStatus: 'active', alternatives: ['llm-d', 'ray-serve-llm', 'bentoml'],
     source: { title: 'KServe LLMInferenceService Overview', publisher: 'KServe', url: 'https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/llmisvc-overview' },
-    verifiedAt: "2026-08-12",
+    extraSources: [
+      { title: 'KServe v0.21.0 release notes', publisher: 'KServe', url: 'https://github.com/kserve/kserve/releases/tag/v0.21.0', supportsClaims: ['release-notes', 'crd-management'] },
+    ],
+    verifiedAt: "2026-10-03",
   }),
 
   make({

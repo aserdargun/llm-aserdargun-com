@@ -1,7 +1,7 @@
 /** Collection versions are observer metadata, never tool-ranking inputs. */
 export const datasetRelease = {
   "schemaVersion": 2,
-  "release": "2026-09-21-content-audit",
+  "release": "2026-10-03-content-audit",
   "collections": {
     "categories": {
       "schemaVersion": 2,
@@ -9,7 +9,7 @@ export const datasetRelease = {
     },
     "solutions": {
       "schemaVersion": 2,
-      "revision": "2026-10-02"
+      "revision": "2026-10-03"
     },
     "concepts": {
       "schemaVersion": 3,
@@ -29,7 +29,7 @@ export const datasetRelease = {
     },
     "sourceAudit": {
       "schemaVersion": 1,
-      "revision": "2026-09-21"
+      "revision": "2026-10-03"
     },
     "portfolio": {
       "schemaVersion": 1,
@@ -291,7 +291,7 @@ export const datasetRelease = {
         "solutions"
       ],
       "url": "https://github.com/vllm-project/vllm/releases/tag/v0.30.0",
-      "checkedAt": "2026-10-02"
+      "checkedAt": "2026-10-03"
     },
     {
       "topic": "sglang-v0.5.21-release",
@@ -299,7 +299,7 @@ export const datasetRelease = {
         "solutions"
       ],
       "url": "https://github.com/sgl-project/sglang/releases/tag/v0.5.21",
-      "checkedAt": "2026-10-02"
+      "checkedAt": "2026-10-03"
     },
     {
       "topic": "tensorrt-llm-v1.3.0rc29-release",
@@ -307,8 +307,32 @@ export const datasetRelease = {
         "solutions"
       ],
       "url": "https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29",
-      "checkedAt": "2026-10-02"
+      "checkedAt": "2026-10-03"
+    },
+    {
+      "topic": "exllamav3-v1.5.3-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3",
+      "checkedAt": "2026-10-03"
+    },
+    {
+      "topic": "ramalama-v0.25.0-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/containers/ramalama/releases/tag/v0.25.0",
+      "checkedAt": "2026-10-03"
+    },
+    {
+      "topic": "kserve-v0.21.0-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/kserve/kserve/releases/tag/v0.21.0",
+      "checkedAt": "2026-10-03"
     }
   ],
-  "note": "All 31 primary-source endpoints reviewed on 2026-09-21; source-audit records endpoint scope. A targeted post-audit refresh on 2026-10-02 re-fetched and recorded three serving-layer primary sources: vLLM v0.30.0, SGLang v0.5.21 and TensorRT-LLM v1.3.0rc29. This refresh is not a new full endpoint review, so sourceAudit.checkedAt and the full-audit release label are unchanged. Individual solution dates remain authoritative; no inference benchmarks or external release are claimed."
+  "note": "All 31 primary-source endpoints (31 source-audit entries, 36 solution sources) were re-fetched and resolved on 2026-10-03; every endpoint returned a live document. Upstream release feeds were re-checked for the serving-layer projects and three published releases after the previous 2026-10-02 check: ExLlamaV3 v1.5.3 (2026-09-27, with v1.5.2 and v1.5.1 also after 2026-09-21), RamaLama v0.25.0 (2026-09-25) and KServe v0.21.0 (2026-09-25). vLLM (v0.30.0), SGLang (v0.5.21) and TensorRT-LLM (v1.3.0rc29, still a release candidate) have no newer release, and their recorded claims were re-read against those same release notes and hold unchanged. Lifecycle and license claims were re-checked against each upstream repository; none changed and no project was newly archived. Individual solution dates remain authoritative; no inference benchmarks or external release are claimed. The NVIDIA Dynamo v1.5.0 release notes could not be read (upstream API rate limit) and are recorded as unconfirmed, so that record was left untouched."
 } as const

@@ -15,7 +15,7 @@ describe('atlas routes', async () => {
     expect(document.documentElement).toHaveAttribute('lang', 'en')
     expect(document.title).toBe('LLM Atlas — Runtime & Serving Field Guide')
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'Compare 31 LLM runtime and serving solutions across seven architectural layers using official sources.')
-    expect(screen.getByText('SOURCE ENDPOINT REVIEW · 2026-09-21')).toBeInTheDocument()
+    expect(screen.getByText('SOURCE ENDPOINT REVIEW · 2026-10-03')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Not one market')
     expect(screen.getByRole('link', { name: 'Open the selection guide' })).toHaveAttribute('href', '/en/guide')
     expect(within(screen.getByRole('navigation')).getAllByRole('link', { name: 'Learn' })).toHaveLength(1)
