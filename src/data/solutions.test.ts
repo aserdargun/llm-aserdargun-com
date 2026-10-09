@@ -38,7 +38,7 @@ describe('curated atlas dataset', () => {
   it('tracks current lifecycle and compatibility for fast-moving records', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-03', modelFormats: ['EXL3'] })
+    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-09', modelFormats: ['EXL3'] })
     expect(bySlug('onnx-runtime-genai')).toMatchObject({ projectStatus: 'preview', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner').executionBackends).toEqual(expect.arrayContaining(['llama.cpp', 'vLLM', 'Diffusers']))
@@ -51,10 +51,10 @@ describe('curated atlas dataset', () => {
   it('records material vLLM v0.29.0 notes in both languages against the pinned release source', () => {
     const vllm = solutions.find((solution) => solution.slug === 'vllm')
     expect(vllm).toBeDefined()
-    expect(vllm!.lastVerified).toBe('2026-10-03')
+    expect(vllm!.lastVerified).toBe('2026-10-09')
     expect(vllm!.sources[0]?.url).toBe('https://github.com/vllm-project/vllm/releases/tag/v0.29.0')
     expect(vllm!.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/vllm-project/vllm/releases/tag/v0.30.0']))
-    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-03')).toBe(true)
+    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-09')).toBe(true)
 
     // Turkish material coverage
     const trConcat = `${vllm!.summary.tr} ${vllm!.description.tr} ${vllm!.limitations.tr.join(' ')}`
@@ -117,8 +117,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-03-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-03')
+    expect(datasetRelease.release).toBe('2026-10-09-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-09')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -127,7 +127,7 @@ describe('curated atlas dataset', () => {
     expect(vllmEvidence!.collections).toEqual(expect.arrayContaining(['solutions', 'lessons']))
     // Each solution retains its own recorded verification date
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
-    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-03')
+    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-09')
     expect(bySlug('hugging-face-tgi').lastVerified).toBe('2026-09-04')
   })
 
@@ -182,21 +182,22 @@ describe('curated atlas dataset', () => {
   it('records the releases published after 2026-09-22 in both languages against their own release notes', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    // ExLlamaV3 v1.5.4 (2026-10-03) supersedes the v1.5.3 the first pass recorded
+    // ExLlamaV3 v1.6.0 (2026-10-07) supersedes the v1.5.4 the 2026-10-03 audit recorded
     const exllama = bySlug('exllamav3')
     expect(exllama.sources.map((s) => s.url)).toEqual(
       expect.arrayContaining([
+        'https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.0',
         'https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.4',
         'https://github.com/turboderp-org/exllamav3/releases/tag/v1.5.3',
       ]),
     )
-    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor paralel', 'EXL3', 'Transformers 5', 'token gömme nicemlemesi', 'MiMo-V2.6']) {
+    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor paralel', 'EXL3', 'Transformers 5', 'token gömme nicemlemesi', 'MiMo-V2.6', 'v1.6.0', 'ROCm 10', 'gfx1100']) {
       expect(exllama.description.tr).toContain(claim)
     }
-    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor-parallel', 'EXL3 remains the weight format', 'Transformers 5', 'backpropagation through wrapped EXL3 layers', 'token-embedding quantization', 'MiMo-V2.6']) {
+    for (const claim of ['KimiLinearForCausalLM', 'MiMoV2ForCausalLM', 'DFlash2', 'tensor-parallel', 'EXL3 remains the weight format', 'Transformers 5', 'backpropagation through wrapped EXL3 layers', 'token-embedding quantization', 'MiMo-V2.6', 'v1.6.0', 'preliminary ROCm support', 'gfx1100']) {
       expect(exllama.description.en).toContain(claim)
     }
-    // The EXL3 weight format itself is unchanged across v1.5.4
+    // The EXL3 weight format itself is unchanged across v1.5.4 and v1.6.0
     expect(exllama.modelFormats).toEqual(['EXL3'])
 
     // RamaLama v0.25.0 (2026-09-25): serve binds to loopback by default
@@ -220,11 +221,35 @@ describe('curated atlas dataset', () => {
     expect(kserve.description.tr).toContain('v0.21.0')
     expect(kserve.description.tr).toContain('CRD')
 
-    // Each new release is pinned as evidence on the current audit date
+    // vLLM v0.31.0 (2026-10-05) supersedes the v0.30.0 the 2026-10-03 audit recorded
+    const vllm = bySlug('vllm')
+    expect(vllm.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/vllm-project/vllm/releases/tag/v0.31.0',
+        'https://github.com/vllm-project/vllm/releases/tag/v0.30.0',
+      ]),
+    )
+    for (const claim of ['vllm preload', 'vllm snapshot create/restore', 'trust-request-mm-kwargs']) {
+      expect(vllm.description.en).toContain(claim)
+    }
+    for (const claim of ['vllm preload', 'vllm snapshot create/restore', 'trust-request-mm-kwargs']) {
+      expect(vllm.description.tr).toContain(claim)
+    }
+    // The multimodal kwargs gate is a breaking change, not a deprecation
+    expect(vllm.limitations.en.join(' ')).toContain('per-request multimodal kwargs gate')
+    expect(vllm.limitations.tr.join(' ')).toContain('istek başına çoklu ortam anahtarı kapısı')
+
+    // Each release is pinned as evidence on the date its own audit found it
     for (const topic of ['exllamav3-v1.5.4-release', 'exllamav3-v1.5.3-release', 'ramalama-v0.25.0-release', 'kserve-v0.21.0-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
       expect(entry!.checkedAt).toBe('2026-10-03')
+      expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
+    }
+    for (const topic of ['exllamav3-v1.6.0-release', 'vllm-v0.31.0-release']) {
+      const entry = datasetRelease.evidence.find((e) => e.topic === topic)
+      expect(entry).toBeDefined()
+      expect(entry!.checkedAt).toBe('2026-10-09')
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
 
