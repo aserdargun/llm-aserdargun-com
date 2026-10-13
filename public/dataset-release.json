@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "release": "2026-10-09-content-audit",
+  "release": "2026-10-13-content-audit",
   "collections": {
     "categories": {
       "schemaVersion": 2,
@@ -8,7 +8,7 @@
     },
     "solutions": {
       "schemaVersion": 2,
-      "revision": "2026-10-09"
+      "revision": "2026-10-13"
     },
     "concepts": {
       "schemaVersion": 3,
@@ -28,7 +28,7 @@
     },
     "sourceAudit": {
       "schemaVersion": 1,
-      "revision": "2026-10-03"
+      "revision": "2026-10-13"
     },
     "portfolio": {
       "schemaVersion": 1,
@@ -325,6 +325,22 @@
       "checkedAt": "2026-10-09"
     },
     {
+      "topic": "exllamav3-v1.6.1-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.1",
+      "checkedAt": "2026-10-13"
+    },
+    {
+      "topic": "nvidia-dynamo-v1.5.0-release",
+      "collections": [
+        "solutions"
+      ],
+      "url": "https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.0",
+      "checkedAt": "2026-10-13"
+    },
+    {
       "topic": "vllm-v0.31.0-release",
       "collections": [
         "solutions",
@@ -366,5 +382,5 @@
       "checkedAt": "2026-10-03"
     }
   ],
-  "note": "The 2026-10-09 pass re-checked the upstream release feeds for the serving-layer projects and found two releases published after the previous 2026-10-03 audit. ExLlamaV3 v1.6.0 (2026-10-07T17:08:24Z) opens the engine to AMD: preliminary ROCm support for ROCm 10 on gfx1100 and above only, faster offloading for AVX2 CPUs, smarter CPU core allocation and pinning by default, reduced system-memory overhead, and fixes for the GLM4 and Qwen3-VL vision towers. That is platform and memory work, not a weight-format change; EXL3 remains the format. vLLM v0.31.0 (2026-10-05T06:44:55Z, 717 commits from 307 contributors) adds restart-cost, speculative-decoding and large-scale-serving directions: the new `vllm preload` CLI starts a weight-cache daemon that keeps post-quantized weights resident in GPU memory across engine restarts, experimental `vllm snapshot create/restore` uses CRIU to restore an initialized TP1 engine, Model Runner V2 gains draft-model speculative decoding, custom logits processors and the LiLiCorr drafter, and DeepSeek-V4.1-Flash runs FlashMLA mega attention with the V4.1 NVFP4 compressed KV cache as the SM100 default alongside the MoonEP and DeepEPv2 backends. Its breaking changes are recorded as such: per-request `mm_processor_kwargs` and `media_io_kwargs` are rejected without `--trust-request-mm-kwargs`, `tokenizer_mode=\"slow\"` was removed, online `quantization=\"fp8\"` was replaced by the `fp8_per_tensor` shorthand, `--enable-mamba-fine-grained-prefix-cache` was renamed, and `--enforce-eager` now also disables JIT kernel warmup. SGLang (v0.5.21), TensorRT-LLM (v1.3.0rc29, still a release candidate), RamaLama (v0.25.0) and KServe (v0.21.0) have no newer release, and their recorded claims were re-read against those same release notes and hold unchanged. MITRE ATLAS data remains at v2026.09. Lifecycle and license claims were re-checked against each upstream repository; none changed and no project was newly archived. Individual solution dates remain authoritative; no inference benchmark was reproduced and no throughput or latency figure is claimed here — the figures quoted in the v0.31.0 description are the release notes' own. The NVIDIA Dynamo v1.5.0 release notes could not be read (upstream API rate limit) and remain recorded as unconfirmed, so that record was still left untouched."
+  "note": "The 2026-10-13 pass re-fetched all 31 source-audit endpoints (every one returned HTTP 200 with no redirect to a different location) and re-read the upstream release feeds for the serving-layer and runtime projects. Two claims changed. ExLlamaV3 v1.6.1 (2026-10-10T20:22:36Z, stable) supersedes the v1.6.0 recorded by the previous pass: it narrows the inference side rather than widening the platform, with reduced (flat) VRAM overhead for GDN/KDA/Mamba drafting, support for recurrent draft models, DFlash switched to sliding attention, a new hybrid drafting mode combining a draft model with long-ngram, a workaround for a Triton issue that breaks kernel autotune on mixed-architecture setups, Turing (sm_75) and AVX2 optimizations, and many bugfixes. Its notes list further ROCm fixes and optimizations but do not restate the ROCm 10 / gfx1100-and-above preliminary bound from v1.6.0, so that limitation stands unchanged and ROCm support stays preliminary. NVIDIA Dynamo v1.5.0 (2026-09-21T20:21:52Z, 658 merged PRs from 123 contributors) is now readable and closes the evidence gap the 2026-10-09 pass preserved: Dynamo Router opens worker selection to custom scoring and picking policies and extends KV indexing to the Mooncake and disk tiers; on the Kubernetes path `nvidia.com/v1beta1` becomes the CRD storage version, the Go Endpoint Picker is removed in favour of the Rust EPP default, and Dynamo Snapshot moves to a standalone operator; TLS and mutual TLS cover the TCP and NATS transports; AIConfigurator becomes AISimulate and ships as its own package; and the engines move to SGLang v0.5.18, TensorRT-LLM v1.3.0rc25 and vLLM v0.28.0. KVBM is recorded as deprecated with removal targeted for v1.7.0, not as removed. Re-read against the same feeds and holding unchanged: vLLM v0.31.0 (2026-10-05T06:44:55Z, 717 commits from 307 contributors) is still the latest vLLM release, with the `vllm preload` weight-cache daemon, experimental CRIU `vllm snapshot create/restore`, Model Runner V2 draft-model speculative decoding and the LiLiCorr drafter, and the same recorded breaking changes (per-request `mm_processor_kwargs` and `media_io_kwargs` rejected without `--trust-request-mm-kwargs`, `tokenizer_mode=\"slow\"` removed, online `quantization=\"fp8\"` replaced by the `fp8_per_tensor` shorthand, `--enable-mamba-fine-grained-prefix-cache` renamed, `--enforce-eager` also disabling JIT kernel warmup). SGLang (v0.5.21), TensorRT-LLM (v1.3.0rc29, still a release candidate), RamaLama (v0.25.0) and KServe (v0.21.0) also have no newer release. The archived TGI repository was re-read through the GitHub API and still reports archived=true, so that lifecycle claim holds; MITRE ATLAS data remains at v2026.09. Several projects published releases after the previous pass that carry no version claim in this dataset, so nothing was stale to correct and no version was invented for them: Xinference v4.0.0 (2026-10-10), Open WebUI v0.12.0 (2026-10-10), Ollama v0.40.3 (2026-10-11) with v0.40.4-rc1 (2026-10-12), LiteLLM v1.105.0 (2026-10-11), WebLLM v0.2.86 (2026-10-11) and Jan v0.8.6 (2026-10-09). llama.cpp continues to publish build tags rather than semver releases, so no version is recorded for it. Individual solution dates remain authoritative; no inference benchmark was reproduced and no throughput or latency figure is claimed here - the figures quoted in the v0.31.0 description are the release notes own. The datasetRelease.evidence list and the 31-entry source audit cover different things and are not compared against each other."
 }

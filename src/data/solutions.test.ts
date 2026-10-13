@@ -38,7 +38,7 @@ describe('curated atlas dataset', () => {
   it('tracks current lifecycle and compatibility for fast-moving records', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-09', modelFormats: ['EXL3'] })
+    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-13', modelFormats: ['EXL3'] })
     expect(bySlug('onnx-runtime-genai')).toMatchObject({ projectStatus: 'preview', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner').executionBackends).toEqual(expect.arrayContaining(['llama.cpp', 'vLLM', 'Diffusers']))
@@ -117,8 +117,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-09-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-09')
+    expect(datasetRelease.release).toBe('2026-10-13-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-13')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -127,7 +127,7 @@ describe('curated atlas dataset', () => {
     expect(vllmEvidence!.collections).toEqual(expect.arrayContaining(['solutions', 'lessons']))
     // Each solution retains its own recorded verification date
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
-    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-09')
+    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-13')
     expect(bySlug('hugging-face-tgi').lastVerified).toBe('2026-09-04')
   })
 
@@ -169,8 +169,8 @@ describe('curated atlas dataset', () => {
     expect(tensorrt.description.tr).toContain('sürüm adayıdır')
     expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
 
-    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-03
-    expect(sourceAudit.checkedAt).toBe('2026-10-03')
+    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-13
+    expect(sourceAudit.checkedAt).toBe('2026-10-13')
     for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release', 'tensorrt-llm-v1.3.0rc29-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
@@ -253,8 +253,13 @@ describe('curated atlas dataset', () => {
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
 
-    // The unreadable Dynamo v1.5.0 notes must not be recorded as verified
-    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-09-04')
-    expect(datasetRelease.note).toContain('could not be read')
+    // The 2026-10-13 pass could finally read the Dynamo v1.5.0 notes, so the gap the
+    // previous pass preserved is closed and the record is now verified against them.
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-13')
+    const dynamoEvidence = datasetRelease.evidence.find((e) => e.topic === 'nvidia-dynamo-v1.5.0-release')
+    expect(dynamoEvidence).toBeDefined()
+    expect(dynamoEvidence!.url).toBe('https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.0')
+    expect(dynamoEvidence!.checkedAt).toBe('2026-10-13')
+    expect(datasetRelease.note).not.toContain('could not be read')
   })
 })
