@@ -117,8 +117,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-15-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-15')
+    expect(datasetRelease.release).toBe('2026-10-17-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-17')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -161,22 +161,27 @@ describe('curated atlas dataset', () => {
     // Release-note performance figures must be framed as the project's own measurements
     expect(sglang.limitations.en.join(' ')).toContain('version-specific measurements')
 
-    // TensorRT-LLM v1.3.0rc29 is a release candidate: breaking removals recorded, not hidden
+    // TensorRT-LLM v1.4.0rc0 is a release candidate: breaking removals recorded, not hidden
     const tensorrt = bySlug('tensorrt-llm')
-    expect(tensorrt.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29']))
+    expect(tensorrt.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.4.0rc0']))
     expect(tensorrt.description.en).toContain('release candidate')
-    expect(tensorrt.description.en).toContain('AutoDeploy')
+    expect(tensorrt.description.en).toContain('KVCacheManagerV2')
     expect(tensorrt.description.tr).toContain('sürüm adayıdır')
     expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
 
-    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-15
-    expect(sourceAudit.checkedAt).toBe('2026-10-15')
-    for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release', 'tensorrt-llm-v1.3.0rc29-release']) {
+    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-17
+    expect(sourceAudit.checkedAt).toBe('2026-10-17')
+    for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
       expect(entry!.checkedAt).toBe('2026-10-03')
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
+    // TensorRT-LLM advanced on its own pass, so its evidence entry carries its own date
+    const tensorrtEvidence = datasetRelease.evidence.find((e) => e.topic === 'tensorrt-llm-v1.4.0rc0-release')
+    expect(tensorrtEvidence).toBeDefined()
+    expect(tensorrtEvidence!.checkedAt).toBe('2026-10-17')
+    expect(tensorrtEvidence!.url).toBe('https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.4.0rc0')
   })
 
   it('records the releases published after 2026-09-22 in both languages against their own release notes', () => {

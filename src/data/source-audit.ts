@@ -1,7 +1,7 @@
 /** Endpoint checks are observer metadata and must never affect matching. */
 export const sourceAudit = {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-15",
+  "checkedAt": "2026-10-17",
   "scope": "Primary-source endpoint and overview review; not an exhaustive hardware, license or model-compatibility certification. Individual solution verification dates remain authoritative.",
   "entries": [
     {

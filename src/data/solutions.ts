@@ -24,8 +24,8 @@ export const solutions: Solution[] = [
       "en": "A PyTorch-based optimization library for LLM inference and serving on NVIDIA GPUs."
     },
     description: {
-      "tr": "Güncel belgeler PyTorch yürütmesini ve doğrudan model yüklemeyi temel alır; eski TensorRT engine oluşturma arka ucu kaldırılmıştır. Nicemleme, KV yönetimi ve çoklu GPU yolları sürüme göre doğrulanmalıdır. 29 Eylül 2026’da yayımlanan v1.3.0rc29 bir sürüm adayıdır, kararlı sürüm değildir; AutoDeploy entegrasyonunu ve CMake’deki eski `cpp_only` derleme seçeneğini kırıcı olarak kaldırdı, API tarafında ise Responses API’de açık null alanlar artık belirtilmemiş sayılıyor ve özel URL getirmeleri açıkça isteğe bağlı hâle getirildi.",
-      "en": "Current documentation centers PyTorch execution and direct model loading; the legacy TensorRT engine-build backend has been removed. Validate quantization, KV management and multi-GPU paths for the release in use. The v1.3.0rc29 published September 29, 2026 is a release candidate, not a stable release: it removes the AutoDeploy integration and the obsolete `cpp_only` CMake build option as breaking changes, and on the API side explicit null optional fields in the Responses API are now treated as unset while private URL fetches require explicit opt-in."
+      "tr": "Güncel belgeler PyTorch yürütmesini ve doğrudan model yüklemeyi temel alır; eski TensorRT engine oluşturma arka ucu kaldırılmıştır. Nicemleme, KV yönetimi ve çoklu GPU yolları sürüme göre doğrulanmalıdır. 14 Ekim 2026’da yayımlanan v1.4.0rc0 bir sürüm adayıdır, kararlı sürüm değildir; KVCacheManagerV2’nin Python arka ucunu kaldırır ve LlmRequest alanlarını Python’a taşır, ikisi de kırıcıdır. Model desteği tarafında GLM-5.3-Flash, K-EXAONE-2, Qwen-Image-Layered, statik FP8 Cosmos3 Nano/Super, Nemotron Super 3.5 VL, MiniMax-M3 için NVFP4 KV önbelleği ve MiniMax H3 ref2va eklenir. API tarafında komut satırı yapılandırma geçersiz kılmaları, istek başına spekülatif çözümleme kabul oranı, bağlam uzunluğu aşımında OpenAI biçimli hatalar ve tekerlek içinde OpenEngine gRPC bağlayıcıları gelir. Sürüm notları bilinen sorunları da listeler: H100’de MPI işçi havuzu yeniden kullanıldığında çoklu GPU akış ya da RPC yürütücüsü işçi başlatma sırasında takılabilir, DeepSeek MLA modelleri SM120/SM121 GPU’larda BF16 BMM ile CUDA grafikleri yakalanırken yasadışı bellek erişimiyle çökebilir ve Qwen3’ün bağlı gömme (tied embeddings) kullanan modelleri TP greater than 1 ile çalışırken model kurulumunda başarısız olabilir.",
+      "en": "Current documentation centers PyTorch execution and direct model loading; the legacy TensorRT engine-build backend has been removed. Validate quantization, KV management and multi-GPU paths for the release in use. The v1.4.0rc0 published October 14, 2026 is a release candidate, not a stable release: it removes the Python backend of KVCacheManagerV2 and migrates LlmRequest fields to Python, both breaking. On model support it adds GLM-5.3-Flash, K-EXAONE-2, Qwen-Image-Layered, static FP8 Cosmos3 Nano/Super, Nemotron Super 3.5 VL, NVFP4 KV cache support for MiniMax-M3, and MiniMax H3 ref2va. On the API side it adds command-line configuration overrides, per-request speculative-decoding acceptance reporting, OpenAI-style errors when a request exceeds the context length, and OpenEngine gRPC bindings in the wheel. Its release notes also list known issues: multi-GPU streaming or RPC executor workloads may hang during worker initialization when MPI worker pools are reused on H100, DeepSeek MLA models may crash with an illegal memory access when CUDA graphs are captured with BF16 BMM on SM120/SM121 GPUs, and Qwen3 models with tied embeddings may fail at model construction when attention data parallelism is enabled with TP greater than 1."
     },
     notFor: text('Tek başına son kullanıcı arayüzü veya sağlayıcılar arası ağ geçidi değildir.', 'It is not, by itself, an end-user interface or cross-provider gateway.'),
     strengths: list(['NVIDIA donanımı için derin optimizasyon', 'Nicemleme ve çoklu GPU seçenekleri'], ['Deep optimization for NVIDIA hardware', 'Quantization and multi-GPU options']),
@@ -33,12 +33,12 @@ export const solutions: Solution[] = [
       "tr": [
         "CUDA/NVIDIA ekosistemine bağlılık",
         "Eski engine-build tariflerinden geçiş ve sürüm uyumu gerekir",
-        "v1.3.0rc29 bir sürüm adayıdır; kırıcı kaldırmalar kararlı sürüm öncesinde yeniden değerlendirilmelidir"
+        "v1.4.0rc0 bir sürüm adayıdır; KVCacheManagerV2 Python arka ucunun kaldırılması ve LlmRequest alanlarının Python’a taşınması kırıcıdır ve kararlı sürüm öncesinde yeniden değerlendirilmelidir"
       ],
       "en": [
         "Coupled to the CUDA/NVIDIA ecosystem",
         "Migration from legacy engine-build recipes and release compatibility require review",
-        "v1.3.0rc29 is a release candidate; its breaking removals should be re-checked before a stable release"
+        "v1.4.0rc0 is a release candidate; removing the KVCacheManagerV2 Python backend and migrating LlmRequest fields to Python are breaking and should be re-checked before a stable release"
       ]
     },
     idealFor: list(['NVIDIA GPU üzerinde uzman ekiplerin üretim çıkarımı'], ['Production inference on NVIDIA GPUs with specialist teams']),
@@ -59,9 +59,9 @@ export const solutions: Solution[] = [
       "url": "https://nvidia.github.io/TensorRT-LLM/legacy/tensorrt-backend-removal.html"
     },
     extraSources: [
-      { title: 'TensorRT-LLM v1.3.0rc29 release notes', publisher: 'NVIDIA', url: 'https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc29', supportsClaims: ['release-notes', 'breaking-changes', 'api-changes'] },
+      { title: 'TensorRT-LLM v1.4.0rc0 release notes', publisher: 'NVIDIA', url: 'https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.4.0rc0', supportsClaims: ['release-notes', 'breaking-changes', 'api-changes'] },
     ],
-    verifiedAt: "2026-10-03",
+    verifiedAt: "2026-10-17",
   }),
   make({
     slug: 'llama-cpp', name: 'llama.cpp', primaryCategory: 'INF', capabilityTags: ['local-inference', 'quantization', 'portable'],
