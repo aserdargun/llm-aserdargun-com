@@ -38,7 +38,7 @@ describe('curated atlas dataset', () => {
   it('tracks current lifecycle and compatibility for fast-moving records', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-15', modelFormats: ['EXL3'] })
+    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-18', modelFormats: ['EXL3'] })
     expect(bySlug('onnx-runtime-genai')).toMatchObject({ projectStatus: 'preview', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner').executionBackends).toEqual(expect.arrayContaining(['llama.cpp', 'vLLM', 'Diffusers']))
@@ -117,8 +117,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-17-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-17')
+    expect(datasetRelease.release).toBe('2026-10-18-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-18')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -127,7 +127,7 @@ describe('curated atlas dataset', () => {
     expect(vllmEvidence!.collections).toEqual(expect.arrayContaining(['solutions', 'lessons']))
     // Each solution retains its own recorded verification date
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
-    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-15')
+    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-18')
     expect(bySlug('hugging-face-tgi').lastVerified).toBe('2026-09-04')
   })
 
@@ -198,10 +198,20 @@ describe('curated atlas dataset', () => {
       ]),
     )
 
-    // ExLlamaV3 v1.6.2 (2026-10-14) supersedes v1.6.1; ROCm stays preliminary
-    expect(exllama.description.en).toContain('v1.6.2')
-    expect(exllama.description.tr).toContain('v1.6.2')
+    // ExLlamaV3 v1.6.3 (2026-10-17) supersedes v1.6.2; ROCm stays preliminary
+    expect(exllama.description.en).toContain('v1.6.3')
+    expect(exllama.description.tr).toContain('v1.6.3')
     expect(exllama.description.en).toContain('DFlash2')
+    expect(exllama.description.en).toContain('BailingMoeV3ForCausalLM')
+    expect(exllama.description.tr).toContain('BailingMoeV3ForCausalLM')
+    const v163 = datasetRelease.evidence.find((e) => e.topic === 'exllamav3-v1.6.3-release')
+    expect(v163).toBeDefined()
+    expect(v163!.url).toBe('https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.3')
+    expect(v163!.checkedAt).toBe('2026-10-18')
+    expect(exllama.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining(['https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.3']),
+    )
+    expect(exllama.lastVerified).toBe('2026-10-18')
     const v162 = datasetRelease.evidence.find((e) => e.topic === 'exllamav3-v1.6.2-release')
     expect(v162).toBeDefined()
     expect(v162!.url).toBe('https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.2')
