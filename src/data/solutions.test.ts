@@ -4,6 +4,7 @@ import { datasetRelease } from './dataset-release'
 import { lessons } from './lessons'
 import { solutions } from './solutions'
 import { sourceAudit } from './source-audit'
+import { ATLAS_DATASET_REVIEWED_AT } from './atlas-meta'
 
 describe('curated atlas dataset', () => {
   it('contains the seven approved categories in order', () => {
@@ -51,10 +52,10 @@ describe('curated atlas dataset', () => {
   it('records material vLLM v0.29.0 notes in both languages against the pinned release source', () => {
     const vllm = solutions.find((solution) => solution.slug === 'vllm')
     expect(vllm).toBeDefined()
-    expect(vllm!.lastVerified).toBe('2026-10-09')
+    expect(vllm!.lastVerified).toBe('2026-10-19')
     expect(vllm!.sources[0]?.url).toBe('https://github.com/vllm-project/vllm/releases/tag/v0.29.0')
     expect(vllm!.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/vllm-project/vllm/releases/tag/v0.30.0']))
-    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-09')).toBe(true)
+    expect(vllm!.sources.every((s) => s.verifiedAt === '2026-10-19')).toBe(true)
 
     // Turkish material coverage
     const trConcat = `${vllm!.summary.tr} ${vllm!.description.tr} ${vllm!.limitations.tr.join(' ')}`
@@ -117,8 +118,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-18-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-18')
+    expect(datasetRelease.release).toBe('2026-10-19-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-19')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -150,7 +151,7 @@ describe('curated atlas dataset', () => {
 
     // SGLang v0.5.21 (2026-10-02): Rust-core default prefix cache, decisions/score endpoints
     const sglang = bySlug('sglang')
-    expect(sglang.lastVerified).toBe('2026-10-03')
+    expect(sglang.lastVerified).toBe('2026-10-19')
     expect(sglang.sources.map((s) => s.url)).toEqual(expect.arrayContaining(['https://github.com/sgl-project/sglang/releases/tag/v0.5.21']))
     expect(sglang.description.en).toContain('v0.5.21')
     expect(sglang.description.en).toContain('Rust core')
@@ -169,8 +170,8 @@ describe('curated atlas dataset', () => {
     expect(tensorrt.description.tr).toContain('sürüm adayıdır')
     expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
 
-    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-17
-    expect(sourceAudit.checkedAt).toBe('2026-10-17')
+    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-19
+    expect(sourceAudit.checkedAt).toBe('2026-10-19')
     for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
@@ -287,4 +288,66 @@ describe('curated atlas dataset', () => {
     expect(dynamoEvidence!.checkedAt).toBe('2026-10-13')
     expect(datasetRelease.note).not.toContain('could not be read')
   })
+
+  it('records the 2026-10-19 serving refresh against the v0.32.0 and v0.5.22 release notes', () => {
+    const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
+
+    // vLLM v0.32.0 (2026-10-18) supersedes the v0.31.0 recorded by the previous pass
+    const vllm = bySlug('vllm')
+    expect(vllm.lastVerified).toBe('2026-10-19')
+    expect(vllm.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/vllm-project/vllm/releases/tag/v0.32.0',
+        'https://github.com/vllm-project/vllm/releases/tag/v0.31.0',
+        'https://github.com/vllm-project/vllm/releases/tag/v0.30.0',
+        'https://github.com/vllm-project/vllm/releases/tag/v0.29.0',
+      ]),
+    )
+    for (const claim of ['v0.32.0', 'POST /v1/systemone', 'response_template', 'ultraquant_4bit', 'fp8_ds_mla', 'vllm download-kernels', 'GHSA-4hhp-h66f-j5j7']) {
+      expect(vllm.description.en).toContain(claim)
+    }
+    for (const claim of ['v0.32.0', 'POST /v1/systemone', 'response_template', 'ultraquant_4bit', 'fp8_ds_mla', 'vllm download-kernels', 'GHSA-4hhp-h66f-j5j7']) {
+      expect(vllm.description.tr).toContain(claim)
+    }
+    // The Python 3.10 drop and the CORS restriction are breaking, and are recorded as such
+    expect(vllm.limitations.en.join(' ')).toContain('Python 3.10 support was dropped')
+    expect(vllm.limitations.tr.join(' ')).toContain('Python 3.10 desteği kalktı')
+    // Release-note throughput figures stay framed as the project's own measurements
+    expect(vllm.description.en).toContain('own benchmark')
+    expect(vllm.description.tr).toContain('sürüm notlarındaki ölçümde')
+
+    // SGLang v0.5.22 (2026-10-19) supersedes the v0.5.21 recorded by the previous pass
+    const sglang = bySlug('sglang')
+    expect(sglang.lastVerified).toBe('2026-10-19')
+    expect(sglang.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/sgl-project/sglang/releases/tag/v0.5.22',
+        'https://github.com/sgl-project/sglang/releases/tag/v0.5.21',
+      ]),
+    )
+    for (const claim of ['v0.5.22', 'InstantTensor', 'Apple Silicon', 'MI355X', 'Python 3.11']) {
+      expect(sglang.description.en).toContain(claim)
+    }
+    for (const claim of ['v0.5.22', 'InstantTensor', 'Apple Silicon', 'MI355X', 'Python 3.11']) {
+      expect(sglang.description.tr).toContain(claim)
+    }
+    // The Python floor is a requirement, so it is stated as a limitation too
+    expect(sglang.limitations.en.join(' ')).toContain('Python 3.11 or newer')
+    expect(sglang.limitations.tr.join(' ')).toContain('Python 3.11')
+    // The earlier v0.5.21 evidence stays pinned
+    expect(sglang.description.en).toContain('v0.5.21')
+    expect(sglang.description.tr).toContain('v0.5.21')
+
+    // Each release is pinned as evidence on the date its own audit found it
+    for (const topic of ['vllm-v0.32.0-release', 'sglang-v0.5.22-release']) {
+      const entry = datasetRelease.evidence.find((e) => e.topic === topic)
+      expect(entry).toBeDefined()
+      expect(entry!.checkedAt).toBe('2026-10-19')
+      expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
+    }
+    // The endpoint sweep was repeated on this pass, so the audit date advanced
+    expect(sourceAudit.checkedAt).toBe('2026-10-19')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-19')
+  })
+
 })
