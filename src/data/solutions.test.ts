@@ -39,13 +39,13 @@ describe('curated atlas dataset', () => {
   it('tracks current lifecycle and compatibility for fast-moving records', () => {
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
 
-    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-18', modelFormats: ['EXL3'] })
+    expect(bySlug('exllamav3')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-21', modelFormats: ['EXL3'] })
     expect(bySlug('onnx-runtime-genai')).toMatchObject({ projectStatus: 'preview', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
     expect(bySlug('docker-model-runner').executionBackends).toEqual(expect.arrayContaining(['llama.cpp', 'vLLM', 'Diffusers']))
     expect(bySlug('docker-model-runner').modelFormats).toEqual(expect.arrayContaining(['GGUF', 'Safetensors', 'OCI artifact']))
     expect(bySlug('nvidia-dynamo').hardware).toEqual(expect.arrayContaining(['NVIDIA GPU', 'AMD GPU', 'Intel GPU']))
-    expect(bySlug('llm-d')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-09-04' })
+    expect(bySlug('llm-d')).toMatchObject({ projectStatus: 'active', lastVerified: '2026-10-20' })
     expect(bySlug('llm-d').executionBackends).toEqual(expect.arrayContaining(['vLLM', 'SGLang']))
   })
 
@@ -118,8 +118,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-19-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-19')
+    expect(datasetRelease.release).toBe('2026-10-21-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-21')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -128,7 +128,7 @@ describe('curated atlas dataset', () => {
     expect(vllmEvidence!.collections).toEqual(expect.arrayContaining(['solutions', 'lessons']))
     // Each solution retains its own recorded verification date
     const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
-    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-18')
+    expect(bySlug('exllamav3').lastVerified).toBe('2026-10-21')
     expect(bySlug('hugging-face-tgi').lastVerified).toBe('2026-09-04')
   })
 
@@ -170,8 +170,8 @@ describe('curated atlas dataset', () => {
     expect(tensorrt.description.tr).toContain('sürüm adayıdır')
     expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
 
-    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-19
-    expect(sourceAudit.checkedAt).toBe('2026-10-19')
+    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-21
+    expect(sourceAudit.checkedAt).toBe('2026-10-21')
     for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
@@ -212,7 +212,7 @@ describe('curated atlas dataset', () => {
     expect(exllama.sources.map((s) => s.url)).toEqual(
       expect.arrayContaining(['https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.3']),
     )
-    expect(exllama.lastVerified).toBe('2026-10-18')
+    expect(exllama.lastVerified).toBe('2026-10-21')
     const v162 = datasetRelease.evidence.find((e) => e.topic === 'exllamav3-v1.6.2-release')
     expect(v162).toBeDefined()
     expect(v162!.url).toBe('https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.2')
@@ -281,7 +281,8 @@ describe('curated atlas dataset', () => {
 
     // The 2026-10-13 pass could finally read the Dynamo v1.5.0 notes, so the gap the
     // previous pass preserved is closed and the record is now verified against them.
-    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-13')
+    // The record moved on again on 2026-10-20, when v1.5.1 was read and recorded.
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-20')
     const dynamoEvidence = datasetRelease.evidence.find((e) => e.topic === 'nvidia-dynamo-v1.5.0-release')
     expect(dynamoEvidence).toBeDefined()
     expect(dynamoEvidence!.url).toBe('https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.0')
@@ -346,8 +347,138 @@ describe('curated atlas dataset', () => {
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
     // The endpoint sweep was repeated on this pass, so the audit date advanced
-    expect(sourceAudit.checkedAt).toBe('2026-10-19')
-    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-19')
+    expect(sourceAudit.checkedAt).toBe('2026-10-21')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-21')
+  })
+
+  it('records the 2026-10-20 pass against the llama.cpp v0.7.0, Dynamo v1.5.1 and llm-d v1.0.0 release notes', () => {
+    const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
+
+    // llama.cpp v0.7.0 (2026-10-15): the semver train the previous two passes denied
+    const llamaCpp = bySlug('llama-cpp')
+    expect(llamaCpp.lastVerified).toBe('2026-10-20')
+    expect(llamaCpp.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/ggml-org/llama.cpp/releases/tag/v0.7.0',
+        'https://github.com/ggml-org/llama.cpp',
+      ]),
+    )
+    for (const claim of ['v0.7.0', '--moe-cache-mib', 'LiliCorr', 'common_chat_session', 'v0.27.0']) {
+      expect(llamaCpp.description.en).toContain(claim)
+    }
+    for (const claim of ['v0.7.0', '--moe-cache-mib', 'LiliCorr', 'common_chat_session', 'v0.27.0']) {
+      expect(llamaCpp.description.tr).toContain(claim)
+    }
+    // The default port move is a change a user has to know about, so it is a limitation
+    expect(llamaCpp.limitations.en.join(' ')).toContain('9931')
+    expect(llamaCpp.limitations.en.join(' ')).toContain('8080')
+    expect(llamaCpp.limitations.tr.join(' ')).toContain('9931')
+    expect(llamaCpp.limitations.tr.join(' ')).toContain('8080')
+
+    // The 2026-10-20 paragraph must not repeat the withdrawn claim. The older
+    // paragraphs stay in the note as history, so the guard is scoped to this
+    // pass's own paragraph rather than to the whole note, and it targets the
+    // withdrawn claim's consequence instead of the phrase it happened to use.
+    // The paragraph index moves on as later passes prepend their own.
+    const thisPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[1]!
+    expect(thisPass).not.toContain('so no version is recorded for it')
+    expect(thisPass).toContain('does publish a semver release train')
+    expect(thisPass).toContain('v0.7.0')
+
+    // NVIDIA Dynamo v1.5.1 (2026-10-07): patch release on top of v1.5.0
+    const dynamo = bySlug('nvidia-dynamo')
+    expect(dynamo.lastVerified).toBe('2026-10-20')
+    expect(dynamo.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.1',
+        'https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.0',
+      ]),
+    )
+    for (const claim of ['v1.5.1', 'HTTP 529', 'min_tokens', 'aiohttp', 'DYN_MM_TRUST_EGRESS_PROXY', 'DYN_MM_LOCAL_PATH']) {
+      expect(dynamo.description.en + dynamo.limitations.en.join(' ')).toContain(claim)
+    }
+    for (const claim of ['v1.5.1', 'HTTP 529', 'min_tokens', 'aiohttp', 'DYN_MM_TRUST_EGRESS_PROXY', 'DYN_MM_LOCAL_PATH']) {
+      expect(dynamo.description.tr + dynamo.limitations.tr.join(' ')).toContain(claim)
+    }
+    // The two upgrade-breaking changes are recorded as breaking, not softened
+    expect(dynamo.limitations.en.join(' ')).toContain('breaking changes')
+    expect(dynamo.limitations.tr.join(' ')).toContain('kırıcı değişiklik')
+
+    // llm-d v1.0.0 (2026-10-20): first stable release, previously recorded without a version
+    const llmD = bySlug('llm-d')
+    expect(llmD.lastVerified).toBe('2026-10-20')
+    expect(llmD.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/llm-d/llm-d/releases/tag/v1.0.0',
+        'https://llm-d.ai/',
+      ]),
+    )
+    for (const claim of ['v1.0.0', 'flowControl', 'DisaggregatedSet', 'previous_response_id']) {
+      expect(llmD.description.en).toContain(claim)
+    }
+    for (const claim of ['v1.0.0', 'flowControl', 'DisaggregatedSet', 'previous_response_id']) {
+      expect(llmD.description.tr).toContain(claim)
+    }
+    // The ROCm image deprecation is recorded as a deprecation, not as a removal
+    expect(llmD.limitations.en.join(' ')).toContain('ghcr.io/llm-d/llm-d-rocm')
+    expect(llmD.limitations.tr.join(' ')).toContain('ghcr.io/llm-d/llm-d-rocm')
+
+    // Each new release is pinned as evidence on the date this audit found it
+    for (const topic of ['llama-cpp-v0.7.0-release', 'nvidia-dynamo-v1.5.1-release', 'llm-d-v1.0.0-release']) {
+      const entry = datasetRelease.evidence.find((e) => e.topic === topic)
+      expect(entry).toBeDefined()
+      expect(entry!.checkedAt).toBe('2026-10-20')
+      expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
+    }
+    // The endpoint sweep was repeated on this pass, so the audit date advanced
+    expect(sourceAudit.checkedAt).toBe('2026-10-21')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-21')
+  })
+
+  it('records the 2026-10-21 pass against the ExLlamaV3 v1.6.4 release notes', () => {
+    const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
+
+    // ExLlamaV3 v1.6.4 (2026-10-20T23:53:45Z) supersedes the v1.6.3 the
+    // previous pass recorded as latest.
+    const exllama = bySlug('exllamav3')
+    expect(exllama.lastVerified).toBe('2026-10-21')
+    expect(exllama.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.4',
+        'https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.3',
+      ]),
+    )
+    for (const claim of ['v1.6.4', 'Lfm2VlForConditionalGeneration', 'Nemotron 3.5 Bolt', 'prefill/decode']) {
+      expect(exllama.description.en).toContain(claim)
+    }
+    for (const claim of ['v1.6.4', 'Lfm2VlForConditionalGeneration', 'Nemotron 3.5 Bolt']) {
+      expect(exllama.description.tr).toContain(claim)
+    }
+    // The ROCm preliminary bound is not restated by v1.6.4, so the limitation
+    // still names every release that left it alone, including this one.
+    expect(exllama.limitations.en.join(' ')).toContain('v1.6.4')
+    expect(exllama.limitations.tr.join(' ')).toContain('v1.6.4')
+    // Every source carries the day the claim was verified
+    expect(exllama.sources.every((s) => s.verifiedAt === '2026-10-21')).toBe(true)
+
+    // The current pass paragraph records the Dynamo development builds as
+    // prereleases that do not move the pinned stable version.
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[0]!
+    expect(currentPass).not.toContain('so no version is recorded for it')
+    expect(currentPass).toContain('v1.6.4')
+    expect(currentPass).toContain('v1.6.0-muse-spark-open-dev.1')
+    expect(currentPass).toContain('do not move the pinned stable version')
+    expect(currentPass).toContain('v1.5.1')
+    // The stable Dynamo claim itself did not move
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-20')
+    expect(bySlug('llama-cpp').lastVerified).toBe('2026-10-20')
+
+    // The new release is pinned as evidence on the date this audit found it
+    const entry = datasetRelease.evidence.find((e) => e.topic === 'exllamav3-v1.6.4-release')
+    expect(entry).toBeDefined()
+    expect(entry!.url).toBe('https://github.com/turboderp-org/exllamav3/releases/tag/v1.6.4')
+    expect(entry!.checkedAt).toBe('2026-10-21')
+    expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
   })
 
 })

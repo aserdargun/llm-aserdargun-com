@@ -15,7 +15,7 @@ describe('atlas routes', async () => {
     expect(document.documentElement).toHaveAttribute('lang', 'en')
     expect(document.title).toBe('LLM Atlas — Runtime & Serving Field Guide')
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'Compare 31 LLM runtime and serving solutions across seven architectural layers using official sources.')
-    expect(screen.getByText('SOURCE ENDPOINT REVIEW · 2026-10-19')).toBeInTheDocument()
+    expect(screen.getByText('SOURCE ENDPOINT REVIEW · 2026-10-21')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Not one market')
     expect(screen.getByRole('link', { name: 'Open the selection guide' })).toHaveAttribute('href', '/en/guide')
     expect(within(screen.getByRole('navigation')).getAllByRole('link', { name: 'Learn' })).toHaveLength(1)
@@ -70,7 +70,7 @@ describe('atlas routes', async () => {
   it('localizes Turkish compatibility values and source types', async () => {
     await renderAt('/tr/solutions/llama-cpp')
     expect(screen.getByText('Yerel · Masaüstü · Uç · Sunucu')).toBeInTheDocument()
-    expect(screen.getByText(/Resmî proje deposu/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Resmî proje deposu/).length).toBeGreaterThan(0)
     expect(screen.queryByText(/official-repository/)).not.toBeInTheDocument()
   })
 
