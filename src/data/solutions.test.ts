@@ -118,8 +118,8 @@ describe('curated atlas dataset', () => {
   })
 
   it('retains pinned vLLM release evidence in the current content audit', () => {
-    expect(datasetRelease.release).toBe('2026-10-27-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-27')
+    expect(datasetRelease.release).toBe('2026-10-28-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-28')
     expect(datasetRelease.collections.lessons.revision).toBe('2026-09-21')
     const vllmEvidence = datasetRelease.evidence.find((e) => e.topic === 'vllm-v0.29.0-release')
     expect(vllmEvidence).toBeDefined()
@@ -175,8 +175,8 @@ describe('curated atlas dataset', () => {
     expect(tensorrt.description.tr).toContain('sürüm adayıdır')
     expect(tensorrt.limitations.en.join(' ')).toContain('release candidate')
 
-    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-27
-    expect(sourceAudit.checkedAt).toBe('2026-10-27')
+    // The endpoint audit date advanced only because every endpoint was re-fetched on 2026-10-28
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
     for (const topic of ['vllm-v0.30.0-release', 'sglang-v0.5.21-release']) {
       const entry = datasetRelease.evidence.find((e) => e.topic === topic)
       expect(entry).toBeDefined()
@@ -287,7 +287,7 @@ describe('curated atlas dataset', () => {
     // The 2026-10-13 pass could finally read the Dynamo v1.5.0 notes, so the gap the
     // previous pass preserved is closed and the record is now verified against them.
     // The record moved on again on 2026-10-20, when v1.5.1 was read and recorded.
-    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-23')
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-28')
     const dynamoEvidence = datasetRelease.evidence.find((e) => e.topic === 'nvidia-dynamo-v1.5.0-release')
     expect(dynamoEvidence).toBeDefined()
     expect(dynamoEvidence!.url).toBe('https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.0')
@@ -352,8 +352,8 @@ describe('curated atlas dataset', () => {
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
     // The endpoint sweep was repeated on this pass, so the audit date advanced
-    expect(sourceAudit.checkedAt).toBe('2026-10-27')
-    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-27')
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-28')
   })
 
   it('records the 2026-10-20 pass against the llama.cpp v0.7.0, Dynamo v1.5.1 and llm-d v1.0.0 release notes', () => {
@@ -385,14 +385,14 @@ describe('curated atlas dataset', () => {
     // pass's own paragraph rather than to the whole note, and it targets the
     // withdrawn claim's consequence instead of the phrase it happened to use.
     // The paragraph index moves on as later passes prepend their own.
-    const thisPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[6]!
+    const thisPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[7]!
     expect(thisPass).not.toContain('so no version is recorded for it')
     expect(thisPass).toContain('does publish a semver release train')
     expect(thisPass).toContain('v0.7.0')
 
     // NVIDIA Dynamo v1.5.1 (2026-10-07): patch release on top of v1.5.0
     const dynamo = bySlug('nvidia-dynamo')
-    expect(dynamo.lastVerified).toBe('2026-10-23')
+    expect(dynamo.lastVerified).toBe('2026-10-28')
     expect(dynamo.sources.map((s) => s.url)).toEqual(
       expect.arrayContaining([
         'https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.1',
@@ -436,8 +436,8 @@ describe('curated atlas dataset', () => {
       expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
     }
     // The endpoint sweep was repeated on this pass, so the audit date advanced
-    expect(sourceAudit.checkedAt).toBe('2026-10-27')
-    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-27')
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-28')
   })
 
   it('records the 2026-10-21 pass against the ExLlamaV3 v1.6.4 release notes', () => {
@@ -468,7 +468,7 @@ describe('curated atlas dataset', () => {
 
     // The current pass paragraph records the Dynamo development builds as
     // prereleases that do not move the pinned stable version.
-    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[5]!
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[6]!
     expect(currentPass).not.toContain('so no version is recorded for it')
     expect(currentPass).toContain('v1.6.4')
     expect(currentPass).toContain('v1.6.0-muse-spark-open-dev.1')
@@ -476,7 +476,7 @@ describe('curated atlas dataset', () => {
     expect(currentPass).toContain('v1.5.1')
     // The stable Dynamo claim itself did not move on that pass. It moved on the
     // 2026-10-23 pass, when v1.6.0 was published as a stable release.
-    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-23')
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-28')
     expect(bySlug('llama-cpp').lastVerified).toBe('2026-10-20')
 
     // The new release is pinned as evidence on the date this audit found it
@@ -515,7 +515,7 @@ describe('curated atlas dataset', () => {
     expect(tensorrt.sources.every((s) => s.verifiedAt === '2026-10-22')).toBe(true)
 
     // The current pass paragraph records the release state of the day.
-    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[4]!
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[5]!
     expect(currentPass).not.toContain('so no version is recorded for it')
     expect(currentPass).toContain('v1.4.0rc1')
     expect(currentPass).toContain('v1.5.1')
@@ -535,7 +535,7 @@ describe('curated atlas dataset', () => {
     // NVIDIA Dynamo v1.6.0 (2026-10-22T22:31:45Z) is a stable release, so it
     // supersedes the v1.5.1 the previous pass recorded as the latest stable one.
     const dynamo = bySlug('nvidia-dynamo')
-    expect(dynamo.lastVerified).toBe('2026-10-23')
+    expect(dynamo.lastVerified).toBe('2026-10-28')
     expect(dynamo.sources.map((s) => s.url)).toEqual(
       expect.arrayContaining([
         'https://github.com/ai-dynamo/dynamo/releases/tag/v1.6.0',
@@ -555,10 +555,10 @@ describe('curated atlas dataset', () => {
     expect(dynamo.limitations.tr.join(' ')).toContain('kırıcı değişiklik')
     expect(dynamo.limitations.tr.join(' ')).toContain('AutoDeploy')
     // Every source carries the day the claim was verified
-    expect(dynamo.sources.every((s) => s.verifiedAt === '2026-10-23')).toBe(true)
+    expect(dynamo.sources.every((s) => s.verifiedAt === '2026-10-28')).toBe(true)
 
     // The current pass paragraph records the release state of the day.
-    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[3]!
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[4]!
     expect(currentPass).not.toContain('so no version is recorded for it')
     expect(currentPass).toContain('v1.6.0')
     expect(currentPass).toContain('v1.5.1')
@@ -579,14 +579,14 @@ describe('curated atlas dataset', () => {
     // The pass re-read every release feed and moved no version claim, so every
     // solution keeps the verifiedAt the pass that recorded it set.
     expect(bySlug('tensorrt-llm').lastVerified).toBe('2026-10-22')
-    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-23')
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-28')
     expect(bySlug('exllamav3').lastVerified).toBe('2026-10-27')
     expect(bySlug('llama-cpp').lastVerified).toBe('2026-10-20')
     expect(bySlug('vllm').lastVerified).toBe('2026-10-19')
     expect(bySlug('sglang').lastVerified).toBe('2026-10-19')
 
     // The current pass paragraph records the release state of the day.
-    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[2]!
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[3]!
     expect(currentPass).not.toContain('so no version is recorded for it')
     expect(currentPass).toContain('No claim changed.')
     expect(currentPass).toContain('v1.4.0rc1')
@@ -598,10 +598,10 @@ describe('curated atlas dataset', () => {
     expect(currentPass).toContain('not a QA-gated release')
 
     // Only the endpoint-review date advanced, and it advanced with it.
-    expect(datasetRelease.release).toBe('2026-10-27-content-audit')
-    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-27')
-    expect(sourceAudit.checkedAt).toBe('2026-10-27')
-    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-27')
+    expect(datasetRelease.release).toBe('2026-10-28-content-audit')
+    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-28')
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-28')
   })
 
   it('records the 2026-10-25 pass as a holding pass with no claim changed', () => {
@@ -610,14 +610,14 @@ describe('curated atlas dataset', () => {
     // The pass re-read every release feed and moved no version claim, so every
     // solution keeps the verifiedAt the pass that recorded it set.
     expect(bySlug('tensorrt-llm').lastVerified).toBe('2026-10-22')
-    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-23')
+    expect(bySlug('nvidia-dynamo').lastVerified).toBe('2026-10-28')
     expect(bySlug('exllamav3').lastVerified).toBe('2026-10-27')
     expect(bySlug('llama-cpp').lastVerified).toBe('2026-10-20')
     expect(bySlug('vllm').lastVerified).toBe('2026-10-19')
     expect(bySlug('sglang').lastVerified).toBe('2026-10-19')
 
     // The current pass paragraph records the release state of the day.
-    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[1]!
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[2]!
     expect(currentPass).not.toContain('so no version is recorded for it')
     expect(currentPass).toContain('No claim changed.')
     expect(currentPass).toContain('v1.4.0rc1')
@@ -633,10 +633,10 @@ describe('curated atlas dataset', () => {
     expect(currentPass).toContain('only the endpoint-review date advances to 2026-10-25')
 
     // Only the endpoint-review date advanced, and it advanced with it.
-    expect(datasetRelease.release).toBe('2026-10-27-content-audit')
-    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-27')
-    expect(sourceAudit.checkedAt).toBe('2026-10-27')
-    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-27')
+    expect(datasetRelease.release).toBe('2026-10-28-content-audit')
+    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-28')
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-28')
   })
 
 
@@ -666,8 +666,8 @@ describe('curated atlas dataset', () => {
     // Every source carries the day the claim was verified
     expect(exllama.sources.every((s) => s.verifiedAt === '2026-10-27')).toBe(true)
 
-    // The current pass paragraph records the release state of the day.
-    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[0]!
+    // That pass paragraph records the release state of its own day.
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[1]!
     expect(currentPass).not.toContain('so no version is recorded for it')
     expect(currentPass).toContain('One claim changed.')
     expect(currentPass).toContain('v1.6.5')
@@ -692,11 +692,73 @@ describe('curated atlas dataset', () => {
     expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
 
     // Only the endpoint-review date advanced, and it advanced with it.
-    expect(datasetRelease.release).toBe('2026-10-27-content-audit')
-    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-27')
-    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-27')
-    expect(sourceAudit.checkedAt).toBe('2026-10-27')
-    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-27')
+    expect(datasetRelease.release).toBe('2026-10-28-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-28')
+    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-28')
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-28')
+  })
+
+  it('records the 2026-10-28 pass against the NVIDIA Dynamo v1.6.1 release notes', () => {
+    const bySlug = (slug: string) => solutions.find((solution) => solution.slug === slug)!
+
+    // NVIDIA Dynamo v1.6.1 (2026-10-27T20:24:42Z) is a stable patch release that
+    // supersedes the v1.6.0 the previous pass recorded as the latest stable one.
+    const dynamo = bySlug('nvidia-dynamo')
+    expect(dynamo.lastVerified).toBe('2026-10-28')
+    expect(dynamo.sources.map((s) => s.url)).toEqual(
+      expect.arrayContaining([
+        'https://github.com/ai-dynamo/dynamo/releases/tag/v1.6.1',
+        'https://github.com/ai-dynamo/dynamo/releases/tag/v1.6.0',
+        'https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.1',
+        'https://github.com/ai-dynamo/dynamo/releases/tag/v1.5.0',
+      ]),
+    )
+    for (const claim of ['v1.6.1', 'emSign ECC Root CA - G3', 'Pillow 13', 'kvbm-kernels']) {
+      expect(dynamo.description.en).toContain(claim)
+    }
+    for (const claim of ['v1.6.1', 'emSign ECC Root CA - G3', 'Pillow 13', 'kvbm-kernels']) {
+      expect(dynamo.description.tr).toContain(claim)
+    }
+    // The trust-store change is recorded as breaking, not softened
+    expect(dynamo.limitations.en.join(' ')).toContain('breaking change')
+    expect(dynamo.limitations.en.join(' ')).toContain('emSign ECC Root CA - G3')
+    expect(dynamo.limitations.tr.join(' ')).toContain('kırıcı değişiklik')
+    expect(dynamo.limitations.tr.join(' ')).toContain('emSign ECC Root CA - G3')
+    // Every source carries the day the claim was verified
+    expect(dynamo.sources.every((s) => s.verifiedAt === '2026-10-28')).toBe(true)
+
+    // The current pass paragraph records the release state of the day.
+    const currentPass = datasetRelease.note.split('The detailed history of the previous pass follows.')[0]!
+    expect(currentPass).not.toContain('so no version is recorded for it')
+    expect(currentPass).toContain('One claim changed.')
+    expect(currentPass).toContain('v1.6.1')
+    expect(currentPass).toContain('emSign ECC Root CA - G3')
+    expect(currentPass).toContain('Pillow 13')
+    expect(currentPass).toContain('v1.6.0')
+    expect(currentPass).toContain('v0.32.0')
+    // The v0.32.1rc0 tag still has no release object behind it.
+    expect(currentPass).toContain('v0.32.1rc0')
+    expect(currentPass).toContain('v0.5.22')
+    expect(currentPass).toContain('v0.7.0')
+    expect(currentPass).toContain('b11946')
+    // Ollama v0.40.12 is now a stable release, but it records no version claim.
+    expect(currentPass).toContain('v0.40.12')
+    expect(currentPass).toContain('only the endpoint-review date advances to 2026-10-28')
+
+    // The new release is pinned as evidence on the date this audit found it
+    const entry = datasetRelease.evidence.find((e) => e.topic === 'nvidia-dynamo-v1.6.1-release')
+    expect(entry).toBeDefined()
+    expect(entry!.url).toBe('https://github.com/ai-dynamo/dynamo/releases/tag/v1.6.1')
+    expect(entry!.checkedAt).toBe('2026-10-28')
+    expect(entry!.collections).toEqual(expect.arrayContaining(['solutions']))
+
+    // Only the endpoint-review date advanced, and it advanced with it.
+    expect(datasetRelease.release).toBe('2026-10-28-content-audit')
+    expect(datasetRelease.collections.solutions.revision).toBe('2026-10-28')
+    expect(datasetRelease.collections.sourceAudit.revision).toBe('2026-10-28')
+    expect(sourceAudit.checkedAt).toBe('2026-10-28')
+    expect(ATLAS_DATASET_REVIEWED_AT).toBe('2026-10-28')
   })
 
 })
